@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: aspnetcore-demo
+    env: dotnet
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: dotnet out/MyAspNetCoreApp.dll
+    autoDeploy: true
