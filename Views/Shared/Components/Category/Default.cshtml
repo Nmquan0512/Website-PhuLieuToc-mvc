@@ -1,0 +1,88 @@
+﻿@model IEnumerable<PhuLieuToc.Models.CategoryModel>
+
+<!-- Style tùy chỉnh nút dấu cộng -->
+<style>
+    .collapse-toggle {
+        background: none;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        float: right;
+        color: #99b18f; /* Màu xanh, bạn có thể thay đổi */
+        font-size: 1.2em;
+        margin: 0;
+        padding: 0;
+    }
+
+        .collapse-toggle:hover {
+            color: #99b18f;
+        }
+    /* Đảm bảo tiêu đề panel có position relative để align đẹp hơn */
+    .panel-heading .panel-title {
+        position: relative;
+    }
+</style>
+
+<div class="panel-group category-products" id="accordian">
+    @foreach (var item in Model)
+    {
+        @if (item.Children.Any())
+        {
+            <!-- Danh mục có con -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <!-- Tên danh mục chuyển hướng -->
+                        <a href="@Url.Action("Index", "Category", new { Slug = item.Slug })">
+                            @item.TenDanhMuc
+                        </a>
+                        <!-- Nút plus riêng, căn sang bên phải -->
+                        <button type="button" class="collapse-toggle" data-target="#@item.Slug">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </h4>
+                </div>
+                <div id="@item.Slug" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <ul>
+                            @foreach (var child in item.Children)
+                            {
+                                <li>
+                                    <a href="@Url.Action("Index", "Category", new { Slug = child.Slug })">
+                                        @child.TenDanhMuc
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Danh mục không có con -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="@Url.Action("Index", "Category", new { Slug = item.Slug })">
+                            @item.TenDanhMuc
+                        </a>
+                    </h4>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<!-- Script jQuery để xử lý nút plus -->
+<script>
+    $(document).ready(function () {
+        $('.collapse-toggle').click(function (e) {
+            // Ngăn việc kích hoạt chuyển hướng khi click vào nút plus
+            e.preventDefault();
+            e.stopPropagation();
+            var target = $(this).data('target');
+            $(target).collapse('toggle');
+        });
+    });
+</script>
