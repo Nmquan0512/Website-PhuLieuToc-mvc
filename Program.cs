@@ -1,38 +1,41 @@
 using Microsoft.EntityFrameworkCore;
-using PhuLieuToc.Repository;
+using PhuLieuToc.Repository; // Đảm bảo namespace chứa AppDbContext và SeedData.
+using PhuLieuToc.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllersWithViews();
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-var connectionString = Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION_STRING") 
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
+// Thêm các service cần thiết vào container
+builder.Services.AddControllersWithViews();
+
+// Cấu hình DbContext (ví dụ, dùng SQL Server hoặc thay thế theo chuỗi kết nối của bạn)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Nếu có các service khác, thêm ở đây
+// ...
 
+var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+// Seed dữ liệu ban đầu nếu cần
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     SeedData.SeedingData(dbContext);
 }
 
+// Cấu hình middleware
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
+// Định tuyến mặc định
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
