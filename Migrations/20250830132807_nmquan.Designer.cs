@@ -12,8 +12,8 @@ using PhuLieuToc.Repository;
 namespace PhuLieuToc.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250607112140_nnnn")]
-    partial class nnnn
+    [Migration("20250830132807_nmquan")]
+    partial class nmquan
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

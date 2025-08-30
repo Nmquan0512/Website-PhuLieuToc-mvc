@@ -14,7 +14,7 @@
 	<link href="~/css/price-range.css" rel="stylesheet">
 	<link href="~/css/animate.css" rel="stylesheet">
 	<link href="~/css/main.css" rel="stylesheet">
-@* 	<link href="~/css/responsive.css" rel="stylesheet"> *@
+	@* 	<link href="~/css/responsive.css" rel="stylesheet"> *@
 	<link rel="shortcut icon" href="images/ico/favicon.ico">
 	<style>
 		/* Header Bottom Styling */
@@ -87,7 +87,6 @@
 				list-style: none;
 				margin: 0;
 				padding: 0;
-
 				align-items: center;
 			}
 
@@ -643,315 +642,317 @@
 			margin-bottom: 30px;
 			line-height: 1.8;
 		}
-		        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-        }
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 
-        /* Main content để demo */
-        .main-content {
-            height: 100vh;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2c3e50;
-            font-size: 24px;
-            font-weight: bold;
-        }
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			line-height: 1.6;
+		}
 
-        /* Footer Styles */
-        .footer {
-            background: linear-gradient(135deg, #99b18f 0%, #7a9470 50%, #99b18f 100%);
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
+		/* Main content để demo */
+		.main-content {
+			height: 100vh;
+			background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #2c3e50;
+			font-size: 24px;
+			font-weight: bold;
+		}
 
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-        }
+		/* Footer Styles */
+		.footer {
+			background: linear-gradient(135deg, #99b18f 0%, #7a9470 50%, #99b18f 100%);
+			color: white;
+			position: relative;
+			overflow: hidden;
+		}
 
-        .footer-main {
-            padding: 60px 0 40px;
-            position: relative;
-        }
+			.footer::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 3px;
+				background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+			}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+		.footer-main {
+			padding: 60px 0 40px;
+			position: relative;
+		}
 
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 20px;
+		}
 
-        .footer-section h3 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #fff;
-            position: relative;
-            padding-bottom: 10px;
-        }
+		.footer-grid {
+			display: grid;
+			grid-template-columns: 2fr 1fr 1fr 1fr;
+			gap: 40px;
+			margin-bottom: 40px;
+		}
 
-        .footer-section h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background: rgba(255,255,255,0.8);
-            border-radius: 2px;
-        }
+		.footer-section h3 {
+			font-size: 20px;
+			font-weight: 600;
+			margin-bottom: 20px;
+			color: #fff;
+			position: relative;
+			padding-bottom: 10px;
+		}
 
-        .footer-about p {
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 20px;
-            line-height: 1.7;
-        }
+			.footer-section h3::after {
+				content: '';
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 40px;
+				height: 3px;
+				background: rgba(255,255,255,0.8);
+				border-radius: 2px;
+			}
 
-        .footer-links ul {
-            list-style: none;
-        }
+		.footer-about p {
+			color: rgba(255,255,255,0.9);
+			margin-bottom: 20px;
+			line-height: 1.7;
+		}
 
-        .footer-links ul li {
-            margin-bottom: 12px;
-        }
+		.footer-links ul {
+			list-style: none;
+		}
 
-        .footer-links ul li a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            padding: 5px 0;
-            display: inline-block;
-            position: relative;
-        }
+			.footer-links ul li {
+				margin-bottom: 12px;
+			}
 
-        .footer-links ul li a:hover {
-            color: white;
-            padding-left: 10px;
-            transform: translateX(5px);
-        }
+				.footer-links ul li a {
+					color: rgba(255,255,255,0.8);
+					text-decoration: none;
+					transition: all 0.3s ease;
+					padding: 5px 0;
+					display: inline-block;
+					position: relative;
+				}
 
-        .footer-links ul li a::before {
-            content: '';
-            position: absolute;
-            left: -15px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 2px;
-            background: white;
-            transition: width 0.3s ease;
-        }
+					.footer-links ul li a:hover {
+						color: white;
+						padding-left: 10px;
+						transform: translateX(5px);
+					}
 
-        .footer-links ul li a:hover::before {
-            width: 8px;
-        }
+					.footer-links ul li a::before {
+						content: '';
+						position: absolute;
+						left: -15px;
+						top: 50%;
+						transform: translateY(-50%);
+						width: 0;
+						height: 2px;
+						background: white;
+						transition: width 0.3s ease;
+					}
 
-        .contact-info {
-            list-style: none;
-        }
+					.footer-links ul li a:hover::before {
+						width: 8px;
+					}
 
-        .contact-info li {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            color: rgba(255,255,255,0.9);
-        }
+		.contact-info {
+			list-style: none;
+		}
 
-        .contact-info li i {
-            width: 20px;
-            margin-right: 12px;
-            color: rgba(255,255,255,0.8);
-            font-size: 16px;
-        }
+			.contact-info li {
+				display: flex;
+				align-items: center;
+				margin-bottom: 15px;
+				color: rgba(255,255,255,0.9);
+			}
 
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
+				.contact-info li i {
+					width: 20px;
+					margin-right: 12px;
+					color: rgba(255,255,255,0.8);
+					font-size: 16px;
+				}
 
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
+		.social-links {
+			display: flex;
+			gap: 15px;
+			margin-top: 20px;
+		}
 
-        .social-links a:hover {
-            background: white;
-            color: #99b18f;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
+			.social-links a {
+				width: 40px;
+				height: 40px;
+				background: rgba(255,255,255,0.1);
+				border-radius: 50%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: white;
+				text-decoration: none;
+				transition: all 0.3s ease;
+				backdrop-filter: blur(10px);
+			}
 
-        .newsletter {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            margin-top: 20px;
-        }
+				.social-links a:hover {
+					background: white;
+					color: #99b18f;
+					transform: translateY(-3px);
+					box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+				}
 
-        .newsletter h4 {
-            margin-bottom: 15px;
-            color: white;
-            font-size: 16px;
-        }
+		.newsletter {
+			background: rgba(255,255,255,0.1);
+			padding: 20px;
+			border-radius: 15px;
+			backdrop-filter: blur(10px);
+			margin-top: 20px;
+		}
 
-        .newsletter-form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
+			.newsletter h4 {
+				margin-bottom: 15px;
+				color: white;
+				font-size: 16px;
+			}
 
-        .newsletter-form input {
-            flex: 1;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255,255,255,0.9);
-            color: #2c3e50;
-            font-size: 14px;
-        }
+		.newsletter-form {
+			display: flex;
+			gap: 10px;
+			margin-bottom: 10px;
+		}
 
-        .newsletter-form input::placeholder {
-            color: #999;
-        }
+			.newsletter-form input {
+				flex: 1;
+				padding: 12px 15px;
+				border: none;
+				border-radius: 25px;
+				background: rgba(255,255,255,0.9);
+				color: #2c3e50;
+				font-size: 14px;
+			}
 
-        .newsletter-form button {
-            padding: 12px 20px;
-            background: white;
-            color: #99b18f;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
+				.newsletter-form input::placeholder {
+					color: #999;
+				}
 
-        .newsletter-form button:hover {
-            background: #f8f9fa;
-            transform: scale(1.05);
-        }
+			.newsletter-form button {
+				padding: 12px 20px;
+				background: white;
+				color: #99b18f;
+				border: none;
+				border-radius: 25px;
+				cursor: pointer;
+				font-weight: 600;
+				transition: all 0.3s ease;
+			}
 
-        .newsletter p {
-            font-size: 12px;
-            color: rgba(255,255,255,0.7);
-            margin: 0;
-        }
+				.newsletter-form button:hover {
+					background: #f8f9fa;
+					transform: scale(1.05);
+				}
 
-        .footer-bottom {
-            background: rgba(0,0,0,0.2);
-            padding: 20px 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
+		.newsletter p {
+			font-size: 12px;
+			color: rgba(255,255,255,0.7);
+			margin: 0;
+		}
 
-        .footer-bottom-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+		.footer-bottom {
+			background: rgba(0,0,0,0.2);
+			padding: 20px 0;
+			border-top: 1px solid rgba(255,255,255,0.1);
+		}
 
-        .footer-bottom p {
-            margin: 0;
-            color: rgba(255,255,255,0.8);
-            font-size: 14px;
-        }
+		.footer-bottom-content {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
 
-        .footer-bottom a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-        }
+		.footer-bottom p {
+			margin: 0;
+			color: rgba(255,255,255,0.8);
+			font-size: 14px;
+		}
 
-        .footer-bottom a:hover {
-            text-decoration: underline;
-        }
+		.footer-bottom a {
+			color: white;
+			text-decoration: none;
+			font-weight: 500;
+		}
 
-        /* Responsive Design */
-        @@media (max-width: 992px) {
-            .footer-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 30px;
-            }
-        }
+			.footer-bottom a:hover {
+				text-decoration: underline;
+			}
 
-        @@media (max-width: 768px) {
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
+		/* Responsive Design */
+		@@media (max-width: 992px) {
+			.footer-grid {
+				grid-template-columns: 1fr 1fr;
+				gap: 30px;
+			}
+		}
 
-            .footer-main {
-                padding: 40px 0 30px;
-            }
+		@@media (max-width: 768px) {
+			.footer-grid {
+				grid-template-columns: 1fr;
+				gap: 30px;
+			}
 
-            .newsletter-form {
-                flex-direction: column;
-            }
+			.footer-main {
+				padding: 40px 0 30px;
+			}
 
-            .footer-bottom-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-        }
+			.newsletter-form {
+				flex-direction: column;
+			}
 
-        @@media (max-width: 480px) {
-            .container {
-                padding: 0 15px;
-            }
+			.footer-bottom-content {
+				flex-direction: column;
+				text-align: center;
+				gap: 10px;
+			}
+		}
 
-            .social-links {
-                justify-content: center;
-            }
-        }
+		@@media (max-width: 480px) {
+			.container {
+				padding: 0 15px;
+			}
 
-        /* Animation */
-        .footer-section {
-            animation: fadeInUp 0.6s ease;
-        }
+			.social-links {
+				justify-content: center;
+			}
+		}
 
-        @@keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+		/* Animation */
+		.footer-section {
+			animation: fadeInUp 0.6s ease;
+		}
+
+		@@keyframes fadeInUp {
+			from {
+				opacity: 0;
+				transform: translateY(30px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
 	</style>
 </head>
 
@@ -1048,39 +1049,38 @@
 						<div class="mainmenu pull-left">
 							<ul id="main-nav" class="nav navbar-nav collapse navbar-collapse">
 								<li><a asp-action="Index" asp-controller="Home">Home</a></li>
-							<li class="dropdown">
+								<li class="dropdown">
 									<a asp-action="Index" asp-controller="Product">Shop<i class="fa fa-angle-down"></i></a>
-								<ul role="menu" class="sub-menu">
+									<ul role="menu" class="sub-menu">
 										<li><a asp-controller="Category" asp-action="Index">Category</a></li>
-									<li><a asp-action="Index" asp-controller="Product">Product Details</a></li>
-									<li><a asp-action="Index" asp-controller="Cart">Cart</a></li>
-									<li><a href="login.html">Login</a></li>
-								</ul>
-							</li>
-							<li class="dropdown">
-								<a href="#">Blog<i class="fa fa-angle-down"></i></a>
-								<ul role="menu" class="sub-menu">
-									<li><a href="blog.html">Blog List</a></li>
-									<li><a href="blog-single.html">Blog Single</a></li>
-								</ul>
-							</li>
-							<li><a href="404.html">404</a></li>
-							<li><a href="contact-us.html">Contact</a></li>
-						</ul>
+										<li><a asp-action="Index" asp-controller="Product">Product Details</a></li>
+										<li><a asp-action="Index" asp-controller="Cart">Cart</a></li>
+										<li><a href="login.html">Login</a></li>
+									</ul>
+								</li>
+								<li class="dropdown">
+									<a href="#">Blog<i class="fa fa-angle-down"></i></a>
+									<ul role="menu" class="sub-menu">
+										<li><a href="blog.html">Blog List</a></li>
+										<li><a href="blog-single.html">Blog Single</a></li>
+									</ul>
+								</li>
+								<li><a href="404.html">404</a></li>
+								<li><a href="contact-us.html">Contact</a></li>
+							</ul>
+						</div>
 					</div>
-				</div>
-				<div class="col-sm-3">
-					<div class="search_box pull-right">
-						<input type="text" placeholder="Search">
+					<div class="col-sm-3">
+						<div class="search_box pull-right">
+							<input type="text" placeholder="Search">
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		</div>
-					
+
 		</div><!--/header-bottom-->
 	</header><!--/header-->
-
 	<!-- Phần còn lại của trang web -->
 	<section id="slider">
 		<div class="container">
@@ -1160,7 +1160,9 @@
 		<div class="container">
 			<div class="row">
 				@RenderBody()
+			</div>
 		</div>
+		
 	</section>
 
 	<footer class="footer">
@@ -1252,17 +1254,18 @@
 				</div>
 			</div>
 		</div>
+
 	</footer>
 </body>
 
 
 
-	<script src="~/js/jquery.js"></script>
-	<script src="~/js/bootstrap.min.js"></script>
-	<script src="~/js/jquery.scrollUp.min.js"></script>
-	<script src="~/js/price-range.js"></script>
-	<script src="~/js/jquery.prettyPhoto.js"></script>
-	<script src="~/js/main.js"></script>
+<script src="~/js/jquery.js"></script>
+<script src="~/js/bootstrap.min.js"></script>
+<script src="~/js/jquery.scrollUp.min.js"></script>
+<script src="~/js/price-range.js"></script>
+<script src="~/js/jquery.prettyPhoto.js"></script>
+<script src="~/js/main.js"></script>
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

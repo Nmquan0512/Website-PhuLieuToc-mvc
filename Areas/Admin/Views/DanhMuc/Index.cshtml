@@ -1,0 +1,502 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Quản lý Danh mục";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-sitemap me-2"></i>Quản lý Danh mục
+            </h1>
+            <p class="text-muted">Quản lý các danh mục phụ liệu tóc chính</p>
+        </div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+            <i class="fas fa-plus me-2"></i>Thêm danh mục mới
+        </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Tổng danh mục
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">6</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-sitemap fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Đang hoạt động
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">6</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Có danh mục con
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">4</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-folder fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Sản phẩm
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">156</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-box fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Danh sách danh mục phụ liệu tóc</h6>
+                    <div class="d-flex gap-2">
+                        <div class="input-group" style="width: 300px;">
+                            <input type="text" class="form-control" placeholder="Tìm kiếm danh mục..." id="searchInput">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <select class="form-select" style="width: 150px;" id="filterStatus">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="active">Đang hoạt động</option>
+                            <option value="inactive">Không hoạt động</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="categoriesTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 50px;">
+                                        <input type="checkbox" class="form-check-input" id="selectAll">
+                                    </th>
+                                    <th style="width: 60px;">#</th>
+                                    <th>Tên danh mục</th>
+                                    <th>Slug</th>
+                                    <th>Mô tả</th>
+                                    <th>Danh mục con</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thứ tự</th>
+                                    <th style="width: 150px;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input category-checkbox">
+                                    </td>
+                                    <td>1</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-cut text-warning me-2"></i>
+                                            <strong>Phụ liệu tóc</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-secondary">phu-lieu-toc</span></td>
+                                    <td>Phụ liệu cơ bản cho tóc</td>
+                                    <td>
+                                        <span class="badge bg-info">5 danh mục con</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    </td>
+                                    <td>1</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Quản lý danh mục con">
+                                                <i class="fas fa-list"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input category-checkbox">
+                                    </td>
+                                    <td>2</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-palette text-warning me-2"></i>
+                                            <strong>Thuốc nhuộm</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-secondary">thuoc-nhuom</span></td>
+                                    <td>Thuốc nhuộm tóc các loại</td>
+                                    <td>
+                                        <span class="badge bg-info">3 danh mục con</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    </td>
+                                    <td>2</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Quản lý danh mục con">
+                                                <i class="fas fa-list"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input category-checkbox">
+                                    </td>
+                                    <td>3</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-spray-can text-warning me-2"></i>
+                                            <strong>Dầu gội & Dầu xả</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-secondary">dau-goi-dau-xa</span></td>
+                                    <td>Dầu gội và dầu xả tóc</td>
+                                    <td>
+                                        <span class="badge bg-info">4 danh mục con</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    </td>
+                                    <td>3</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Quản lý danh mục con">
+                                                <i class="fas fa-list"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input category-checkbox">
+                                    </td>
+                                    <td>4</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-magic text-warning me-2"></i>
+                                            <strong>Dưỡng tóc</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-secondary">duong-toc</span></td>
+                                    <td>Sản phẩm dưỡng và phục hồi tóc</td>
+                                    <td>
+                                        <span class="badge bg-info">2 danh mục con</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    </td>
+                                    <td>4</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Quản lý danh mục con">
+                                                <i class="fas fa-list"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input category-checkbox">
+                                    </td>
+                                    <td>5</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-tools text-warning me-2"></i>
+                                            <strong>Dụng cụ</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-secondary">dung-cu</span></td>
+                                    <td>Dụng cụ làm tóc chuyên nghiệp</td>
+                                    <td>
+                                        <span class="badge bg-info">3 danh mục con</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    </td>
+                                    <td>5</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Quản lý danh mục con">
+                                                <i class="fas fa-list"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input category-checkbox">
+                                    </td>
+                                    <td>6</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-gift text-warning me-2"></i>
+                                            <strong>Bộ sản phẩm</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-secondary">bo-san-pham</span></td>
+                                    <td>Bộ sản phẩm làm tóc combo</td>
+                                    <td>
+                                        <span class="badge bg-info">1 danh mục con</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    </td>
+                                    <td>6</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Quản lý danh mục con">
+                                                <i class="fas fa-list"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted">
+                            Hiển thị 1-6 của 6 danh mục
+                        </div>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">Trước</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">Sau</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm danh mục -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">
+                    <i class="fas fa-plus me-2"></i>Thêm danh mục mới
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="categoryName" placeholder="Nhập tên danh mục phụ liệu tóc..." required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="categorySlug" class="form-label">Slug</label>
+                        <input type="text" class="form-control" id="categorySlug" placeholder="Tự động tạo..." readonly>
+                        <small class="text-muted">Tự động tạo từ tên danh mục</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="categoryDescription" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="categoryDescription" rows="3" placeholder="Mô tả ngắn gọn về danh mục phụ liệu tóc..."></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="categoryOrder" class="form-label">Thứ tự</label>
+                                <input type="number" class="form-control" id="categoryOrder" value="1" min="1">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="categoryActive" class="form-label">Trạng thái</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="categoryActive" checked>
+                                    <label class="form-check-label" for="categoryActive">
+                                        Danh mục đang hoạt động
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" form="addCategoryForm" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Lưu danh mục
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý checkbox "Chọn tất cả"
+    const selectAllCheckbox = document.getElementById('selectAll');
+    const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+    
+    selectAllCheckbox.addEventListener('change', function() {
+        categoryCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+    
+    // Xử lý tìm kiếm
+    const searchInput = document.getElementById('searchInput');
+    const filterStatus = document.getElementById('filterStatus');
+    
+    function filterCategories() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusFilter = filterStatus.value;
+        
+        const rows = document.querySelectorAll('#categoriesTable tbody tr');
+        
+        rows.forEach(row => {
+            const categoryName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const status = row.querySelector('td:nth-child(7)').textContent;
+            
+            const matchesSearch = categoryName.includes(searchTerm);
+            const matchesStatus = !statusFilter || status.includes(statusFilter === 'active' ? 'Đang hoạt động' : 'Không hoạt động');
+            
+            row.style.display = matchesSearch && matchesStatus ? '' : 'none';
+        });
+    }
+    
+    searchInput.addEventListener('input', filterCategories);
+    filterStatus.addEventListener('change', filterCategories);
+    
+    // Xử lý form thêm danh mục
+    const addCategoryForm = document.getElementById('addCategoryForm');
+    const categoryNameInput = document.getElementById('categoryName');
+    const categorySlugInput = document.getElementById('categorySlug');
+    
+    // Tự động tạo slug từ tên danh mục
+    categoryNameInput.addEventListener('input', function() {
+        const slug = this.value
+            .toLowerCase()
+            .replace(/đ/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
+        categorySlugInput.value = slug;
+    });
+    
+    addCategoryForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Xử lý lưu danh mục ở đây
+        alert('Danh mục đã được lưu thành công!');
+        
+        // Đóng modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+        modal.hide();
+        
+        // Reset form
+        addCategoryForm.reset();
+    });
+});
+</script>

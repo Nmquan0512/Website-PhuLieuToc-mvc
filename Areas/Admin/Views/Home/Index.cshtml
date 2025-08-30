@@ -1,0 +1,566 @@
+﻿@{
+    ViewData["Title"] = "Dashboard - FuryFriend Admin";
+}
+
+<div class="top-bar" style="padding-left: 20px;">
+    <h1>Dashboard</h1>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 20px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Trang chủ</li>
+    </ol>
+</nav>
+
+<!-- Dashboard Cards - Row 1 (4 cards) -->
+<div class="dashboard-grid" style="grid-template-columns: repeat(4, 1fr); margin-left: 5px; margin-right: 20px;">
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.CustomerGrowthPercent > 0 ? "positive" : ViewBag.CustomerGrowthPercent < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.CustomerGrowthPercent > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.CustomerGrowthPercent%</span>
+                        }
+                        else if (ViewBag.CustomerGrowthPercent < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.CustomerGrowthPercent%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Tổng khách hàng</h3>
+                <p class="card-value">@ViewBag.TotalCustomers</p>
+            </div>
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h4>Chi tiết khách hàng</h4>
+                    <p>Khách hàng mới: @ViewBag.ActiveCustomers</p>
+                    <p>Khách hàng không hoạt động: @ViewBag.InactiveCustomers</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon success">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.OrderGrowthPercent > 0 ? "positive" : ViewBag.OrderGrowthPercent < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.OrderGrowthPercent > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.OrderGrowthPercent%</span>
+                        }
+                        else if (ViewBag.OrderGrowthPercent < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.OrderGrowthPercent%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Tổng đơn hàng</h3>
+                <p class="card-value">@ViewBag.TotalOrders</p>
+            </div>
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>Thống kê đơn hàng</h4>
+                    <p>Đơn hàng hôm nay: @ViewBag.TodayOrders</p>
+                    <p>Doanh thu hôm nay: @ViewBag.TodayRevenue?.ToString("N0") VNĐ</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon warning">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.ProductGrowthPercent > 0 ? "positive" : ViewBag.ProductGrowthPercent < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.ProductGrowthPercent > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.ProductGrowthPercent%</span>
+                        }
+                        else if (ViewBag.ProductGrowthPercent < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.ProductGrowthPercent%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Tổng sản phẩm</h3>
+                <p class="card-value">@ViewBag.TotalProducts</p>
+            </div>
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h4>Thông tin sản phẩm</h4>
+                    <p>Sản phẩm bán hôm nay: @ViewBag.ProductsSoldToday</p>
+                    <p>Danh mục sản phẩm: Đa dạng</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon info">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.EmployeeGrowthPercent > 0 ? "positive" : ViewBag.EmployeeGrowthPercent < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.EmployeeGrowthPercent > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.EmployeeGrowthPercent%</span>
+                        }
+                        else if (ViewBag.EmployeeGrowthPercent < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.EmployeeGrowthPercent%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Tổng nhân viên</h3>
+                <p class="card-value">@ViewBag.TotalEmployees</p>
+            </div>
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <h4>Quản lý nhân viên</h4>
+                    <p>Nhân viên đang làm việc: @ViewBag.TotalEmployees</p>
+                    <p>Phòng ban: Quản lý, Bán hàng</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard Cards - Row 2 (3 cards) -->
+<div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 16px; margin-left: 5px; margin-right: 20px;">
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon revenue">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+15.2%</span>
+                    </div>
+                </div>
+                <h3 class="card-title">Doanh thu hôm nay</h3>
+                <p class="card-value">@ViewBag.TodayRevenue?.ToString("N0") VNĐ</p>
+            </div>
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h4>Thống kê doanh thu</h4>
+                    <p>Trung bình/đơn: @(ViewBag.TodayOrders > 0 ? (ViewBag.TodayRevenue / ViewBag.TodayOrders)?.ToString("N0") : "0") VNĐ</p>
+                    <p>So hôm qua: @ViewBag.TodayRevenueGrowth%</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon monthly">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.MonthlyRevenueGrowth > 0 ? "positive" : ViewBag.MonthlyRevenueGrowth < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.MonthlyRevenueGrowth > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.MonthlyRevenueGrowth%</span>
+                        }
+                        else if (ViewBag.MonthlyRevenueGrowth < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.MonthlyRevenueGrowth%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Doanh thu tháng</h3>
+                <p class="card-value">@ViewBag.MonthlyRevenue?.ToString("N0") VNĐ</p>
+            </div>
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h4>Thống kê tháng</h4>
+                    <p>Đơn hàng tháng: @ViewBag.MonthlyOrders</p>
+                    <p>So tháng trước: @ViewBag.MonthlyRevenueGrowth%</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon profit">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.TodayProfitGrowth > 0 ? "positive" : ViewBag.TodayProfitGrowth < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.TodayProfitGrowth > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.TodayProfitGrowth%</span>
+                        }
+                        else if (ViewBag.TodayProfitGrowth < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.TodayProfitGrowth%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Lợi nhuận hôm nay</h3>
+                <p class="card-value">@ViewBag.TodayProfit?.ToString("N0") VNĐ</p>
+            </div>
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h4>Thống kê lợi nhuận</h4>
+                    <p>Lợi nhuận tháng: @ViewBag.MonthlyProfit?.ToString("N0") VNĐ</p>
+                    <p>Tăng trưởng tháng: @ViewBag.MonthlyProfitGrowth%</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Charts Section -->
+<div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; margin-top: 16px; margin-left: 5px; margin-right: 20px;">
+    <!-- Revenue Chart -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title">Doanh Thu Theo Tháng</h3>
+            <div class="chart-actions">
+                <button class="btn btn-sm btn-outline-primary" data-period="day">Ngày</button>
+                <button class="btn btn-sm btn-outline-primary" data-period="week">Tuần</button>
+                <button class="btn btn-sm btn-outline-primary active" data-period="month">Tháng</button>
+                <button class="btn btn-sm btn-outline-primary" data-period="quarter">Quý</button>
+                <button class="btn btn-sm btn-outline-primary" data-period="year">Năm</button>
+            </div>
+        </div>
+        <div class="chart-container" style="height: 300px;">
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Order Status Chart -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3 class="card-title">Trạng Thái Đơn Hàng</h3>
+        </div>
+        <div class="chart-container" style="height: 300px;">
+            <canvas id="orderStatusChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="dashboard-card" style="margin: 16px 20px;">
+    <div class="card-header">
+        <h3 class="card-title">Đơn Hàng Gần Đây</h3>
+        <a href="/Admin/DonHang" class="btn btn-primary btn-sm">
+            <i class="fas fa-external-link-alt"></i>
+            Xem tất cả
+        </a>
+    </div>
+    <div class="table-container" style="margin: 0; box-shadow: none; border: none;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Sản phẩm</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày tạo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.RecentOrders != null)
+                {
+                    foreach (dynamic order in ViewBag.RecentOrders)
+                    {
+                        <tr>
+                            <td><strong>#@(order.HoaDonId?.ToString().Substring(0, 8).ToUpper() ?? "N/A")</strong></td>
+                            <td>@(order.CustomerName ?? "Không xác định")</td>
+                            <td>1 sản phẩm</td>
+                            <td><strong>@(order.TongTienSauKhiGiam?.ToString("N0") ?? "0") VNĐ</strong></td>
+                            <td>
+                                <span class="status-badge status-@(GetStatusClass(order.TrangThai))">
+                                    @(order.StatusText ?? GetStatusText(order.TrangThai))
+                                </span>
+                            </td>
+                            <td>@(order.NgayTao?.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@functions {
+    public string GetStatusText(int trangThai)
+    {
+        return trangThai switch
+        {
+            0 => "Chờ duyệt",
+            1 => "Đã duyệt",
+            2 => "Đang giao",
+            3 => "Đã giao",
+            4 => "Đã hủy",
+            _ => "Không xác định"
+        };
+    }
+
+    public string GetStatusClass(int trangThai)
+    {
+        return trangThai switch
+        {
+            0 => "pending",
+            1 => "approved",
+            2 => "shipping",
+            3 => "delivered",
+            4 => "cancelled",
+            _ => "pending"
+        };
+    }
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/dashboard-test.js"></script>
+    <script>
+        let revenueChart, orderStatusChart;
+
+        // Khởi tạo biểu đồ
+        function initializeCharts() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        borderColor: '#4A90E2',
+                        backgroundColor: 'rgba(74, 144, 226, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toLocaleString('vi-VN') + ' VNĐ';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Order Status Chart
+            const orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
+            orderStatusChart = new Chart(orderStatusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Chờ duyệt', 'Đã duyệt', 'Đang giao', 'Đã giao', 'Đã hủy'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            '#ffc107', // Chờ duyệt - Vàng
+                            '#1976d2', // Đã duyệt - Xanh dương
+                            '#219150', // Đang giao - Xanh lá
+                            '#4caf50', // Đã giao - Xanh đậm
+                            '#d32f2f'  // Đã hủy - Đỏ
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Lấy dữ liệu thật từ API
+        function loadChartData(period = 'month') {
+            fetch(`/Admin/Dashboard/GetChartData?period=${period}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success === false) {
+                        console.error('Error:', data.message);
+                        return;
+                    }
+
+                    // Cập nhật biểu đồ doanh thu
+                    if (data.revenueData && data.revenueData.length >= 2) {
+                        const revenueLabels = data.revenueData[0].labels;
+                        const revenueValues = data.revenueData[1].values;
+
+                        if (revenueLabels && revenueValues) {
+                            revenueChart.data.labels = revenueLabels;
+                            revenueChart.data.datasets[0].data = revenueValues;
+
+                            // Cập nhật label theo period
+                            if (period === 'day') {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo ngày';
+                            } else if (period === 'week') {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo tuần';
+                            } else if (period === 'quarter') {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo quý';
+                            } else if (period === 'year') {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo năm';
+                            } else {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo tháng';
+                            }
+
+                            revenueChart.update();
+                        }
+                    }
+
+                    // Cập nhật biểu đồ trạng thái đơn hàng
+                    if (data.orderStatusData && data.orderStatusData.length >= 2) {
+                        const statusLabels = data.orderStatusData[0].labels;
+                        const statusValues = data.orderStatusData[1].values;
+
+                        if (statusLabels && statusValues) {
+                            orderStatusChart.data.labels = statusLabels;
+                            orderStatusChart.data.datasets[0].data = statusValues;
+                            orderStatusChart.update();
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading chart data:', error);
+                });
+        }
+
+        // Khởi tạo khi trang load
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeCharts();
+            loadChartData();
+        });
+
+        // Chart period buttons
+        document.querySelectorAll('[data-period]').forEach(button => {
+            button.addEventListener('click', function () {
+                const period = this.dataset.period;
+
+                // Cập nhật active state
+                document.querySelectorAll('[data-period]').forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                // Tải dữ liệu theo period được chọn
+                loadChartData(period);
+            });
+        });
+    </script>
+} 

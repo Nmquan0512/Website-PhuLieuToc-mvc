@@ -1,0 +1,657 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Linh Trang Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/admin-loading.css" />
+    <link rel="stylesheet" href="~/css/admin.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+@*     @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+    @{
+        var hoTen = HttpContextAccessor.HttpContext?.Session.GetString("HoTen") ?? "Chưa đăng nhập";
+        var role = HttpContextAccessor.HttpContext?.Session.GetString("Role") ?? "";
+        var isAdmin = !string.IsNullOrEmpty(role) && role.ToLower().Contains("admin");
+        var isEmployee = !string.IsNullOrEmpty(role) && role.ToLower().Contains("nhanvien");
+    } *@
+    <header class="admin-header d-flex justify-content-end align-items-center px-4 py-2 shadow-sm" style="background: #fff; min-height: 60px; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 1000;">
+        <div class="d-flex align-items-center gap-3 ms-auto">
+            <div class="position-relative dropdown">
+                <i class="fas fa-bell fa-lg text-secondary" style="cursor:pointer;" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" style="font-size:10px; display: none;">0</span>
+
+                <div class="dropdown-menu dropdown-menu-end notification-dropdown" style="width: 350px; max-height: 400px; overflow-y: auto; overflow-x: hidden;">
+                    <div class="dropdown-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Thông báo</h6>
+                       @*  <a href="@url.action("index", "thongbao", new { area = "admin" })" class="text-decoration-none small">xem tất cả</a> *@
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div id="notificationlist">
+                        <div class="text-center py-3">
+                            <div class="spinner-border spinner-border-sm text-muted" role="status">
+                                <span class="visually-hidden">đang tải...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item text-center">
+                      @*   <a href="@url.action("index", "thongbao", new { area = "admin" })" class="text-decoration-none"> *@
+                            <i class="fas fa-external-link-alt me-1"></i>
+                            xem tất cả thông báo
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <div class="d-flex flex-column align-items-end me-2">
+                    <span class="fw-semibold text-dark"></span>
+                    <span class="text-muted small" style="font-size:12px;"></span>
+                </div>
+                <img src="/images/default-avatar.png" alt="avatar" class="rounded-circle" style="width:36px; height:36px; object-fit:cover; border:2px solid #e5e7eb;" />
+            </div>
+        </div>
+    </header>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="sidebar-brand">
+                    <div class="">
+                        <img src="/images/home/logo.jpg" alt="Logo" style="height: 40px;" />
+                    </div>
+
+                    <h1 class="brand-text">Linh Trang Admin</h1>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+              @*   @if (isAdmin)
+                { *@
+                    <div class="nav-section">
+                        <h3 class="nav-section-title">Dashboard</h3>
+                        <ul class="nav-item">
+                            <li>
+                                <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                                    <span>Tổng quan</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+               @*  } *@
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Danh mục</h3>
+                    <ul class="nav-item">
+                        <li>
+                            <a href="@Url.Action("Index", "DanhMuc", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DanhMuc" ? "active" : "")">
+                                <i class="fa fa-th-list"></i>
+                                <span>Danh mục</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Đơn hàng</h3>
+                    <ul class="nav-item">
+                        <li>
+                            <a href="@Url.Action("Index", "HoaDon", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "HoaDon" ? "active" : "")">
+                                <i class="nav-icon fas fa-shopping-cart"></i>
+                                <span>Hóa đơn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "DonHang", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DonHang" ? "active" : "")">
+                                <i class="nav-icon fas fa-boxes"></i>
+                                <span>Quản lý đơn hàng</span>
+                            </a>
+                        </li>
+                      @*   @if (isAdmin) *@
+                      @*   { *@
+                            <li>
+                                <a href="@Url.Action("Index", "GiamGia", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GiamGias" ? "active" : "")">
+                                    <i class="nav-icon fas fa-percent"></i>
+                                    <span>Khuyến mãi</span>
+                                </a>
+                            </li>
+                       @*  } *@
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Quản lý</h3>
+                    <ul class="nav-item">
+                        <li>
+                            <a href="@Url.Action("Index", "ThongBao", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ThongBao" ? "active" : "")">
+                                <i class="nav-icon fas fa-bell"></i>
+                                <span>Thông báo</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "KhachHangs", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "KhachHangs" ? "active" : "")">
+                                <i class="nav-icon fas fa-users"></i>
+                                <span>Khách hàng</span>
+                            </a>
+                        </li>
+@*                         @if (isAdmin)
+                        { *@
+                            <li>
+                                <a href="@Url.Action("Index", "NhanVien", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "NhanVien" ? "active" : "")">
+                                    <i class="nav-icon fas fa-user-tie"></i>
+                                    <span>Nhân viên</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "ChucVu", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ChucVu" ? "active" : "")">
+                                    <i class="nav-icon fas fa-id-badge"></i>
+                                    <span>Chức vụ</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "Vouchers", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Vouchers" ? "active" : "")">
+                                    <i class="nav-icon fas fa-ticket-alt"></i>
+                                    <span>Voucher</span>
+                                </a>
+                            </li>
+                        @* } *@
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Sản phẩm</h3>
+                    <ul class="nav-item">
+                        <li>
+                            <a href="@Url.Action("Index", "SanPham", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "SanPham" ? "active" : "")">
+                                <i class="nav-icon fas fa-box"></i>
+                                <span>Sản phẩm</span>
+                            </a>
+                        </li>
+                       @*  @if (isAdmin)
+                        { *@
+                            <li class="nav-dropdown">
+                                <a href="#" class="nav-link nav-dropdown-toggle" onclick="toggleDropdown(event)">
+                                    <i class="nav-icon fas fa-cogs"></i>
+                                    <span>Thuộc tính sản phẩm</span>
+                                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                                </a>
+                                <ul class="nav-dropdown-menu">
+                                    <li>
+                                        <a href="@Url.Action("Index", "Anh", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Anh" ? "active" : "")">
+                                            <i class="nav-icon fas fa-image"></i>
+                                            <span>Quản lý ảnh</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "ChatLieu", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ChatLieu" ? "active" : "")">
+                                            <i class="nav-icon fas fa-cube"></i>
+                                            <span>Chất liệu</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "ThuongHieu", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ThuongHieu" ? "active" : "")">
+                                            <i class="nav-icon fas fa-copyright"></i>
+                                            <span>Thương hiệu</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "MauSac", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "MauSac" ? "active" : "")">
+                                            <i class="nav-icon fas fa-palette"></i>
+                                            <span>Màu sắc</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "KichCo", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "KichCo" ? "active" : "")">
+                                            <i class="nav-icon fas fa-ruler-combined"></i>
+                                            <span>Kích cỡ</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "ThanhPhan", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ThanhPhan" ? "active" : "")">
+                                            <i class="nav-icon fas fa-layer-group"></i>
+                                            <span>Thành phần</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @* } *@
+                    </ul>
+                </div>
+
+              @*   @if (isAdmin)
+                { *@
+                    <div class="nav-section">
+                        <h3 class="nav-section-title">Hệ thống</h3>
+                        <ul class="nav-item">
+                            <li>
+                                <a href="@Url.Action("Index", "TaiKhoan", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TaiKhoan" ? "active" : "")">
+                                    <i class="nav-icon fas fa-user-shield"></i>
+                                    <span>Tài khoản</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+
+
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="top-bar">
+                <button class="sidebar-toggle" onclick="toggleSidebarAndOverlay()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                @RenderSection("TopBar", required: false)
+            </div>
+            @RenderBody()
+        </main>
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebarAndOverlay()"></div>
+    </div>
+
+    <!-- Loading Overlay - TẠM THỜI ẨN -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none !important;">
+        <div class="loading-container">
+            <div class="loader">
+                <div class="dog">
+                    <div class="dog-body">
+                        <div class="dog-tail">
+                            <div class="dog-tail">
+                                <div class="dog-tail">
+                                    <div class="dog-tail">
+                                        <div class="dog-tail">
+                                            <div class="dog-tail">
+                                                <div class="dog-tail">
+                                                    <div class="dog-tail"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dog-torso"></div>
+                    <div class="dog-head">
+                        <div class="dog-ears">
+                            <div class="dog-ear"></div>
+                            <div class="dog-ear"></div>
+                        </div>
+                        <div class="dog-eyes">
+                            <div class="dog-eye"></div>
+                            <div class="dog-eye"></div>
+                        </div>
+                        <div class="dog-muzzle">
+                            <div class="dog-tongue"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="loading-text" id="loadingText">Đang tải trang...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/admin-loading.js"></script>
+    <script src="~/js/siteadmin.js"></script>
+    <script src="~/js/admin-scroll-fix.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Sidebar toggle for mobile
+        function toggleSidebarAndOverlay() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('show');
+            if (sidebar.classList.contains('show')) {
+                overlay.style.display = 'block';
+            } else {
+                overlay.style.display = 'none';
+            }
+        }
+        function closeSidebarAndOverlay() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('show');
+            overlay.style.display = 'none';
+        }
+        // Close sidebar when clicking outside on mobile (for accessibility)
+        document.addEventListener('click', function (e) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (window.innerWidth <= 1024 && sidebar.classList.contains('show')) {
+                if (!sidebar.contains(e.target) && !e.target.closest('.sidebar-toggle')) {
+                    sidebar.classList.remove('show');
+                    overlay.style.display = 'none';
+                }
+            }
+        });
+        // Responsive sidebar behavior
+        window.addEventListener('resize', function () {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('show');
+                overlay.style.display = 'none';
+            }
+        });
+        // Initialize admin loading
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof window.adminLoading !== 'undefined') {
+                window.adminLoading.init();
+            }
+
+            // Initialize dropdown menus
+            initializeDropdowns();
+
+            // Initialize notifications
+            initializeNotifications();
+
+            // Hiển thị thông báo thành công/thất bại chung
+        @if (TempData["Success"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: '@Html.Raw(TempData["Success"])',
+                        timer: 3000,
+                        showConfirmButton: false
+                    });
+            </text>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: '@Html.Raw(TempData["Error"])',
+                        timer: 5000,
+                        showConfirmButton: true
+                    });
+            </text>
+        }
+                });
+
+        // Dropdown functionality
+        function toggleDropdown(event) {
+            event.preventDefault();
+            const dropdown = event.target.closest('.nav-dropdown');
+            const isActive = dropdown.classList.contains('active');
+
+            // Close all other dropdowns
+            document.querySelectorAll('.nav-dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+
+            // Toggle current dropdown
+            if (!isActive) {
+                dropdown.classList.add('active');
+
+                // Scroll to dropdown smoothly and ensure it's visible
+                setTimeout(() => {
+                    const sidebar = document.getElementById('sidebar');
+                    const dropdownRect = dropdown.getBoundingClientRect();
+                    const sidebarRect = sidebar.getBoundingClientRect();
+
+                    // Check if dropdown is fully visible in sidebar
+                    if (dropdownRect.bottom > sidebarRect.bottom) {
+                        dropdown.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'end',
+                            inline: 'nearest'
+                        });
+                    } else if (dropdownRect.top < sidebarRect.top) {
+                        dropdown.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'nearest'
+                        });
+                    }
+                }, 150);
+            }
+        }
+
+        function initializeDropdowns() {
+            // Auto-expand dropdown if current page is in dropdown menu
+            const currentController = '@ViewContext.RouteData.Values["Controller"]?.ToString()';
+            const dropdownControllers = ['ChatLieu', 'ThuongHieu', 'MauSac', 'KichCo', 'ThanhPhan', 'Anh'];
+
+            console.log('Current Controller:', currentController);
+            console.log('Dropdown Controllers:', dropdownControllers);
+            console.log('Should expand dropdown:', dropdownControllers.includes(currentController));
+
+            // Chỉ mở dropdown nếu controller hiện tại thực sự nằm trong danh sách
+            if (dropdownControllers.includes(currentController)) {
+                const dropdown = document.querySelector('.nav-dropdown');
+                if (dropdown) {
+                    dropdown.classList.add('active');
+                    console.log('Dropdown expanded for controller:', currentController);
+
+                    // Ensure dropdown is visible in sidebar
+                    setTimeout(() => {
+                        const sidebar = document.getElementById('sidebar');
+                        const dropdownRect = dropdown.getBoundingClientRect();
+                        const sidebarRect = sidebar.getBoundingClientRect();
+
+                        if (dropdownRect.bottom > sidebarRect.bottom) {
+                            dropdown.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'end',
+                                inline: 'nearest'
+                            });
+                        }
+                    }, 200);
+                }
+            } else {
+                // Đảm bảo dropdown đóng nếu không phải controller trong danh sách
+                const dropdown = document.querySelector('.nav-dropdown');
+                if (dropdown) {
+                    dropdown.classList.remove('active');
+                    console.log('Dropdown closed for controller:', currentController);
+                }
+            }
+
+            // Add touch support for mobile devices
+            const dropdownMenus = document.querySelectorAll('.nav-dropdown-menu');
+            dropdownMenus.forEach(menu => {
+                menu.addEventListener('touchstart', function (e) {
+                    e.stopPropagation();
+                }, { passive: true });
+            });
+        }
+    </script>
+
+    <script>
+        // Notification functions
+        function initializeNotifications() {
+            loadNotificationCount();
+            loadRecentNotifications();
+
+            // Auto refresh every 30 seconds
+            setInterval(function () {
+                loadNotificationCount();
+                loadRecentNotifications();
+            }, 30000);
+        }
+
+        function loadNotificationCount() {
+            $.get('https://localhost:7289/api/ThongBao')
+                .done(function (response) {
+                    if (response && Array.isArray(response)) {
+                        var unreadCount = response.filter(tb => !tb.daDoc).length;
+                        var displayCount = unreadCount > 100 ? "99+" : unreadCount.toString();
+
+                        var badge = $('.notification-badge');
+                        if (unreadCount > 0) {
+                            badge.text(displayCount).show();
+                        } else {
+                            badge.hide();
+                        }
+                    }
+                })
+                .fail(function () {
+                    console.log('Failed to load notification count');
+                });
+        }
+
+        function loadRecentNotifications() {
+            $.get('https://localhost:7289/api/ThongBao')
+                .done(function (response) {
+                    if (response && Array.isArray(response)) {
+                        var container = $('#notificationList');
+                        var recentNotifications = response
+                            .sort((a, b) => new Date(b.ngayTao) - new Date(a.ngayTao))
+                            .slice(0, 5);
+
+                        if (recentNotifications.length > 0) {
+                            var html = '';
+                            recentNotifications.forEach(function (notification) {
+                                var unreadClass = !notification.daDoc ? 'unread-notification' : '';
+                                var unreadIndicator = !notification.daDoc ? '<div class="unread-dot bg-primary rounded-circle me-2" style="width: 6px; height: 6px;"></div>' : '';
+
+                                html += `
+                                            <div class="dropdown-item notification-item ${unreadClass}" data-id="${notification.thongBaoId}">
+                                                <div class="d-flex align-items-start">
+                                                    ${unreadIndicator}
+                                                    <div class="flex-grow-1">
+                                                                                                         <div class="d-flex justify-content-between align-items-start mb-1">
+                                                             <h6 class="mb-0 small fw-semibold ${!notification.daDoc ? 'text-dark' : 'text-muted'}">${notification.tieuDe || notification.noiDung}</h6>
+                                                             <button class="btn btn-sm btn-outline-primary mark-read-dropdown-btn"
+                                                                     data-id="${notification.thongBaoId}"
+                                                                     style="display: ${!notification.daDoc ? 'block' : 'none'}; font-size: 10px; padding: 2px 4px;">
+                                                                 <i class="fas fa-check"></i>
+                                                             </button>
+                                                         </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="badge bg-light text-dark small" style="font-size: 10px;">
+                                                                <i class="fas fa-tag me-1"></i>${notification.loai}
+                                                            </span>
+                                                            <span class="text-muted small" style="font-size: 10px;">
+                                                                <i class="fas fa-clock me-1"></i>${notification.formattedDate}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                            });
+                            container.html(html);
+
+                            // Bind events for mark as read buttons
+                            $('.mark-read-dropdown-btn').click(function (e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                var btn = $(this);
+                                var notificationId = btn.data('id');
+                                var notificationItem = btn.closest('.notification-item');
+
+                                $.ajax({
+                                    url: `https://localhost:7289/api/ThongBao/mark-as-read/${notificationId}`,
+                                    type: 'PUT',
+                                    success: function (response) {
+                                        notificationItem.removeClass('unread-notification');
+                                        btn.hide();
+                                        notificationItem.find('.unread-dot').remove();
+                                        notificationItem.find('h6').removeClass('text-dark').addClass('text-muted');
+                                        loadNotificationCount();
+                                    }
+                                });
+                            });
+                        } else {
+                            container.html(`
+                                        <div class="dropdown-item text-center py-3">
+                                            <i class="fas fa-bell-slash text-muted mb-2"></i>
+                                            <p class="text-muted small mb-0">Không có thông báo mới</p>
+                                        </div>
+                                    `);
+                        }
+                    }
+                })
+                .fail(function () {
+                    $('#notificationList').html(`
+                                <div class="dropdown-item text-center py-3">
+                                    <i class="fas fa-exclamation-triangle text-warning mb-2"></i>
+                                    <p class="text-muted small mb-0">Không thể tải thông báo</p>
+                                </div>
+                            `);
+                });
+        }
+    </script>
+
+    <style>
+        .notification-dropdown {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            overflow-x: hidden !important;
+        }
+
+        .notification-item {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 12px 16px;
+            transition: background-color 0.2s ease;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+            .notification-item:hover {
+                background-color: #f8f9fa;
+            }
+
+            .notification-item:last-child {
+                border-bottom: none;
+            }
+
+        .unread-notification {
+            background-color: #f0f8ff;
+        }
+
+        .unread-dot {
+            animation: pulse 2s infinite;
+        }
+
+        @@keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .dropdown-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 12px 16px;
+        }
+
+        .dropdown-item {
+            border: none;
+            padding: 8px 16px;
+        }
+
+            .dropdown-item:hover {
+                background-color: #f8f9fa;
+            }
+    </style>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
