@@ -12,7 +12,7 @@ using PhuLieuToc.Repository;
 namespace PhuLieuToc.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250830132807_nmquan")]
+    [Migration("20250831114947_nmquan")]
     partial class nmquan
     {
         /// <inheritdoc />
