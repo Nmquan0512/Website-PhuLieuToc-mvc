@@ -15,9 +15,91 @@
             </h1>
             <p class="text-muted">Quản lý các danh mục phụ liệu tóc chính</p>
         </div>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+        <button class="btn btn-primary" id="toggleAddForm">
             <i class="fas fa-plus me-2"></i>Thêm danh mục mới
         </button>
+    </div>
+
+    <!-- Form Thêm Danh Mục (Ẩn mặc định) -->
+    <div class="form-container" id="addCategoryForm" style="display: none;">
+        <div class="form-header">
+            <h5 class="form-title">
+                <i class="fas fa-plus me-2"></i>Thêm danh mục mới
+            </h5>
+            <p class="form-subtitle">Tạo danh mục cha và thêm các danh mục con</p>
+        </div>
+        
+        <form id="categoryForm">
+            @Html.AntiForgeryToken()
+            
+            <!-- Thông tin danh mục cha -->
+            <div class="form-section">
+                <h6 class="section-title">
+                    <i class="fas fa-folder me-2"></i>Thông tin danh mục cha
+                </h6>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="categoryName" class="form-label">Tên danh mục cha <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="categoryName" placeholder="Nhập tên danh mục phụ liệu tóc..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categorySlug" class="form-label">Slug</label>
+                        <input type="text" class="form-control" id="categorySlug" placeholder="Tự động tạo từ tên danh mục..." readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoryDescription" class="form-label">Mô tả</label>
+                    <textarea class="form-control" id="categoryDescription" rows="3" placeholder="Mô tả ngắn gọn về danh mục phụ liệu tóc..."></textarea>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="categoryActive" class="form-label">Trạng thái</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="categoryActive" checked>
+                            <label class="form-check-label" for="categoryActive">
+                                Danh mục đang hoạt động
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Thao tác</label>
+                        <button type="button" class="btn btn-success w-100" id="addSubcategoryBtn">
+                            <i class="fas fa-plus me-2"></i>Thêm danh mục con
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phần danh mục con -->
+            <div class="form-section">
+                <h6 class="section-title">
+                    <i class="fas fa-folder-tree me-2"></i>Danh mục con
+                </h6>
+                
+                <div id="subcategoriesContainer" class="subcategories-wrapper">
+                    <div class="text-muted text-center" id="noSubcategoriesMessage">
+                        <i class="fas fa-folder-open me-2"></i>Chưa có danh mục con nào
+                        <br>
+                        <small>Nhấn "Thêm danh mục con" để bắt đầu</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action buttons -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Lưu danh mục
+                </button>
+                <button type="button" class="btn btn-secondary" id="cancelAddBtn">
+                    <i class="fas fa-times me-2"></i>Hủy
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- Stats Cards -->
@@ -126,9 +208,8 @@
                                     <th style="width: 60px;">ID</th>
                                     <th>Tên danh mục</th>
                                     <th>Mô tả</th>
-
                                     <th>Trạng thái</th>
-                                    <th>Số danh mục nhỏ</th>
+                                    <th>Số danh mục con</th>
                                     <th style="width: 150px;">Thao tác</th>
                                 </tr>
                             </thead>
@@ -147,7 +228,6 @@
                                             </div>
                                         </td>
                                         <td>@category.MoTa</td>
-
                                         <td>
                                             @if (category.TrangThai == 1)
                                             {
@@ -158,11 +238,9 @@
                                                 <span class="badge bg-danger">Không hoạt động</span>
                                             }
                                         </td>
-
                                         @if (category.Children == null || category.Children.Count == 0)
                                         {
                                             <td>Chưa có danh mục con</td>
-                                           
                                         }
                                         else
                                         {
@@ -176,16 +254,12 @@
                                                 <button class="btn btn-sm btn-outline-success" title="Quản lý danh mục con">
                                                     <i class="fas fa-list"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-danger" title="Xóa">
+                                                <button class="btn btn-sm btn-outline-danger delete-btn" title="Xóa" data-id="@category.Id">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
                                         </td>
                                     </tr>
-
-
-
-
                                 }
                             </tbody>
                         </table>
@@ -216,142 +290,39 @@
     </div>
 </div>
 
-<!-- Modal Thêm danh mục -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCategoryModalLabel">
-                    <i class="fas fa-plus me-2"></i>Thêm danh mục mới
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addCategoryForm">
-                    <div class="mb-3">
-                        <label for="categoryName" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="categoryName" placeholder="Nhập tên danh mục phụ liệu tóc..." required>
-                    </div>
-                    
-                    <div class="mb-3">
-
-                        <input type="hidden" class="form-control" id="categorySlug" placeholder="" readonly>
-
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="categoryDescription" class="form-label">Mô tả</label>
-                        <textarea class="form-control" id="categoryDescription" rows="3" placeholder="Mô tả ngắn gọn về danh mục phụ liệu tóc..."></textarea>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="categoryActive" class="form-label">Trạng thái</label>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="categoryActive" checked>
-                                    <label class="form-check-label" for="categoryActive">
-                                        Danh mục đang hoạt động
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Thao tác</label>
-                                <div class="d-grid">
-                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSubcategoryModal">
-                                        <i class="fas fa-plus me-2"></i>Thêm danh mục con
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Phần hiển thị danh mục con -->
-                    <div class="mb-3">
-                        <label class="form-label">Danh mục con đã thêm:</label>
-                        <div id="subcategoriesList" class="border rounded p-3 bg-light">
-                            <div class="text-muted text-center">
-                                <i class="fas fa-folder-open me-2"></i>Chưa có danh mục con nào
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" form="addCategoryForm" class="btn btn-primary">
-                    <i class="fas fa-save me-2"></i>Lưu danh mục
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Thêm danh mục con -->
-<div class="modal fade" id="addSubcategoryModal" tabindex="-1" aria-labelledby="addSubcategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addSubcategoryModalLabel">
-                    <i class="fas fa-plus me-2"></i>Thêm danh mục con
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addSubcategoryForm">
-                    <div class="mb-3">
-                        <label class="form-label">Danh mục cha</label>
-                        
-                        <!-- Thông báo danh mục cha đang được chọn -->
-                        <div id="parentCategoryInfo" class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <span id="parentCategoryText">Chưa có danh mục cha nào được chọn</span>
-                        </div>
-                        
-                        <!-- Hidden input để lưu ID danh mục cha -->
-                        <input type="hidden" id="parentCategory" name="parentCategory" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="subcategoryName" class="form-label">Tên danh mục con <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="subcategoryName" placeholder="Nhập tên danh mục con..." required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <input type="hidden" class="form-control" id="subcategorySlug" placeholder="" readonly>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="subcategoryDescription" class="form-label">Mô tả</label>
-                        <textarea class="form-control" id="subcategoryDescription" rows="3" placeholder="Mô tả ngắn gọn về danh mục con..."></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="subcategoryActive" class="form-label">Trạng thái</label>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="subcategoryActive" checked>
-                            <label class="form-check-label" for="subcategoryActive">
-                                Danh mục con đang hoạt động
-                            </label>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" form="addSubcategoryForm" class="btn btn-success">
-                    <i class="fas fa-save me-2"></i>Lưu danh mục con
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Scripts -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Biến lưu trữ danh mục con
+    let subcategories = [];
+    let subcategoryCounter = 0;
+
+    // Xử lý hiển thị/ẩn form thêm danh mục
+    const toggleAddFormBtn = document.getElementById('toggleAddForm');
+    const addCategoryForm = document.getElementById('addCategoryForm');
+    const cancelAddBtn = document.getElementById('cancelAddBtn');
+
+    toggleAddFormBtn.addEventListener('click', function() {
+        addCategoryForm.style.display = addCategoryForm.style.display === 'none' ? 'block' : 'none';
+        if (addCategoryForm.style.display === 'block') {
+            this.innerHTML = '<i class="fas fa-minus me-2"></i>Ẩn form thêm';
+            this.classList.remove('btn-primary');
+            this.classList.add('btn-secondary');
+        } else {
+            this.innerHTML = '<i class="fas fa-plus me-2"></i>Thêm danh mục mới';
+            this.classList.remove('btn-secondary');
+            this.classList.add('btn-primary');
+        }
+    });
+
+    cancelAddBtn.addEventListener('click', function() {
+        addCategoryForm.style.display = 'none';
+        toggleAddFormBtn.innerHTML = '<i class="fas fa-plus me-2"></i>Thêm danh mục mới';
+        toggleAddFormBtn.classList.remove('btn-secondary');
+        toggleAddFormBtn.classList.add('btn-primary');
+        resetForm();
+    });
+
     // Xử lý checkbox "Chọn tất cả"
     const selectAllCheckbox = document.getElementById('selectAll');
     const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
@@ -386,8 +357,46 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', filterCategories);
     filterStatus.addEventListener('change', filterCategories);
     
+    // Xử lý xóa danh mục
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const categoryId = this.getAttribute('data-id');
+            const categoryName = this.closest('tr').querySelector('td:nth-child(3) strong').textContent;
+            
+            if (confirm(`Bạn có chắc chắn muốn xóa danh mục "${categoryName}"?`)) {
+                deleteCategory(categoryId);
+            }
+        });
+    });
+    
+    // Hàm xóa danh mục
+    async function deleteCategory(categoryId) {
+        try {
+            const response = await fetch(`/Admin/DanhMuc/Delete/${categoryId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert(result.message);
+                // Reload trang để cập nhật danh sách
+                location.reload();
+            } else {
+                alert('Lỗi: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Lỗi khi xóa danh mục:', error);
+            alert('Có lỗi xảy ra khi xóa danh mục. Vui lòng thử lại.');
+        }
+    }
+    
     // Xử lý form thêm danh mục
-    const addCategoryForm = document.getElementById('addCategoryForm');
+    const categoryForm = document.getElementById('categoryForm');
     const categoryNameInput = document.getElementById('categoryName');
     const categorySlugInput = document.getElementById('categorySlug');
     
@@ -401,178 +410,201 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/-+/g, '-')
             .trim('-');
         categorySlugInput.value = slug;
-        
-        // Cập nhật thông báo trong modal danh mục con nếu đang mở
-        const subcategoryModal = document.getElementById('addSubcategoryModal');
-        if (subcategoryModal.classList.contains('show')) {
-            const parentCategoryText = document.getElementById('parentCategoryText');
-            if (parentCategoryText && this.value.trim() !== '') {
-                parentCategoryText.textContent = `Đang thêm danh mục con cho: "${this.value.trim()}"`;
-            }
-        }
     });
     
-    addCategoryForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Xử lý lưu danh mục ở đây
-        alert('Danh mục đã được lưu thành công!');
-        
-        // Đóng modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
-        modal.hide();
-        
-        // Reset form
-        addCategoryForm.reset();
+    // Xử lý thêm danh mục con
+    const addSubcategoryBtn = document.getElementById('addSubcategoryBtn');
+    
+    addSubcategoryBtn.addEventListener('click', function() {
+        addSubcategoryInput();
     });
     
-    // Xử lý form thêm danh mục con
-    const addSubcategoryForm = document.getElementById('addSubcategoryForm');
-    const subcategoryNameInput = document.getElementById('subcategoryName');
-    const subcategorySlugInput = document.getElementById('subcategorySlug');
-    const parentCategorySelect = document.getElementById('parentCategory');
-    
-    // Tự động tạo slug từ tên danh mục con
-    subcategoryNameInput.addEventListener('input', function() {
-        const slug = this.value
-            .toLowerCase()
-            .replace(/đ/g, 'd')
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')
-            .trim('-');
-        subcategorySlugInput.value = slug;
-    });
-    
-    // Xử lý submit form danh mục con
-    addSubcategoryForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Hàm thêm input danh mục con
+    function addSubcategoryInput() {
+        subcategoryCounter++;
+        const subcategoryId = `subcategory_${subcategoryCounter}`;
         
-        const parentCategoryHidden = document.getElementById('parentCategory');
-        const parentCategoryId = parentCategoryHidden.value;
-        const parentCategoryName = parentCategoryHidden.getAttribute('data-parent-name');
-        const subcategoryName = subcategoryNameInput.value;
-        const subcategoryDescription = document.getElementById('subcategoryDescription').value;
-        const subcategoryActive = document.getElementById('subcategoryActive').checked;
-        
-        if (!parentCategoryId || parentCategoryId === '') {
-            alert('Vui lòng mở modal từ danh mục cha!');
-            return;
-        }
-        
-        if (!subcategoryName) {
-            alert('Vui lòng nhập tên danh mục con!');
-            return;
-        }
-        
-        // Tạo đối tượng danh mục con
-        const subcategory = {
-            id: Date.now(), // Tạm thời dùng timestamp làm ID
-            name: subcategoryName,
-            description: subcategoryDescription,
-            active: subcategoryActive,
-            parentId: parentCategoryId,
-            parentName: parentCategoryName
-        };
-        
-        // Thêm danh mục con vào danh sách hiển thị
-        addSubcategoryToList(subcategory);
-        
-        // Xử lý lưu danh mục con ở đây (sẽ gọi API)
-        console.log('Đang lưu danh mục con:', subcategory);
-        
-        // Đóng modal danh mục con
-        const subcategoryModal = bootstrap.Modal.getInstance(document.getElementById('addSubcategoryModal'));
-        subcategoryModal.hide();
-        
-        // Reset form
-        addSubcategoryForm.reset();
-        
-        // Hiển thị thông báo thành công
-        alert('Danh mục con đã được thêm thành công!');
-    });
-    
-    // Hàm thêm danh mục con vào danh sách hiển thị
-    function addSubcategoryToList(subcategory) {
-        const subcategoriesList = document.getElementById('subcategoriesList');
-        
-        // Xóa thông báo "Chưa có danh mục con nào"
-        if (subcategoriesList.querySelector('.text-muted')) {
-            subcategoriesList.innerHTML = '';
-        }
-        
-        // Tạo element hiển thị danh mục con
-        const subcategoryItem = document.createElement('div');
-        subcategoryItem.className = 'd-flex justify-content-between align-items-center p-2 border-bottom';
-        subcategoryItem.innerHTML = `
-            <div>
-                <strong>${subcategory.name}</strong>
-                <br>
-                <small class="text-muted">Danh mục con của: <strong>${subcategory.parentName}</strong></small>
-                <br>
-                <small class="text-muted">${subcategory.description || 'Không có mô tả'}</small>
-            </div>
-            <div class="d-flex gap-1">
-                <span class="badge ${subcategory.active ? 'bg-success' : 'bg-secondary'}">
-                    ${subcategory.active ? 'Hoạt động' : 'Không hoạt động'}
-                </span>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeSubcategory(${subcategory.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
+        const subcategoryHtml = `
+            <div class="subcategory-item" id="${subcategoryId}">
+                <div class="subcategory-header">
+                    <h6 class="subcategory-title">
+                        <i class="fas fa-folder me-2"></i>Danh mục con #${subcategoryCounter}
+                    </h6>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeSubcategoryInput('${subcategoryId}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="subcategory-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="subcategoryName_${subcategoryCounter}" class="form-label">Tên danh mục con <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control subcategory-name" id="subcategoryName_${subcategoryCounter}" placeholder="Nhập tên danh mục con..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subcategorySlug_${subcategoryCounter}" class="form-label">Slug</label>
+                            <input type="text" class="form-control subcategory-slug" id="subcategorySlug_${subcategoryCounter}" placeholder="Tự động tạo..." readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subcategoryDescription_${subcategoryCounter}" class="form-label">Mô tả</label>
+                        <textarea class="form-control subcategory-description" id="subcategoryDescription_${subcategoryCounter}" rows="2" placeholder="Mô tả ngắn gọn về danh mục con..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input subcategory-active" type="checkbox" id="subcategoryActive_${subcategoryCounter}" checked>
+                            <label class="form-check-label" for="subcategoryActive_${subcategoryCounter}">
+                                Danh mục con đang hoạt động
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
         
-        subcategoriesList.appendChild(subcategoryItem);
+        const container = document.getElementById('subcategoriesContainer');
+        const noMessage = document.getElementById('noSubcategoriesMessage');
+        
+        if (noMessage) {
+            noMessage.remove();
+        }
+        
+        container.insertAdjacentHTML('beforeend', subcategoryHtml);
+        
+        // Thêm event listener cho việc tự động tạo slug
+        const nameInput = document.getElementById(`subcategoryName_${subcategoryCounter}`);
+        const slugInput = document.getElementById(`subcategorySlug_${subcategoryCounter}`);
+        
+        nameInput.addEventListener('input', function() {
+            const slug = this.value
+                .toLowerCase()
+                .replace(/đ/g, 'd')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim('-');
+            slugInput.value = slug;
+        });
     }
     
-    // Hàm xóa danh mục con khỏi danh sách
-    window.removeSubcategory = function(id) {
-        const subcategoriesList = document.getElementById('subcategoriesList');
-        const items = subcategoriesList.querySelectorAll('.d-flex.justify-content-between');
-        
-        items.forEach(item => {
-            if (item.querySelector('.btn-outline-danger').getAttribute('onclick').includes(id)) {
-                item.remove();
+    // Hàm xóa input danh mục con
+    window.removeSubcategoryInput = function(id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.remove();
+            
+            // Kiểm tra nếu không còn danh mục con nào thì hiển thị thông báo
+            const container = document.getElementById('subcategoriesContainer');
+            if (container.children.length === 0) {
+                container.innerHTML = `
+                    <div class="text-muted text-center" id="noSubcategoriesMessage">
+                        <i class="fas fa-folder-open me-2"></i>Chưa có danh mục con nào
+                        <br>
+                        <small>Nhấn "Thêm danh mục con" để bắt đầu</small>
+                    </div>
+                `;
             }
-        });
-        
-        // Kiểm tra nếu không còn danh mục con nào thì hiển thị thông báo
-        if (subcategoriesList.children.length === 0) {
-            subcategoriesList.innerHTML = `
-                <div class="text-muted text-center">
-                    <i class="fas fa-folder-open me-2"></i>Chưa có danh mục con nào
-                </div>
-            `;
         }
     };
     
-    // Cập nhật danh mục cha khi mở modal
-    document.getElementById('addSubcategoryModal').addEventListener('show.bs.modal', function() {
-        // Lấy tên danh mục cha từ modal chính
-        const categoryNameInput = document.getElementById('categoryName');
-        const parentCategoryHidden = document.getElementById('parentCategory');
-        const parentCategoryText = document.getElementById('parentCategoryText');
+    // Xử lý submit form
+    categoryForm.addEventListener('submit', function(e) {
+        e.preventDefault();
         
-        if (categoryNameInput && categoryNameInput.value.trim() !== '') {
-            const categoryName = categoryNameInput.value.trim();
+        // Thu thập dữ liệu danh mục cha
+        const categoryData = {
+            name: categoryNameInput.value,
+            slug: categorySlugInput.value,
+            description: document.getElementById('categoryDescription').value,
+            active: document.getElementById('categoryActive').checked,
+            subcategories: []
+        };
+        
+        // Thu thập dữ liệu danh mục con
+        const subcategoryItems = document.querySelectorAll('.subcategory-item');
+        subcategoryItems.forEach(item => {
+            const nameInput = item.querySelector('.subcategory-name');
+            const slugInput = item.querySelector('.subcategory-slug');
+            const descriptionInput = item.querySelector('.subcategory-description');
+            const activeInput = item.querySelector('.subcategory-active');
             
-            // Tạo ID tạm thời cho danh mục cha (sẽ được thay thế bằng ID thật khi lưu)
-            const tempParentId = 'temp_' + Date.now();
-            parentCategoryHidden.value = tempParentId;
-            
-            // Hiển thị thông báo danh mục cha đang được chọn
-            parentCategoryText.textContent = `Đang thêm danh mục con cho: "${categoryName}"`;
-            
-            // Lưu tên danh mục cha vào data attribute để sử dụng sau này
-            parentCategoryHidden.setAttribute('data-parent-name', categoryName);
-        } else {
-            // Nếu không có tên danh mục cha
-            parentCategoryHidden.value = '';
-            parentCategoryText.textContent = 'Chưa có danh mục cha nào được chọn';
-            parentCategoryHidden.removeAttribute('data-parent-name');
+            if (nameInput && nameInput.value.trim() !== '') {
+                categoryData.subcategories.push({
+                    name: nameInput.value.trim(),
+                    slug: slugInput.value,
+                    description: descriptionInput.value,
+                    active: activeInput.checked
+                });
+            }
+        });
+        
+        // Validate dữ liệu
+        if (!categoryData.name.trim()) {
+            alert('Vui lòng nhập tên danh mục cha!');
+            return;
         }
         
-        console.log('Modal thêm danh mục con đang mở');
+        // Hiển thị dữ liệu sẽ được lưu (tạm thời)
+        console.log('Dữ liệu danh mục sẽ được lưu:', categoryData);
+        
+        // Gọi API để lưu dữ liệu
+        saveCategory(categoryData);
     });
+    
+    // Hàm lưu danh mục (gọi API)
+    async function saveCategory(categoryData) {
+        try {
+            // Lấy antiforgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+            
+            const response = await fetch('/Admin/DanhMuc/CreateWithSubcategories', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify(categoryData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Hiển thị thông báo thành công
+                alert(result.message);
+                
+                // Reset form
+                resetForm();
+                
+                // Ẩn form
+                addCategoryForm.style.display = 'none';
+                toggleAddFormBtn.innerHTML = '<i class="fas fa-plus me-2"></i>Thêm danh mục mới';
+                toggleAddFormBtn.classList.remove('btn-secondary');
+                toggleAddFormBtn.classList.add('btn-primary');
+                
+                // Reload trang để hiển thị dữ liệu mới
+                location.reload();
+            } else {
+                alert('Lỗi: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Lỗi khi lưu danh mục:', error);
+            alert('Có lỗi xảy ra khi lưu danh mục. Vui lòng thử lại.');
+        }
+    }
+    
+    // Hàm reset form
+    function resetForm() {
+        categoryForm.reset();
+        subcategories = [];
+        subcategoryCounter = 0;
+        
+        const container = document.getElementById('subcategoriesContainer');
+        container.innerHTML = `
+            <div class="text-muted text-center" id="noSubcategoriesMessage">
+                <i class="fas fa-folder-open me-2"></i>Chưa có danh mục con nào
+                <br>
+                <small>Nhấn "Thêm danh mục con" để bắt đầu</small>
+            </div>
+        `;
+    }
 });
 </script>

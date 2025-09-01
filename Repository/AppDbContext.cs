@@ -26,6 +26,13 @@ namespace PhuLieuToc.Repository
 			.HasMany(b => b.Products)
 			.WithOne(p => p.Brand)
 			.HasForeignKey(p => p.BrandId);
+
+            // Cấu hình relationship cho CategoryModel
+            modelBuilder.Entity<CategoryModel>()
+                .HasOne(c => c.ParentCategory)
+                .WithMany(c => c.Children)
+                .HasForeignKey(c => c.ParentCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 		}
 
 		public DbSet<CategoryModel> Categorys { get; set; }

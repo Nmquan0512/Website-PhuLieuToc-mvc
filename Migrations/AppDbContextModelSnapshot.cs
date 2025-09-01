@@ -136,7 +136,8 @@ namespace PhuLieuToc.Migrations
                 {
                     b.HasOne("PhuLieuToc.Models.CategoryModel", "ParentCategory")
                         .WithMany("Children")
-                        .HasForeignKey("ParentCategoryId");
+                        .HasForeignKey("ParentCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ParentCategory");
                 });

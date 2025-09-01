@@ -12,8 +12,8 @@ using PhuLieuToc.Repository;
 namespace PhuLieuToc.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250831114947_nmquan")]
-    partial class nmquan
+    [Migration("20250901153424_nmq")]
+    partial class nmq
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,7 +139,8 @@ namespace PhuLieuToc.Migrations
                 {
                     b.HasOne("PhuLieuToc.Models.CategoryModel", "ParentCategory")
                         .WithMany("Children")
-                        .HasForeignKey("ParentCategoryId");
+                        .HasForeignKey("ParentCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ParentCategory");
                 });

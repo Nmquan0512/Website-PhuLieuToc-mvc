@@ -5,7 +5,7 @@
 namespace PhuLieuToc.Migrations
 {
     /// <inheritdoc />
-    public partial class nmquan : Migration
+    public partial class nmq : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -45,7 +45,8 @@ namespace PhuLieuToc.Migrations
                         name: "FK_Categorys_Categorys_ParentCategoryId",
                         column: x => x.ParentCategoryId,
                         principalTable: "Categorys",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
