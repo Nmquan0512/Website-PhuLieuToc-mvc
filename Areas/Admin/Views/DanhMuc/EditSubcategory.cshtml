@@ -1,0 +1,276 @@
+@using PhuLieuToc.Models
+@model CategoryModel
+@{
+    ViewData["Title"] = "Chỉnh sửa Danh mục con";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-edit me-2"></i>Chỉnh sửa Danh mục con: @Model.TenDanhMuc
+            </h1>
+            <p class="text-muted">Chỉnh sửa thông tin danh mục con phụ liệu tóc</p>
+        </div>
+        <a href="/Admin/DanhMuc/Subcategories/@Model.ParentCategoryId" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Thông tin danh mục cha -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-folder me-2"></i>Thuộc danh mục cha
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-item">
+                        <label class="info-label">ID danh mục cha:</label>
+                        <span class="info-value">@Model.ParentCategoryId</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-item">
+                        <label class="info-label">Trạng thái:</label>
+                        <span class="info-value">
+                            @if (Model.TrangThai == 1)
+                            {
+                                <span class="badge bg-success">Đang hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Không hoạt động</span>
+                            }
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Chỉnh sửa Danh Mục Con -->
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-success">
+                <i class="fas fa-edit me-2"></i>Thông tin danh mục con
+            </h6>
+        </div>
+        <div class="card-body">
+            <form id="editSubcategoryForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="subcategoryId" value="@Model.Id" />
+                <input type="hidden" id="parentCategoryId" value="@Model.ParentCategoryId" />
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="subcategoryName" class="form-label">Tên danh mục con <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="subcategoryName" 
+                                   value="@Model.TenDanhMuc" 
+                                   placeholder="Nhập tên danh mục con..." required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="subcategorySlug" class="form-label">Slug</label>
+                            <input type="text" class="form-control" id="subcategorySlug" 
+                                   value="@Model.Slug" 
+                                   placeholder="Tự động tạo..." readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subcategoryDescription" class="form-label">Mô tả</label>
+                    <textarea class="form-control" id="subcategoryDescription" rows="4" 
+                              placeholder="Mô tả ngắn gọn về danh mục con...">@Model.MoTa</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="subcategoryActive" 
+                               @(Model.TrangThai == 1 ? "checked" : "")>
+                        <label class="form-check-label" for="subcategoryActive">
+                            Danh mục con đang hoạt động
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Action buttons -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Cập nhật danh mục con
+                    </button>
+                    <a href="/Admin/DanhMuc/Subcategories/@Model.ParentCategoryId" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const editSubcategoryForm = document.getElementById('editSubcategoryForm');
+    const subcategoryNameInput = document.getElementById('subcategoryName');
+    const subcategorySlugInput = document.getElementById('subcategorySlug');
+    
+    // Tự động tạo slug từ tên danh mục con
+    subcategoryNameInput.addEventListener('input', function() {
+        const slug = this.value
+            .toLowerCase()
+            .replace(/đ/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
+        subcategorySlugInput.value = slug;
+    });
+    
+    // Xử lý submit form
+    editSubcategoryForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const subcategoryData = {
+            id: document.getElementById('subcategoryId').value,
+            name: subcategoryNameInput.value,
+            slug: subcategorySlugInput.value,
+            description: document.getElementById('subcategoryDescription').value,
+            active: document.getElementById('subcategoryActive').checked,
+            parentCategoryId: document.getElementById('parentCategoryId').value
+        };
+        
+        if (!subcategoryData.name.trim()) {
+            alert('Vui lòng nhập tên danh mục con!');
+            return;
+        }
+        
+        console.log('Dữ liệu danh mục con sẽ được cập nhật:', subcategoryData);
+        updateSubcategory(subcategoryData);
+    });
+    
+    async function updateSubcategory(subcategoryData) {
+        try {
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+            const response = await fetch(`/Admin/DanhMuc/EditSubcategory/${subcategoryData.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify(subcategoryData)
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                const parentCategoryId = document.getElementById('parentCategoryId').value;
+                window.location.href = `/Admin/DanhMuc/Subcategories/${parentCategoryId}`;
+            } else {
+                alert('Lỗi: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Lỗi khi cập nhật danh mục con:', error);
+            alert('Có lỗi xảy ra khi cập nhật danh mục con. Vui lòng thử lại.');
+        }
+    }
+});
+</script>
+
+<style>
+/* CSS cho trang chỉnh sửa danh mục con */
+.info-item {
+    margin-bottom: 1rem;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #5a5c69;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.info-value {
+    color: #858796;
+    font-size: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #5a5c69;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 1px solid #d1d3e2;
+    border-radius: 0.35rem;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.form-control:focus {
+    border-color: #bac8f3;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: #1cc88a;
+    border-color: #1cc88a;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-start;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e3e6f0;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 0.35rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-success {
+    background-color: #1cc88a;
+    border-color: #1cc88a;
+}
+
+.btn-success:hover {
+    background-color: #17a673;
+    border-color: #169b6b;
+}
+
+.btn-secondary {
+    background-color: #858796;
+    border-color: #858796;
+}
+
+.btn-secondary:hover {
+    background-color: #717384;
+    border-color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+}
+</style>

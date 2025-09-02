@@ -248,12 +248,14 @@
                                         }
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <button class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                                <a href="/Admin/DanhMuc/Edit/@category.Id" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
                                                     <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-success" title="Quản lý danh mục con">
+                                                </a>
+
+                                                <a href="/Admin/DanhMuc/Subcategories/@category.Id"  class="btn btn-sm btn-outline-success" title="Quản lý danh mục con">
                                                     <i class="fas fa-list"></i>
-                                                </button>
+                                                  </a>
+                                               
                                                 <button class="btn btn-sm btn-outline-danger delete-btn" title="Xóa" data-id="@category.Id">
                                                     <i class="fas fa-trash"></i>
                                                 </button>

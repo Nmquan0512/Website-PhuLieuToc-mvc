@@ -18,13 +18,6 @@ namespace PhuLieuToc.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Lấy danh sách tất cả danh mục để làm danh mục cha
-            var danhsachDanhCha = await _context.Categorys
-                .Where(c => c.TrangThai == 1).Where(c => c.ParentCategoryId == null) // Chỉ lấy danh mục đang hoạt động
-                .ToListAsync();
-            
-            // Tạo SelectList cho dropdown danh mục cha
-            ViewBag.ParentCategory = new SelectList(danhsachDanhCha, "Id", "TenDanhMuc");
 
             // Lấy danh sách danh mục cha (không có ParentCategoryId) để hiển thị trong bảng
             var danhSachDanhMuc = await _context.Categorys
@@ -164,7 +157,113 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Có lỗi xảy ra: " + ex.Message });
             }
         }
-        
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+
+            var duLieuEdit = await _context.Categorys.Include(c => c.Children)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return View(duLieuEdit);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Edit([FromBody] CategoryCreateViewModel model , int id)
+        {
+            var ListChaCon = await _context.Categorys.Include(c => c.Children)
+                                .FirstOrDefaultAsync(x => x.Id == id);
+            if (ListChaCon == null)
+            {
+                return NotFound(new { success = false, message = "Không tìm thấy danh mục" });
+            }
+
+                ListChaCon.TenDanhMuc = model.Name;
+                ListChaCon.MoTa = model.Description;
+                ListChaCon.Slug = string.IsNullOrEmpty(model.Slug) ? CreateSlug(model.Name) : model.Slug;
+                ListChaCon.TrangThai = model.Active ? 1 : 0;
+
+            
+            _context.Update(ListChaCon);
+            await _context.SaveChangesAsync();
+
+            // Xóa danh mục con cũ
+            if (ListChaCon.Children != null)
+            {
+                _context.Categorys.RemoveRange(ListChaCon.Children);
+            }
+
+            foreach (var sub in model.Subcategories)
+            {
+                var SuaDanhSachCon = new CategoryModel
+                {
+                    TenDanhMuc = sub.Name,
+                    MoTa = sub.Description,
+                    Slug = string.IsNullOrEmpty(sub.Slug) ? CreateSlug(sub.Name) : sub.Slug,
+                    TrangThai = sub.Active ? 1 : 0,
+                    ParentCategoryId = ListChaCon.Id
+                };
+            _context.Update(SuaDanhSachCon);
+            
+
+
+            }
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Danh mục đã được sửa thành công" });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Subcategories(int id)
+        {
+            var DanhMucCon = await _context.Categorys.Include(c => c.Children)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return View(DanhMucCon);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditSubcategory(int id)
+        {
+            var DanhMucCon = await _context.Categorys.Include(c => c.Children)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return View(DanhMucCon);
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> EditSubcategory(int id , CategoryCreateViewModel model)
+        {
+            var ListEditDanhMucCon = await _context.Categorys.Include(c => c.Children)
+                .FirstOrDefaultAsync(x => x.Id == id);
+                
+            if(ListEditDanhMucCon.Children != null)
+            {
+                _context.RemoveRange(ListEditDanhMucCon.Children);
+            }
+
+            foreach( var sub in model.Subcategories)
+            {
+                var EditCon = new CategoryModel
+                {
+                    TenDanhMuc = sub.Name,
+                    MoTa = sub.Description,
+                    Slug = string.IsNullOrEmpty(sub.Slug) ? CreateSlug(sub.Name) : sub.Slug,
+                    TrangThai = sub.Active ? 1 : 0,
+                    ParentCategoryId = ListEditDanhMucCon.Id
+
+                  
+                };
+                _context.Add(EditCon);
+
+            }
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Danh mục con đã được sửa thành công" });
+        }
+
+
         private string CreateSlug(string text)
 {
     if (string.IsNullOrEmpty(text)) return "";

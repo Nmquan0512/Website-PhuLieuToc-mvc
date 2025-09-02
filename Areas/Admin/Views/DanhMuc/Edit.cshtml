@@ -1,0 +1,546 @@
+@using PhuLieuToc.Models
+@model CategoryModel
+@{
+    ViewData["Title"] = "Chỉnh sửa Danh mục";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-edit me-2"></i>Chỉnh sửa Danh mục: @Model.TenDanhMuc
+            </h1>
+            <p class="text-muted">Chỉnh sửa thông tin danh mục phụ liệu tóc</p>
+        </div>
+        <a href="/Admin/DanhMuc" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại
+        </a>
+    </div>
+
+    <!-- Form Chỉnh sửa Danh Mục -->
+    <div class="form-container">
+        <div class="form-header">
+            <h5 class="form-title">
+                <i class="fas fa-edit me-2"></i>Chỉnh sửa danh mục: @Model.TenDanhMuc
+            </h5>
+            <p class="form-subtitle">Cập nhật thông tin danh mục cha và các danh mục con</p>
+        </div>
+        
+        <form id="editCategoryForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="categoryId" value="@Model.Id" />
+            
+            <!-- Thông tin danh mục cha -->
+            <div class="form-section">
+                <h6 class="section-title">
+                    <i class="fas fa-folder me-2"></i>Thông tin danh mục cha
+                </h6>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="categoryName" class="form-label">Tên danh mục cha <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="categoryName" 
+                               value="@Model.TenDanhMuc" 
+                               placeholder="Nhập tên danh mục phụ liệu tóc..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="categorySlug" class="form-label">Slug</label>
+                        <input type="text" class="form-control" id="categorySlug" 
+                               value="@Model.Slug" 
+                               placeholder="Tự động tạo từ tên danh mục..." readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoryDescription" class="form-label">Mô tả</label>
+                    <textarea class="form-control" id="categoryDescription" rows="3" 
+                              placeholder="Mô tả ngắn gọn về danh mục phụ liệu tóc...">@Model.MoTa</textarea>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="categoryActive" class="form-label">Trạng thái</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="categoryActive" 
+                                   @(Model.TrangThai == 1 ? "checked" : "")>
+                            <label class="form-check-label" for="categoryActive">
+                                Danh mục đang hoạt động
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Thao tác</label>
+                        <button type="button" class="btn btn-success w-100" id="addSubcategoryBtn">
+                            <i class="fas fa-plus me-2"></i>Thêm danh mục con
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phần danh mục con -->
+            <div class="form-section">
+                <h6 class="section-title">
+                    <i class="fas fa-folder-tree me-2"></i>Danh mục con
+                </h6>
+                
+                <div id="subcategoriesContainer" class="subcategories-wrapper">
+                    @if (Model.Children != null && Model.Children.Any())
+                    {
+                        foreach (var child in Model.Children)
+                        {
+                            <div class="subcategory-item" id="subcategory_@child.Id">
+                                <div class="subcategory-header">
+                                    <h6 class="subcategory-title">
+                                        <i class="fas fa-folder me-2"></i>@child.TenDanhMuc
+                                    </h6>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                            onclick="removeSubcategoryInput('subcategory_@child.Id')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="subcategory-content">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label class="form-label">Tên danh mục con <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control subcategory-name" 
+                                                   value="@child.TenDanhMuc" 
+                                                   placeholder="Nhập tên danh mục con..." required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Slug</label>
+                                            <input type="text" class="form-control subcategory-slug" 
+                                                   value="@child.Slug" 
+                                                   placeholder="Tự động tạo..." readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Mô tả</label>
+                                        <textarea class="form-control subcategory-description" rows="2" 
+                                                  placeholder="Mô tả ngắn gọn về danh mục con...">@child.MoTa</textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input subcategory-active" type="checkbox" 
+                                                   @(child.TrangThai == 1 ? "checked" : "")>
+                                            <label class="form-check-label">
+                                                Danh mục con đang hoạt động
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-muted text-center" id="noSubcategoriesMessage">
+                            <i class="fas fa-folder-open me-2"></i>Chưa có danh mục con nào
+                            <br>
+                            <small>Nhấn "Thêm danh mục con" để bắt đầu</small>
+                        </div>
+                    }
+                </div>
+            </div>
+            
+            <!-- Action buttons -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Cập nhật danh mục
+                </button>
+                <a href="/Admin/DanhMuc" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Hủy
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Biến lưu trữ danh mục con
+    let subcategories = [];
+    let subcategoryCounter = 0;
+
+    // Khởi tạo counter dựa trên số danh mục con hiện có
+    @if (Model.Children != null && Model.Children.Any())
+    {
+        <text>
+        subcategoryCounter = @Model.Children.Count;
+        </text>
+    }
+
+    // Xử lý form chỉnh sửa danh mục
+    const editCategoryForm = document.getElementById('editCategoryForm');
+    const categoryNameInput = document.getElementById('categoryName');
+    const categorySlugInput = document.getElementById('categorySlug');
+    
+    // Tự động tạo slug từ tên danh mục
+    categoryNameInput.addEventListener('input', function() {
+        const slug = this.value
+            .toLowerCase()
+            .replace(/đ/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
+        categorySlugInput.value = slug;
+    });
+    
+    // Xử lý thêm danh mục con
+    const addSubcategoryBtn = document.getElementById('addSubcategoryBtn');
+    
+    addSubcategoryBtn.addEventListener('click', function() {
+        addSubcategoryInput();
+    });
+    
+    // Hàm thêm input danh mục con
+    function addSubcategoryInput() {
+        subcategoryCounter++;
+        const subcategoryId = `subcategory_new_${subcategoryCounter}`;
+        
+        const subcategoryHtml = `
+            <div class="subcategory-item" id="${subcategoryId}">
+                <div class="subcategory-header">
+                    <h6 class="subcategory-title">
+                        <i class="fas fa-folder me-2"></i>Danh mục con mới #${subcategoryCounter}
+                    </h6>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeSubcategoryInput('${subcategoryId}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="subcategory-content">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="subcategoryName_${subcategoryCounter}" class="form-label">Tên danh mục con <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control subcategory-name" id="subcategoryName_${subcategoryCounter}" placeholder="Nhập tên danh mục con..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subcategorySlug_${subcategoryCounter}" class="form-label">Slug</label>
+                            <input type="text" class="form-control subcategory-slug" id="subcategorySlug_${subcategoryCounter}" placeholder="Tự động tạo..." readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="subcategoryDescription_${subcategoryCounter}" class="form-label">Mô tả</label>
+                        <textarea class="form-control subcategory-description" id="subcategoryDescription_${subcategoryCounter}" rows="2" placeholder="Mô tả ngắn gọn về danh mục con..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input subcategory-active" type="checkbox" id="subcategoryActive_${subcategoryCounter}" checked>
+                            <label class="form-check-label" for="subcategoryActive_${subcategoryCounter}">
+                                Danh mục con đang hoạt động
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const container = document.getElementById('subcategoriesContainer');
+        const noMessage = document.getElementById('noSubcategoriesMessage');
+        
+        if (noMessage) {
+            noMessage.remove();
+        }
+        
+        container.insertAdjacentHTML('beforeend', subcategoryHtml);
+        
+        // Thêm event listener cho việc tự động tạo slug
+        const nameInput = document.getElementById(`subcategoryName_${subcategoryCounter}`);
+        const slugInput = document.getElementById(`subcategorySlug_${subcategoryCounter}`);
+        
+        nameInput.addEventListener('input', function() {
+            const slug = this.value
+                .toLowerCase()
+                .replace(/đ/g, 'd')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim('-');
+            slugInput.value = slug;
+        });
+    }
+    
+    // Hàm xóa input danh mục con
+    window.removeSubcategoryInput = function(id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.remove();
+            
+            // Kiểm tra nếu không còn danh mục con nào thì hiển thị thông báo
+            const container = document.getElementById('subcategoriesContainer');
+            if (container.children.length === 0) {
+                container.innerHTML = `
+                    <div class="text-muted text-center" id="noSubcategoriesMessage">
+                        <i class="fas fa-folder-open me-2"></i>Chưa có danh mục con nào
+                        <br>
+                        <small>Nhấn "Thêm danh mục con" để bắt đầu</small>
+                    </div>
+                `;
+            }
+        }
+    };
+    
+    // Xử lý submit form
+    editCategoryForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Thu thập dữ liệu danh mục cha
+        const categoryData = {
+            name: categoryNameInput.value,
+            slug: categorySlugInput.value,
+            description: document.getElementById('categoryDescription').value,
+            active: document.getElementById('categoryActive').checked,
+            subcategories: []
+        };
+        
+        // Thu thập dữ liệu danh mục con
+        const subcategoryItems = document.querySelectorAll('.subcategory-item');
+        subcategoryItems.forEach(item => {
+            const nameInput = item.querySelector('.subcategory-name');
+            const slugInput = item.querySelector('.subcategory-slug');
+            const descriptionInput = item.querySelector('.subcategory-description');
+            const activeInput = item.querySelector('.subcategory-active');
+            
+            if (nameInput && nameInput.value.trim() !== '') {
+                categoryData.subcategories.push({
+                    name: nameInput.value.trim(),
+                    slug: slugInput.value,
+                    description: descriptionInput.value,
+                    active: activeInput.checked
+                });
+            }
+        });
+        
+        // Validate dữ liệu
+        if (!categoryData.name.trim()) {
+            alert('Vui lòng nhập tên danh mục cha!');
+            return;
+        }
+        
+        // Hiển thị dữ liệu sẽ được cập nhật (tạm thời)
+        console.log('Dữ liệu danh mục sẽ được cập nhật:', categoryData);
+        
+        // Gọi API để cập nhật dữ liệu
+        updateCategory(categoryData);
+    });
+    
+    // Hàm cập nhật danh mục (gọi API)
+    async function updateCategory(categoryData) {
+        try {
+            // Lấy antiforgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+            
+            // Lấy ID danh mục từ hidden input
+            const categoryId = document.getElementById('categoryId').value;
+            
+            const response = await fetch(`/Admin/DanhMuc/Edit/${categoryId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify(categoryData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Hiển thị thông báo thành công
+                alert(result.message);
+                
+                // Chuyển về trang danh sách
+                window.location.href = '/Admin/DanhMuc';
+            } else {
+                alert('Lỗi: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Lỗi khi cập nhật danh mục:', error);
+            alert('Có lỗi xảy ra khi cập nhật danh mục. Vui lòng thử lại.');
+        }
+    }
+});
+</script>
+
+<style>
+/* CSS cho form chỉnh sửa danh mục */
+.form-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e3e6f0;
+}
+
+.form-title {
+    color: #5a5c69;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    color: #858796;
+    margin-bottom: 0;
+}
+
+.form-section {
+    background: #f8f9fc;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    color: #5a5c69;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #5a5c69;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 1px solid #d1d3e2;
+    border-radius: 0.35rem;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.form-control:focus {
+    border-color: #bac8f3;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: #1cc88a;
+    border-color: #1cc88a;
+}
+
+.subcategories-wrapper {
+    margin-top: 1rem;
+}
+
+.subcategory-item {
+    background: #fff;
+    border: 1px solid #e3e6f0;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.subcategory-header {
+    background: #eaecf4;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.subcategory-title {
+    margin: 0;
+    color: #5a5c69;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.subcategory-content {
+    padding: 1rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-start;
+    padding-top: 1rem;
+    border-top: 1px solid #e3e6f0;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 0.35rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+.btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+}
+
+.btn-secondary {
+    background-color: #858796;
+    border-color: #858796;
+}
+
+.btn-secondary:hover {
+    background-color: #717384;
+    border-color: #6b7280;
+}
+
+.btn-success {
+    background-color: #1cc88a;
+    border-color: #1cc88a;
+}
+
+.btn-success:hover {
+    background-color: #17a673;
+    border-color: #169b6b;
+}
+
+.btn-outline-danger {
+    color: #e74a3b;
+    border-color: #e74a3b;
+}
+
+.btn-outline-danger:hover {
+    background-color: #e74a3b;
+    border-color: #e74a3b;
+}
+
+/* Responsive */
+@@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-container {
+        padding: 1rem;
+    }
+}
+</style>
