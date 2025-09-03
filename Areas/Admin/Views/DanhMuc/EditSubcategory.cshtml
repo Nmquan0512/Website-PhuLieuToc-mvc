@@ -1,85 +1,114 @@
-@model PhuLieuToc.Models.SubcategoryViewModel
+@model PhuLieuToc.Models.CategoryModel
 @{
-    ViewData["Title"] = "Chỉnh sửa Danh mục con";
+    ViewData["Title"] = "Chỉnh sửa danh mục con";
     Layout = "_Layout";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-edit me-2"></i>Chỉnh sửa Danh mục con: @Model.Name
-        </h1>
-        <a href="/Admin/DanhMuc/Subcategories/@ViewBag.ParentCategoryId" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Quay lại
-        </a>
-    </div>
-
-    <div class="card shadow">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-success">Thông tin danh mục con</h6>
+<div class="container">
+    <h1>Chỉnh sửa danh mục con: @Model.TenDanhMuc</h1>
+    <form id="editSubcategoryForm">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label for="name" class="form-label">Tên danh mục con</label>
+            <input type="text" class="form-control" id="name" value="@Model.TenDanhMuc" required />
         </div>
-        <div class="card-body">
-            <form id="editSubcategoryForm">
-                @Html.AntiForgeryToken()
-                <input type="hidden" id="subcategoryId" value="@ViewBag.SubcategoryId" />
-                <input type="hidden" id="parentCategoryId" value="@ViewBag.ParentCategoryId" />
-
-                <div class="form-group">
-                    <label for="subcategoryName">Tên danh mục con</label>
-                    <input type="text" class="form-control" id="subcategoryName" value="@Model.Name" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="subcategorySlug">Slug</label>
-                    <input type="text" class="form-control" id="subcategorySlug" value="@Model.Slug" readonly />
-                </div>
-
-                <div class="form-group">
-                    <label for="subcategoryDescription">Mô tả</label>
-                    <textarea class="form-control" id="subcategoryDescription">@Model.Description</textarea>
-                </div>
-
-                <div class="form-group form-check">
-                    <input class="form-check-input" type="checkbox" id="subcategoryActive" @(Model.Active ? "checked" : "") />
-                    <label class="form-check-label" for="subcategoryActive">Đang hoạt động</label>
-                </div>
-
-                <button type="submit" class="btn btn-success">Cập nhật</button>
-                <a href="/Admin/DanhMuc/Subcategories/@ViewBag.ParentCategoryId" class="btn btn-secondary">Hủy</a>
-            </form>
+        <div class="mb-3">
+            <label for="slug" class="form-label">Slug</label>
+            <input type="text" class="form-control" id="slug" value="@Model.Slug" />
+            <small class="form-text text-muted">Slug sẽ được tạo tự động từ tên danh mục</small>
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Mô tả</label>
+            <textarea class="form-control" id="description">@Model.MoTa</textarea>
+        </div>
+        <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="active" @(Model.TrangThai == 1 ? "checked" : "") />
+            <label class="form-check-label" for="active">Đang hoạt động</label>
+        </div>
+        <button type="submit" class="btn btn-success">Lưu</button>
+        <a href="/Admin/DanhMuc/Subcategories/@Model.ParentCategoryId" class="btn btn-secondary">Quay lại</a>
+    </form>
 </div>
 
+
 <script>
-document.getElementById('editSubcategoryForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
+    document.addEventListener('DOMContentLoaded', function () {
+        const nameInput = document.getElementById('name');
+        const slugInput = document.getElementById('slug');
+        const descriptionInput = document.getElementById('description');
+        const activeInput = document.getElementById('active');
+        const form = document.getElementById('editSubcategoryForm');
 
-    const subcategoryData = {
-        name: document.getElementById('subcategoryName').value,
-        slug: document.getElementById('subcategorySlug').value,
-        description: document.getElementById('subcategoryDescription').value,
-        active: document.getElementById('subcategoryActive').checked
-    };
+        // Tạo slug tự động theo logic của controller
+        nameInput.addEventListener('input', function () {
+            const slug = this.value
+                .toLowerCase()
+                .replace(/đ/g, 'd')
+                .replace(/Đ/g, 'd')
+                .replace(/\s+/g, '-')
+                .replace(/\./g, '')
+                .replace(/,/g, '')
+                .replace(/;/g, '')
+                .replace(/:/g, '')
+                .replace(/!/g, '')
+                .replace(/\?/g, '')
+                .replace(/\(/g, '')
+                .replace(/\)/g, '')
+                .replace(/\[/g, '')
+                .replace(/\]/g, '')
+                .replace(/\{/g, '')
+                .replace(/\}/g, '')
+                .replace(/'/g, '')
+                .replace(/"/g, '')
+                .replace(/\\/g, '')
+                .replace(/\//g, '')
+                .replace(/\|/g, '')
+                .replace(/`/g, '')
+                .replace(/~/g, '')
+                .replace(/@/g, '')
+                .replace(/#/g, '')
+                .replace(/\$/g, '')
+                .replace(/%/g, '')
+                .replace(/\^/g, '')
+                .replace(/&/g, '')
+                .replace(/\*/g, '')
+                .replace(/\+/g, '')
+                .replace(/=/g, '')
+                .replace(/_/g, '-')
+                .replace(/-+/g, '-')
+                .trim();
+            slugInput.value = slug;
+        });
 
-    const id = document.getElementById('subcategoryId').value;
-    const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-    const response = await fetch(`/Admin/DanhMuc/EditSubcategory/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'RequestVerificationToken': token
-        },
-        body: JSON.stringify(subcategoryData)
+            const data = {
+                Name: nameInput.value,
+                Slug: slugInput.value,
+                Description: descriptionInput.value,
+                Active: activeInput.checked
+            };
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            const response = await fetch(`/Admin/DanhMuc/EditSubcategory/@Model.Id`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert(result.message);
+                window.location.href = `/Admin/DanhMuc/Subcategories/@Model.ParentCategoryId`;
+            } else {
+                alert('Lỗi: ' + result.message);
+            }
+        });
     });
 
-    const result = await response.json();
-    if (result.success) {
-        alert(result.message);
-        window.location.href = `/Admin/DanhMuc/Subcategories/${document.getElementById('parentCategoryId').value}`;
-    } else {
-        alert('Lỗi: ' + result.message);
-    }
-});
 </script>

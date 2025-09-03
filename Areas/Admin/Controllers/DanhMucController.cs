@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PhuLieuToc.Repository;
 using PhuLieuToc.Models;
+using PhuLieuToc.Models.ViewModels;
 
 namespace PhuLieuToc.Areas.Admin.Controllers
 {
@@ -232,36 +233,23 @@ namespace PhuLieuToc.Areas.Admin.Controllers
         }
 
 
-        [HttpPut]
-        public async Task<IActionResult> EditSubcategory(int id , CategoryCreateViewModel model)
-        {
-            var ListEditDanhMucCon = await _context.Categorys.Include(c => c.Children)
-                .FirstOrDefaultAsync(x => x.Id == id);
-                
-            if(ListEditDanhMucCon.Children != null)
-            {
-                _context.RemoveRange(ListEditDanhMucCon.Children);
-            }
+          [HttpPut]
+          public async Task<IActionResult> EditSubcategory(int id, [FromBody] SubcategoryViewModel model)
+          {
+              var subcategory = await _context.Categorys.FirstOrDefaultAsync(x => x.Id == id);
+              if (subcategory == null)
+                  return NotFound(new { success = false, message = "Không tìm thấy danh mục con" });
 
-            foreach( var sub in model.Subcategories)
-            {
-                var EditCon = new CategoryModel
-                {
-                    TenDanhMuc = sub.Name,
-                    MoTa = sub.Description,
-                    Slug = string.IsNullOrEmpty(sub.Slug) ? CreateSlug(sub.Name) : sub.Slug,
-                    TrangThai = sub.Active ? 1 : 0,
-                    ParentCategoryId = ListEditDanhMucCon.Id
+              subcategory.TenDanhMuc = model.Name;
+              subcategory.MoTa = model.Description;
+              subcategory.Slug = CreateSlug(model.Name);
+              subcategory.TrangThai = model.Active ? 1 : 0;
 
-                  
-                };
-                _context.Add(EditCon);
+              await _context.SaveChangesAsync();
+              return Json(new { success = true, message = "Danh mục con đã được sửa thành công" });
+          }
 
-            }
-            await _context.SaveChangesAsync();
-
-            return Json(new { success = true, message = "Danh mục con đã được sửa thành công" });
-        }
+       
 
 
         private string CreateSlug(string text)
@@ -304,21 +292,5 @@ namespace PhuLieuToc.Areas.Admin.Controllers
 }
     }
 
-    // ViewModel cho việc tạo danh mục với danh mục con
-    public class CategoryCreateViewModel
-    {
-        public string Name { get; set; }
-        public string Slug { get; set; }
-        public string Description { get; set; }
-        public bool Active { get; set; }
-        public List<SubcategoryViewModel> Subcategories { get; set; } = new List<SubcategoryViewModel>();
-    }
 
-    public class SubcategoryViewModel
-    {
-        public string Name { get; set; }
-        public string Slug { get; set; }
-        public string Description { get; set; }
-        public bool Active { get; set; }
-    }
 }

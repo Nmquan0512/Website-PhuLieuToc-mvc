@@ -239,6 +239,12 @@
 
 <!-- Scripts -->
 <script>
+    fetch(`/Admin/DanhMuc/EditSubcategory/@Model.Id`, {
+        method: 'PUT',
+        headers: { ... },
+        body: JSON.stringify(data)
+    });
+
 document.addEventListener('DOMContentLoaded', function() {
     // Xử lý hiển thị/ẩn form thêm danh mục con
     const addSubcategoryBtn = document.getElementById('addSubcategoryBtn');
