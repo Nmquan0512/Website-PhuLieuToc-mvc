@@ -30,56 +30,31 @@
     </form>
 </div>
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+@section Scripts {
+    <script>
         const nameInput = document.getElementById('name');
         const slugInput = document.getElementById('slug');
         const descriptionInput = document.getElementById('description');
         const activeInput = document.getElementById('active');
         const form = document.getElementById('editSubcategoryForm');
 
-        // Tạo slug tự động theo logic của controller
-        nameInput.addEventListener('input', function () {
-            const slug = this.value
-                .toLowerCase()
-                .replace(/đ/g, 'd')
-                .replace(/Đ/g, 'd')
+        // Hàm tạo slug
+        function generateSlug(text) {
+            return text.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // bỏ dấu tiếng Việt
+                .replace(/đ/g, 'd').replace(/Đ/g, 'd')
                 .replace(/\s+/g, '-')
-                .replace(/\./g, '')
-                .replace(/,/g, '')
-                .replace(/;/g, '')
-                .replace(/:/g, '')
-                .replace(/!/g, '')
-                .replace(/\?/g, '')
-                .replace(/\(/g, '')
-                .replace(/\)/g, '')
-                .replace(/\[/g, '')
-                .replace(/\]/g, '')
-                .replace(/\{/g, '')
-                .replace(/\}/g, '')
-                .replace(/'/g, '')
-                .replace(/"/g, '')
-                .replace(/\\/g, '')
-                .replace(/\//g, '')
-                .replace(/\|/g, '')
-                .replace(/`/g, '')
-                .replace(/~/g, '')
-                .replace(/@/g, '')
-                .replace(/#/g, '')
-                .replace(/\$/g, '')
-                .replace(/%/g, '')
-                .replace(/\^/g, '')
-                .replace(/&/g, '')
-                .replace(/\*/g, '')
-                .replace(/\+/g, '')
-                .replace(/=/g, '')
-                .replace(/_/g, '-')
+                .replace(/[^a-z0-9-]/g, '') // bỏ ký tự đặc biệt
                 .replace(/-+/g, '-')
-                .trim();
-            slugInput.value = slug;
+                .replace(/^-|-$/g, '');
+        }
+
+        // Auto tạo slug khi nhập tên
+        nameInput.addEventListener('input', function () {
+            slugInput.value = generateSlug(this.value);
         });
 
+        // Submit form
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
@@ -109,6 +84,5 @@
                 alert('Lỗi: ' + result.message);
             }
         });
-    });
-
-</script>
+    </script>
+}

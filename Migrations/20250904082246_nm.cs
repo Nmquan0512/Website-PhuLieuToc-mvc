@@ -5,7 +5,7 @@
 namespace PhuLieuToc.Migrations
 {
     /// <inheritdoc />
-    public partial class nmq : Migration
+    public partial class nm : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
