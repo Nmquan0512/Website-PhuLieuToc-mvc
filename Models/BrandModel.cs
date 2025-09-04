@@ -19,6 +19,6 @@ namespace PhuLieuToc.Models
 
 		public int TrangThai { get; set; } 
 
-		public ICollection<ProductModel> Products { get; set; }
+		public ICollection<SanPham> SanPhams { get; set; }
 	}
 }

@@ -26,6 +26,9 @@ namespace PhuLieuToc.Models
         public ICollection<CategoryModel> Children { get; set; } = new List<CategoryModel>();
 
         // Navigation cho sản phẩm (nếu bạn dùng danh mục để tham chiếu cho sản phẩm)
-        public ICollection<ProductModel> Products { get; set; } = new List<ProductModel>();
+        public ICollection<SanPham> SanPhams { get; set; } = new List<SanPham>();
+
+
+
     }
 }

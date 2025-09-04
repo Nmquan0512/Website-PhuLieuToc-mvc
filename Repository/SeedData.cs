@@ -151,7 +151,7 @@ namespace PhuLieuToc.Repository
                 _context.SaveChanges();
 
                 // Tạo sản phẩm (tham chiếu danh mục con – leaf categories)
-                var product1 = new ProductModel
+                var product1 = new SanPhamChiTiet
                 {
                     TenSanPham = "Máy duỗi tóc X1",
                     Slug = "may-duoi-toc-x1",
@@ -162,7 +162,7 @@ namespace PhuLieuToc.Repository
                     CategoryId = mayDuoiToc.Id
                 };
 
-                var product2 = new ProductModel
+                var product2 = new SanPhamChiTiet
                 {
                     TenSanPham = "Thuốc nhuộm tóc Đỏ Ruby",
                     Slug = "thuoc-nhuom-toc-do-ruby",
@@ -173,7 +173,7 @@ namespace PhuLieuToc.Repository
                     CategoryId = thuocNhuomToc.Id
                 };
 
-                var product3 = new ProductModel
+                var product3 = new SanPhamChiTiet
                 {
                     TenSanPham = "Thuốc dưỡng tóc VIP",
                     Slug = "thuoc-duong-toc-vip",
