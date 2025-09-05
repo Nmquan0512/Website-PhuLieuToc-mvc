@@ -45,6 +45,9 @@ namespace PhuLieuToc.Models
         [DataType(DataType.DateTime)]
         public DateTime? NgayCapNhat { get; set; }
 
+        [StringLength(50)]
+        public string? PhuongThucThanhToan { get; set; }
+
         [Required]
         [ForeignKey("TaiKhoan")]
         public int TaiKhoanId { get; set; }
