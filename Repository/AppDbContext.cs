@@ -23,7 +23,7 @@ namespace PhuLieuToc.Repository
 
 
             modelBuilder.Entity<BrandModel>()
-			.HasMany(b => b.Products)
+			.HasMany(b => b.SanPhams)
 			.WithOne(p => p.Brand)
 			.HasForeignKey(p => p.BrandId);
 
@@ -47,6 +47,34 @@ namespace PhuLieuToc.Repository
                 .HasOne(spcttt => spcttt.GiaTriThuocTinh)
                 .WithMany(gttt => gttt.SanPhamChiTietThuocTinhs)
                 .HasForeignKey(spcttt => spcttt.GiaTriThuocTinhId);
+
+            // Unique indexes for Slug fields
+            modelBuilder.Entity<SanPham>()
+                .HasIndex(p => p.Slug)
+                .IsUnique();
+
+            modelBuilder.Entity<CategoryModel>()
+                .HasIndex(c => c.Slug)
+                .IsUnique();
+
+            modelBuilder.Entity<BrandModel>()
+                .HasIndex(b => b.Slug)
+                .IsUnique();
+
+            // Unique indexes for TaiKhoan
+            modelBuilder.Entity<TaiKhoan>()
+                .HasIndex(t => t.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<TaiKhoan>()
+                .HasIndex(t => t.TenDangNhap)
+                .IsUnique();
+
+            // Allow multiple NULL phone numbers but enforce uniqueness when not NULL
+            modelBuilder.Entity<TaiKhoan>()
+                .HasIndex(t => t.SoDienThoai)
+                .IsUnique()
+                .HasFilter("[SoDienThoai] IS NOT NULL");
 		}
 
 		public DbSet<CategoryModel> Categorys { get; set; }
@@ -60,6 +88,9 @@ namespace PhuLieuToc.Repository
 		public DbSet<HoaDon> HoaDons { get; set; }
 		public DbSet<HoaDonChiTiet> HoaDonChiTiets { get; set; }
 		public DbSet<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
+        public DbSet<GioHang> GioHangs { get; set; }
+        public DbSet<GioHangChiTiet> GioHangChiTiets { get; set; }
+
 
 
 	}

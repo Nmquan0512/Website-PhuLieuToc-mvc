@@ -14,10 +14,12 @@ namespace PhuLieuToc.Models
         [StringLength(50, MinimumLength = 5, ErrorMessage = "Tên đăng nhập phải từ 5 đến 50 ký tự")]
         public string TenDangNhap { get; set; }
 
-        [Required(ErrorMessage = "Mật khẩu là bắt buộc")]
-        [StringLength(255, ErrorMessage = "Mật khẩu tối đa 255 ký tự")]
-        public string MatKhau { get; set; }
+        [Required]
+        public byte[] PasswordHash { get; set; }
 
+        [Required]
+        public byte[] PasswordSalt { get; set; }
+    
         [Required(ErrorMessage = "Email là bắt buộc")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         [StringLength(100)]
@@ -42,5 +44,7 @@ namespace PhuLieuToc.Models
         public ICollection<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; } = new List<DiaChiGiaoHang>();
 
         public ICollection<HoaDon>? HoaDons { get; set; } = new List<HoaDon>();
+
+        public ICollection<GioHang>? GioHangs { get; set; } = new List<GioHang>();
     }
 }

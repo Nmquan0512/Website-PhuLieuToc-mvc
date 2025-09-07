@@ -127,8 +127,10 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Không tìm thấy danh mục" });
                 }
 
-                // Kiểm tra xem có sản phẩm nào thuộc danh mục này không
-                var hasProducts = await _context.Products.AnyAsync(p => p.CategoryId == id);
+                // Kiểm tra xem có sản phẩm nào thuộc danh mục này không (qua SanPham -> SanPhamChiTiet)
+                var hasProducts = await _context.SanPhamChiTiets
+                    .Include(ct => ct.SanPham)
+                    .AnyAsync(ct => ct.SanPham.CategoryId == id);
                 if (hasProducts)
                 {
                     return Json(new { success = false, message = "Không thể xóa danh mục có sản phẩm. Vui lòng di chuyển hoặc xóa sản phẩm trước." });
@@ -137,7 +139,9 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                 if (category.Children != null && category.Children.Any())
                     {
                 var childIds = category.Children.Select(c => c.Id).ToList();
-                var hasProductsInChildren = await _context.Products.AnyAsync(p => childIds.Contains(p.CategoryId));
+                var hasProductsInChildren = await _context.SanPhamChiTiets
+                    .Include(ct => ct.SanPham)
+                    .AnyAsync(ct => childIds.Contains(ct.SanPham.CategoryId));
                 if (hasProductsInChildren)
                 {
                     return Json(new { success = false, message = "Không thể xóa danh mục có con chứa sản phẩm" });
@@ -253,43 +257,43 @@ namespace PhuLieuToc.Areas.Admin.Controllers
 
 
         private string CreateSlug(string text)
-{
-    if (string.IsNullOrEmpty(text)) return "";
-    
-    return text.ToLower()
-        .Replace("đ", "d")
-        .Replace("Đ", "d")
-        .Replace(" ", "-")
-        .Replace(".", "")
-        .Replace(",", "")
-        .Replace(";", "")
-        .Replace(":", "")
-        .Replace("!", "")
-        .Replace("?", "")
-        .Replace("(", "")
-        .Replace(")", "")
-        .Replace("[", "")
-        .Replace("]", "")
-        .Replace("{", "")
-        .Replace("}", "")
-        .Replace("'", "")
-        .Replace("\"", "")
-        .Replace("\\", "")
-        .Replace("/", "")
-        .Replace("|", "")
-        .Replace("`", "")
-        .Replace("~", "")
-        .Replace("@", "")
-        .Replace("#", "")
-        .Replace("$", "")
-        .Replace("%", "")
-        .Replace("^", "")
-        .Replace("&", "")
-        .Replace("*", "")
-        .Replace("+", "")
-        .Replace("=", "")
-        .Replace("_", "-");
-}
+        {
+            if (string.IsNullOrEmpty(text)) return "";
+            
+            return text.ToLower()
+                .Replace("đ", "d")
+                .Replace("Đ", "d")
+                .Replace(" ", "-")
+                .Replace(".", "")
+                .Replace(",", "")
+                .Replace(";", "")
+                .Replace(":", "")
+                .Replace("!", "")
+                .Replace("?", "")
+                .Replace("(", "")
+                .Replace(")", "")
+                .Replace("[", "")
+                .Replace("]", "")
+                .Replace("{", "")
+                .Replace("}", "")
+                .Replace("'", "")
+                .Replace("\"", "")
+                .Replace("\\", "")
+                .Replace("/", "")
+                .Replace("|", "")
+                .Replace("`", "")
+                .Replace("~", "")
+                .Replace("@", "")
+                .Replace("#", "")
+                .Replace("$", "")
+                .Replace("%", "")
+                .Replace("^", "")
+                .Replace("&", "")
+                .Replace("*", "")
+                .Replace("+", "")
+                .Replace("=", "")
+                .Replace("_", "-");
+        }
     }
 
 

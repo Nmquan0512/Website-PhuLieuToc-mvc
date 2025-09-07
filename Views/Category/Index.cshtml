@@ -16,8 +16,8 @@
 							<div class="productinfo text-center">
 
 								<img src="@item.Anh" />
-								<h2>@item.GiaBan</h2>
-								<p style="font-size: 15px; font-weight: bold;">@item.TenSanPham</p>
+								<h2>@item.Gia.ToString("N0")</h2>
+								<p style="font-size: 15px; font-weight: bold;">@item.SanPham?.TenSanPham</p>
 
 
 								<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</a>
@@ -26,10 +26,10 @@
 
 							<div class="product-overlay">
 								<div class="overlay-content">
-									<h2>@item.GiaBan</h2>
-									<p style="font-size: 15px; font-weight: bold;">@item.TenSanPham</p>
-									<p>@item.MoTa</p>
-									<p>@item.Brand.TenThuongHieu</p>
+									<h2>@item.Gia.ToString("N0")</h2>
+									<p style="font-size: 15px; font-weight: bold;">@item.SanPham?.TenSanPham</p>
+									<p>@item.SanPham?.MoTa</p>
+									<p>@item.SanPham?.Brand?.TenThuongHieu</p>
 									<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</a>
 
 								</div>

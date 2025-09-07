@@ -21,7 +21,9 @@ namespace PhuLieuToc.Controllers
 			{
 				return RedirectToAction("Index");
 			}
-			var BrandTheoProduct = _context.Products.Where(p => p.BrandId == brandModel.Id);
+			var BrandTheoProduct = _context.SanPhamChiTiets
+				.Include(x => x.SanPham)
+				.Where(p => p.SanPham.BrandId == brandModel.Id);
 
 			return View( await BrandTheoProduct.ToListAsync());
 		}

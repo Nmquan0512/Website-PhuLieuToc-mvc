@@ -26,17 +26,8 @@ namespace PhuLieuToc.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal TongTien { get; set; }
 
-        [Required(ErrorMessage = "Tổng tiền sau giảm giá là bắt buộc")]
-        [Range(0, double.MaxValue, ErrorMessage = "Tổng tiền sau giảm giá phải lớn hơn 0")]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal TongTienSauGiamGia { get; set; }
-
-        [StringLength(200)]
-        public string? ThongTinVoucher { get; set; }
-
         [Required(ErrorMessage = "Trạng thái là bắt buộc")]
-        [StringLength(50, ErrorMessage = "Trạng thái không được vượt quá 50 ký tự")]
-        public string TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]

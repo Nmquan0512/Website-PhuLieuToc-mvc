@@ -21,7 +21,10 @@ namespace PhuLieuToc.Controllers
         }
         public IActionResult Index()
         {
-            var ListProduct = _context.Products.Include("Brand").ToList();
+            var ListProduct = _context.SanPhamChiTiets
+                .Include(x => x.SanPham)
+                .ThenInclude(s => s.Brand)
+                .ToList();
             return View(ListProduct);
         }
 

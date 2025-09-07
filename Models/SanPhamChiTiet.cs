@@ -7,7 +7,7 @@ namespace PhuLieuToc.Models
 	public class SanPhamChiTiet
 	{
 		[Key]
-		public int Id { get; set; }
+		public int SanPhamChiTietId { get; set; }
 
 		[StringLength(500)]
 		public string? Anh { get; set; }
@@ -33,5 +33,7 @@ namespace PhuLieuToc.Models
         public ICollection<SanPhamChiTietThuocTinh> SanPhamChiTietThuocTinhs { get; set; } = new List<SanPhamChiTietThuocTinh>();
 
 		public ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; } = new List<HoaDonChiTiet>();
+
+		public ICollection<GioHangChiTiet> GioHangChiTiets { get; set; } = new List<GioHangChiTiet>();
     }
 }

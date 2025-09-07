@@ -12,7 +12,7 @@ namespace PhuLieuToc.Repository
             _context.Database.Migrate();
 
             // Nếu chưa có sản phẩm nào, tiến hành tạo dữ liệu mẫu
-            if (!_context.Products.Any())
+            if (!_context.SanPhamChiTiets.Any())
             {
                 // Tạo các danh mục cha
                 var thietBi = new CategoryModel
@@ -150,41 +150,65 @@ namespace PhuLieuToc.Repository
                 // Lưu lại để EF gán Id cho danh mục và thương hiệu
                 _context.SaveChanges();
 
-                // Tạo sản phẩm (tham chiếu danh mục con – leaf categories)
-                var product1 = new SanPhamChiTiet
+                // Tạo sản phẩm cha (SanPham)
+                var sp1 = new SanPham
                 {
                     TenSanPham = "Máy duỗi tóc X1",
                     Slug = "may-duoi-toc-x1",
                     MoTa = "Máy duỗi tóc cao cấp, công nghệ mới.",
-                    GiaBan = 1200000m,
-                    Anh = "/images/home/may-duoi-toc-x1.png",
+                    CategoryId = mayDuoiToc.Id,
                     BrandId = brandA.Id,
-                    CategoryId = mayDuoiToc.Id
+                    TrangThai = 1
                 };
-
-                var product2 = new SanPhamChiTiet
+                var sp2 = new SanPham
                 {
                     TenSanPham = "Thuốc nhuộm tóc Đỏ Ruby",
                     Slug = "thuoc-nhuom-toc-do-ruby",
                     MoTa = "Thuốc nhuộm màu đỏ ruby bền lâu.",
-                    GiaBan = 200000m,
-                    Anh = "/images/home/thuoc-nhuom-do-ruby.jpg",
+                    CategoryId = thuocNhuomToc.Id,
                     BrandId = brandB.Id,
-                    CategoryId = thuocNhuomToc.Id
+                    TrangThai = 1
                 };
-
-                var product3 = new SanPhamChiTiet
+                var sp3 = new SanPham
                 {
                     TenSanPham = "Thuốc dưỡng tóc VIP",
                     Slug = "thuoc-duong-toc-vip",
                     MoTa = "Thuốc dưỡng tóc cho mái tóc mượt mà và chắc khỏe.",
-                    GiaBan = 20000m,
-                    Anh = "/images/home/sanpham1.jpg",
+                    CategoryId = thuocDuongToc.Id,
                     BrandId = brandB.Id,
-                    CategoryId = thuocDuongToc.Id
+                    TrangThai = 1
                 };
 
-                _context.Products.AddRange(product1, product2, product3);
+                _context.SanPhams.AddRange(sp1, sp2, sp3);
+                _context.SaveChanges();
+
+                // Tạo biến thể (SanPhamChiTiet)
+                var sp1ct = new SanPhamChiTiet
+                {
+                    SanPhamId = sp1.SanPhamId,
+                    Gia = 1200000m,
+                    SoLuongTon = 50,
+                    TrangThai = 1,
+                    Anh = "/images/home/may-duoi-toc-x1.png"
+                };
+                var sp2ct = new SanPhamChiTiet
+                {
+                    SanPhamId = sp2.SanPhamId,
+                    Gia = 200000m,
+                    SoLuongTon = 200,
+                    TrangThai = 1,
+                    Anh = "/images/home/thuoc-nhuom-do-ruby.jpg"
+                };
+                var sp3ct = new SanPhamChiTiet
+                {
+                    SanPhamId = sp3.SanPhamId,
+                    Gia = 20000m,
+                    SoLuongTon = 500,
+                    TrangThai = 1,
+                    Anh = "/images/home/sanpham1.jpg"
+                };
+
+                _context.SanPhamChiTiets.AddRange(sp1ct, sp2ct, sp3ct);
 
                 _context.SaveChanges();
             }

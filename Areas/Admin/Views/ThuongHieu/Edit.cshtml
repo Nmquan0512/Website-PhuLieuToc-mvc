@@ -1,0 +1,86 @@
+@using PhuLieuToc.Models
+@model BrandModel
+
+@{
+	ViewData["Title"] = "Sửa thương hiệu";
+}
+
+<div class="container-fluid py-3">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h2 class="m-0">Sửa thương hiệu</h2>
+		<a asp-area="Admin" asp-controller="ThuongHieu" asp-action="Index" class="btn btn-outline-secondary">
+			<i class="fa fa-arrow-left"></i> Quay lại
+		</a>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<form asp-area="Admin" asp-controller="ThuongHieu" asp-action="Edit" method="post" novalidate>
+						<input type="hidden" asp-for="Id" />
+						<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+						<div class="mb-3">
+							<label asp-for="TenThuongHieu" class="form-label">Tên thương hiệu</label>
+							<input asp-for="TenThuongHieu" class="form-control" id="TenThuongHieuInput" />
+							<span asp-validation-for="TenThuongHieu" class="text-danger"></span>
+						</div>
+
+						<div class="mb-3">
+							<label asp-for="Slug" class="form-label">Slug</label>
+							<div class="input-group">
+								<input asp-for="Slug" class="form-control" id="SlugInput" />
+								<button type="button" class="btn btn-outline-secondary" onclick="generateSlug()">Tạo từ tên</button>
+							</div>
+							<span asp-validation-for="Slug" class="text-danger"></span>
+						</div>
+
+						<div class="mb-3">
+							<label asp-for="MoTa" class="form-label">Mô tả</label>
+							<textarea asp-for="MoTa" class="form-control" rows="3"></textarea>
+							<span asp-validation-for="MoTa" class="text-danger"></span>
+						</div>
+
+						<div class="mb-3">
+							<label asp-for="TrangThai" class="form-label">Trạng thái</label>
+							<select asp-for="TrangThai" class="form-select">
+								<option value="1">Hoạt động</option>
+								<option value="0">Tắt</option>
+							</select>
+							<span asp-validation-for="TrangThai" class="text-danger"></span>
+						</div>
+
+						<div class="d-flex gap-2">
+							<button type="submit" class="btn btn-primary">
+								<i class="fa fa-save"></i> Cập nhật
+							</button>
+							<a asp-area="Admin" asp-controller="ThuongHieu" asp-action="Index" class="btn btn-light">Hủy</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />
+
+<script>
+function createSlug(text) {
+    if (!text) return "";
+    return text.toLowerCase()
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'd')
+        .replace(/\s/g, '-')
+        .replace(/[\.,;:!\?\(\)\[\]\{\}'"\\\/\|`~@@#$%\^&*\+=]/g, '')
+        .replace(/_/g, '-');
+}
+
+function generateSlug() {
+    const name = document.getElementById('TenThuongHieuInput').value;
+    document.getElementById('SlugInput').value = createSlug(name);
+}
+</script>
+
+

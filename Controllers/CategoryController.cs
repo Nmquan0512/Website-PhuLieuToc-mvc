@@ -22,7 +22,9 @@ namespace PhuLieuToc.Controllers
 
 				return RedirectToAction("Index");
 			}
-			var productByCategory = _context.Products.Where(p => p.CategoryId == category.Id);
+			var productByCategory = _context.SanPhamChiTiets
+				.Include(x => x.SanPham)
+				.Where(p => p.SanPham.CategoryId == category.Id);
 
 			return View(await productByCategory.ToListAsync());
 		}
