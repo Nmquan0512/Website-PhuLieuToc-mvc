@@ -48,10 +48,21 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                         category.Slug = CreateSlug(category.TenDanhMuc);
                     }
 
+                    // Kiểm tra trùng slug
+                    if (await _context.Categorys.AnyAsync(c => c.Slug == category.Slug))
+                    {
+                        ModelState.AddModelError("Slug", "Slug đã tồn tại. Vui lòng nhập slug khác.");
+                        return View(category);
+                    }
+
                     _context.Categorys.Add(category);
                     await _context.SaveChangesAsync();
 
                     return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException ex)
+                {
+                    ModelState.AddModelError("", "Lưu thất bại: " + (ex.InnerException?.Message ?? ex.Message));
                 }
                 catch (Exception ex)
                 {
@@ -73,12 +84,49 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                     return BadRequest(new { success = false, message = "Tên Danh Mục không được để trống !" });
                 }
 
+                var parentSlug = string.IsNullOrEmpty(model.Slug) ? CreateSlug(model.Name) : model.Slug;
+                // Kiểm tra trùng slug cha
+                if (await _context.Categorys.AnyAsync(c => c.Slug == parentSlug))
+                {
+                    return BadRequest(new { success = false, message = $"Slug '{parentSlug}' đã tồn tại. Vui lòng chọn slug khác." });
+                }
+
+                // Kiểm tra trùng giữa các slug con và với slug cha
+                var childSlugs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                if (model.Subcategories != null)
+                {
+                    foreach (var sub in model.Subcategories)
+                    {
+                        var s = string.IsNullOrEmpty(sub.Slug) ? CreateSlug(sub.Name) : sub.Slug;
+                        if (string.IsNullOrWhiteSpace(s))
+                        {
+                            return BadRequest(new { success = false, message = "Slug danh mục con không hợp lệ." });
+                        }
+                        if (s.Equals(parentSlug, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return BadRequest(new { success = false, message = $"Slug con '{s}' trùng với slug cha." });
+                        }
+                        if (!childSlugs.Add(s))
+                        {
+                            return BadRequest(new { success = false, message = $"Có slug danh mục con bị trùng: '{s}'." });
+                        }
+                    }
+
+                    // Kiểm tra trùng slug con với DB
+                    var existsChild = await _context.Categorys
+                        .AnyAsync(c => childSlugs.Contains(c.Slug));
+                    if (existsChild)
+                    {
+                        return BadRequest(new { success = false, message = "Có slug danh mục con đã tồn tại trong hệ thống." });
+                    }
+                }
+
                 //Tao danh muc cha
                 var DanhMucCha = new CategoryModel
                 {
                     TenDanhMuc = model.Name,
                     MoTa = model.Description,
-                    Slug = string.IsNullOrEmpty(model.Slug) ? CreateSlug(model.Name) : model.Slug,
+                    Slug = parentSlug,
                     TrangThai = model.Active ? 1 : 0,
                     ParentCategoryId = null
                 };
@@ -94,7 +142,7 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                         {
                             TenDanhMuc = subcategory.Name,
                             MoTa = subcategory.Description,
-                            Slug = string.IsNullOrEmpty(model.Slug) ? CreateSlug(model.Name) : model.Slug,
+                            Slug = string.IsNullOrEmpty(subcategory.Slug) ? CreateSlug(subcategory.Name) : subcategory.Slug,
                             TrangThai = subcategory.Active ? 1 : 0,
                             ParentCategoryId = DanhMucCha.Id
                         };
@@ -106,6 +154,10 @@ namespace PhuLieuToc.Areas.Admin.Controllers
 
                 return Json(new { success = true, message = "Danh mục đã được tạo thành công", categoryId = DanhMucCha.Id });
 
+            }
+            catch (DbUpdateException ex)
+            {
+                return BadRequest(new { success = false, message = "Lưu thất bại: " + (ex.InnerException?.Message ?? ex.Message) });
             }
             catch (Exception ex) 
             {
@@ -208,7 +260,7 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                     TrangThai = sub.Active ? 1 : 0,
                     ParentCategoryId = ListChaCon.Id
                 };
-            _context.Update(SuaDanhSachCon);
+            _context.Add(SuaDanhSachCon);
             
 
 

@@ -1,0 +1,102 @@
+@using PhuLieuToc.Models
+@model IEnumerable<TaiKhoan>
+
+@{
+	ViewData["Title"] = "Quản lý tài khoản";
+}
+
+<div class="container-fluid py-3">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h2 class="m-0">Tài khoản</h2>
+		<a asp-area="Admin" asp-controller="TaiKhoan" asp-action="Create" class="btn btn-primary">
+			<i class="fa fa-user-plus"></i> Thêm tài khoản
+		</a>
+	</div>
+
+	<form method="get" class="row g-2 mb-3" id="searchForm">
+		<div class="col-md-4">
+			<input class="form-control" name="q" value="@Context.Request.Query["q"]" placeholder="Tìm theo tên đăng nhập, email, SĐT" />
+		</div>
+		<div class="col-md-3">
+			<select class="form-select" name="role" id="roleFilter">
+				<option value="">Tất cả vai trò</option>
+				<option value="admin" selected="@(Context.Request.Query["role"] == "admin")">Admin</option>
+				<option value="khachhang" selected="@(Context.Request.Query["role"] == "khachhang")">Khách hàng</option>
+			</select>
+		</div>
+		<div class="col-md-3">
+			<select class="form-select" name="active">
+				<option value="">Tất cả trạng thái</option>
+				<option value="true" selected="@(Context.Request.Query["active"] == "true")">Hoạt động</option>
+				<option value="false" selected="@(Context.Request.Query["active"] == "false")">Khóa</option>
+			</select>
+		</div>
+		<div class="col-md-2 d-flex gap-2">
+			<button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i> Lọc</button>
+			<a asp-area="Admin" asp-controller="TaiKhoan" asp-action="Index" class="btn btn-outline-dark"><i class="fa fa-undo"></i></a>
+		</div>
+	</form>
+
+	<div class="table-responsive bg-white shadow-sm rounded">
+		<table class="table table-hover align-middle m-0">
+			<thead class="table-light">
+				<tr>
+					<th>#</th>
+					<th>Tên đăng nhập</th>
+					<th>Email</th>
+					<th>SĐT</th>
+					<th>Vai trò</th>
+					<th>Trạng thái</th>
+					<th class="text-end" style="width: 150px;">Thao tác</th>
+				</tr>
+			</thead>
+			<tbody id="accountTableBody">
+				@if (Model == null || !Model.Any())
+				{
+					<tr>
+						<td colspan="7" class="text-center text-muted py-4">Không có dữ liệu</td>
+					</tr>
+				}
+				else
+				{
+					var i = 1;
+					foreach (var u in Model)
+					{
+						<tr data-role="@u.VaiTro" data-active="@u.TrangThai.ToString().ToLower()">
+							<td>@i</td>
+							<td class="fw-semibold">@u.TenDangNhap</td>
+							<td>@u.Email</td>
+							<td>@u.SoDienThoai</td>
+							<td>
+								<span class="badge @(u.VaiTro == "admin" ? "bg-primary" : "bg-info text-dark")">@u.VaiTro</span>
+							</td>
+							<td>
+								<span class="badge @(u.TrangThai ? "bg-success" : "bg-secondary")">@(u.TrangThai ? "Hoạt động" : "Khóa")</span>
+							</td>
+							<td class="text-end">
+								<a asp-area="Admin" asp-controller="TaiKhoan" asp-action="Edit" asp-route-id="@u.TaiKhoanId" class="btn btn-sm btn-outline-primary"><i class="fa fa-pencil"></i></a>
+								<form asp-area="Admin" asp-controller="TaiKhoan" asp-action="Delete" asp-route-id="@u.TaiKhoanId" method="post" class="d-inline" onsubmit="return confirm('Xóa tài khoản này?');">
+									<button type="submit" class="btn btn-sm btn-outline-danger"><i class="fa fa-trash"></i></button>
+								</form>
+							</td>
+						</tr>
+						i++;
+					}
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script>
+// Client-side refine for role without reload (optional enhancement)
+document.getElementById('roleFilter')?.addEventListener('change', function () {
+    const role = this.value;
+    document.querySelectorAll('#accountTableBody tr').forEach(tr => {
+        if (!role) { tr.classList.remove('d-none'); return; }
+        tr.classList.toggle('d-none', tr.getAttribute('data-role') !== role);
+    });
+});
+</script>
+
+

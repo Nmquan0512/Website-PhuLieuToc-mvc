@@ -29,7 +29,7 @@
 						<div class="mb-3">
 							<label asp-for="Slug" class="form-label">Slug</label>
 							<div class="input-group">
-								<input asp-for="Slug" class="form-control" id="SlugInput" placeholder="vd: loreal" />
+								<input asp-for="Slug" class="form-control" id="SlugInput" placeholder="vd: loreal" readonly="readonly" />
 								<button type="button" class="btn btn-outline-secondary" onclick="generateSlug()">Tạo từ tên</button>
 							</div>
 							<span asp-validation-for="Slug" class="text-danger"></span>

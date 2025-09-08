@@ -143,3 +143,4 @@ C:\Users\Windows\Downloads\Website-PhuLieuToc-mvc\obj\Debug\net8.0\refint\PhuLie
 C:\Users\Windows\Downloads\Website-PhuLieuToc-mvc\obj\Debug\net8.0\PhuLieuToc.pdb
 C:\Users\Windows\Downloads\Website-PhuLieuToc-mvc\obj\Debug\net8.0\PhuLieuToc.genruntimeconfig.cache
 C:\Users\Windows\Downloads\Website-PhuLieuToc-mvc\obj\Debug\net8.0\ref\PhuLieuToc.dll
+C:\Users\Windows\Downloads\Website-PhuLieuToc-mvc\bin\Debug\net8.0\BCrypt.Net-Next.dll

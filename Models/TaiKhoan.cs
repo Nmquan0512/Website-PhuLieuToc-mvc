@@ -14,13 +14,11 @@ namespace PhuLieuToc.Models
         [StringLength(50, MinimumLength = 5, ErrorMessage = "Tên đăng nhập phải từ 5 đến 50 ký tự")]
         public string TenDangNhap { get; set; }
 
-        [Required]
-        public byte[] PasswordHash { get; set; }
+		[Required]
+		[StringLength(255)]
+		public string MatKhau { get; set; } 
 
-        [Required]
-        public byte[] PasswordSalt { get; set; }
-    
-        [Required(ErrorMessage = "Email là bắt buộc")]
+		[Required(ErrorMessage = "Email là bắt buộc")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         [StringLength(100)]
         public string Email { get; set; }

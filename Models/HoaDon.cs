@@ -45,5 +45,7 @@ namespace PhuLieuToc.Models
         public TaiKhoan TaiKhoan { get; set; }
 
         public ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; } = new List<HoaDonChiTiet>();
+
+        public ICollection<LichSuTrangThaiHoaDon> LichSuTrangThaiHoaDons { get; set; } = new List<LichSuTrangThaiHoaDon>();
     }
 }
