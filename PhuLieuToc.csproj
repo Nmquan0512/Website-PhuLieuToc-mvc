@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Views\TaiKhoan\" />
-    <Folder Include="Models\ViewModels\" />
     <Folder Include="Service\" />
   </ItemGroup>
 

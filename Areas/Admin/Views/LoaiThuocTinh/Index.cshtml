@@ -1,0 +1,138 @@
+@{
+    ViewData["Title"] = "Quản lý Loại Thuộc Tính";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">
+                <i class="fas fa-tags me-2"></i>Quản lý Loại Thuộc Tính
+            </h1>
+            <p class="text-muted">Quản lý các thuộc tính và giá trị thuộc tính</p>
+        </div>
+        <a class="btn btn-primary" href="/Admin/LoaiThuocTinh/Create">
+            <i class="fas fa-plus me-2"></i>Thêm thuộc tính mới
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Danh sách thuộc tính</h6>
+            <div class="d-flex gap-2">
+                <div class="input-group" style="width: 300px;">
+                    <input type="text" class="form-control" placeholder="Tìm kiếm..." id="searchInput">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <select class="form-select" style="width: 150px;" id="filterStatus">
+                    <option value="">Tất cả</option>
+                    <option value="1">Đang hoạt động</option>
+                    <option value="0">Không hoạt động</option>
+                </select>
+            </div>
+        </div>
+        @Html.AntiForgeryToken()
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="attributesTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width:60px;">ID</th>
+                            <th>Tên thuộc tính</th>
+                            <th>Mô tả</th>
+                            <th style="width:120px;">Số giá trị</th>
+                            <th>Trạng thái</th>
+                            <th style="width: 150px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.ThuocTinhId</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-tag text-info me-2"></i>
+                                            <strong>@item.TenThuocTinh</strong>
+                                        </div>
+                                    </td>
+                                    <td>@item.MoTa</td>
+                                    <td>@(item.GiaTriThuocTinhs != null ? item.GiaTriThuocTinhs.Count : 0)</td>
+                                    <td>
+                                        @if (item.TrangThai == 1)
+                                        {
+                                            <span class="badge bg-success">Đang hoạt động</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Không hoạt động</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a class="btn btn-sm btn-outline-primary" href="/Admin/LoaiThuocTinh/Edit/@item.ThuocTinhId" title="Sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete" data-id="@item.ThuocTinhId" title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const searchInput = document.getElementById('searchInput');
+    const filterStatus = document.getElementById('filterStatus');
+
+    function filterRows(){
+        const term = (searchInput.value || '').toLowerCase();
+        const status = filterStatus.value;
+        document.querySelectorAll('#attributesTable tbody tr').forEach(row => {
+            const nameText = row.querySelector('td:nth-child(2)')?.innerText.toLowerCase() || '';
+            const statusText = row.querySelector('td:nth-child(5)')?.innerText || '';
+            const matchTerm = nameText.includes(term);
+            const matchStatus = !status || (status === '1' ? statusText.includes('Đang hoạt động') : statusText.includes('Không hoạt động'));
+            row.style.display = matchTerm && matchStatus ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterRows);
+    filterStatus.addEventListener('change', filterRows);
+
+    // Delete handlers
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', async function(){
+            const id = this.getAttribute('data-id');
+            if (!id) return;
+            if (!confirm('Bạn có chắc chắn muốn xóa thuộc tính này?\nLưu ý: các giá trị con sẽ bị xóa theo.')) return;
+            try{
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+                const res = await fetch(`/Admin/LoaiThuocTinh/Delete/${id}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token }});
+                if (res.ok){
+                    location.reload();
+                } else {
+                    const txt = await res.text();
+                    alert('Xóa thất bại: ' + txt);
+                }
+            } catch(err){
+                alert('Lỗi: ' + err.message);
+            }
+        });
+    });
+});
+</script>
+
+
