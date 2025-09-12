@@ -1,12 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using PhuLieuToc.Repository; // Đảm bảo namespace chứa AppDbContext và SeedData.
 using PhuLieuToc.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Thêm các service cần thiết vào container
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login";
+        options.AccessDeniedPath = "/Login/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(7);
+        options.SlidingExpiration = true;
+    });
 
 // Cấu hình DbContext (ví dụ, dùng SQL Server hoặc thay thế theo chuỗi kết nối của bạn)
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -34,6 +43,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Định tuyến cho Areas (phải đặt trước routing mặc định)
@@ -45,5 +55,11 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Redirect legacy short URLs
+app.MapGet("/Register", () => Results.Redirect("/Login/Register"));
+app.MapPost("/Register", () => Results.Redirect("/Login/Register"));
+app.MapGet("/Login", () => Results.Redirect("/Login/Index"));
+app.MapPost("/Login", () => Results.Redirect("/Login/Index"));
 
 app.Run();

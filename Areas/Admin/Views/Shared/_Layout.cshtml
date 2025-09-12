@@ -99,6 +99,30 @@
                 </div>
 
                 <div class="nav-section">
+                    <h3 class="nav-section-title">Sản phẩm</h3>
+                    <ul class="nav-item">
+                        <li>
+                            <a href="@Url.Action("Index", "SanPham", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "SanPham" ? "active" : "")">
+                                <i class="nav-icon fas fa-box"></i>
+                                <span>Sản phẩm</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "ThuongHieu", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ThuongHieu" ? "active" : "")">
+                                <i class="nav-icon fas fa-copyright"></i>
+                                <span>Thương hiệu</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "LoaiThuocTinh", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "LoaiThuocTinh" ? "active" : "")">
+                                <i class="nav-icon fas fa-cogs"></i>
+                                <span>Loại thuộc tính</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
                     <h3 class="nav-section-title">Đơn hàng</h3>
                     <ul class="nav-item">
                         <li>
@@ -113,131 +137,23 @@
                                 <span>Quản lý đơn hàng</span>
                             </a>
                         </li>
-                      @*   @if (isAdmin) *@
-                      @*   { *@
-                            <li>
-                                <a href="@Url.Action("Index", "GiamGia", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GiamGias" ? "active" : "")">
-                                    <i class="nav-icon fas fa-percent"></i>
-                                    <span>Khuyến mãi</span>
-                                </a>
-                            </li>
-                       @*  } *@
+                
                     </ul>
                 </div>
+
+
 
                 <div class="nav-section">
-                    <h3 class="nav-section-title">Quản lý</h3>
+                    <h3 class="nav-section-title">Hệ thống</h3>
                     <ul class="nav-item">
                         <li>
-                            <a href="@Url.Action("Index", "ThongBao", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ThongBao" ? "active" : "")">
-                                <i class="nav-icon fas fa-bell"></i>
-                                <span>Thông báo</span>
+                            <a href="@Url.Action("Index", "TaiKhoan", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TaiKhoan" ? "active" : "")">
+                                <i class="nav-icon fas fa-user-shield"></i>
+                                <span>Tài khoản</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="@Url.Action("Index", "KhachHangs", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "KhachHangs" ? "active" : "")">
-                                <i class="nav-icon fas fa-users"></i>
-                                <span>Khách hàng</span>
-                            </a>
-                        </li>
-@*                         @if (isAdmin)
-                        { *@
-                            <li>
-                                <a href="@Url.Action("Index", "NhanVien", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "NhanVien" ? "active" : "")">
-                                    <i class="nav-icon fas fa-user-tie"></i>
-                                    <span>Nhân viên</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("Index", "ChucVu", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ChucVu" ? "active" : "")">
-                                    <i class="nav-icon fas fa-id-badge"></i>
-                                    <span>Chức vụ</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("Index", "Vouchers", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Vouchers" ? "active" : "")">
-                                    <i class="nav-icon fas fa-ticket-alt"></i>
-                                    <span>Voucher</span>
-                                </a>
-                            </li>
-                        @* } *@
                     </ul>
                 </div>
-
-                <div class="nav-section">
-                    <h3 class="nav-section-title">Sản phẩm</h3>
-                    <ul class="nav-item">
-                        <li>
-                            <a href="@Url.Action("Index", "SanPham", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "SanPham" ? "active" : "")">
-                                <i class="nav-icon fas fa-box"></i>
-                                <span>Sản phẩm</span>
-                            </a>
-                        </li>
-                       @*  @if (isAdmin)
-                        { *@
-                            <li class="nav-dropdown">
-                                <a href="#" class="nav-link nav-dropdown-toggle" onclick="toggleDropdown(event)">
-                                    <i class="nav-icon fas fa-cogs"></i>
-                                    <span>Thuộc tính sản phẩm</span>
-                                    <i class="fas fa-chevron-down dropdown-arrow"></i>
-                                </a>
-                                <ul class="nav-dropdown-menu">
-                                    <li>
-                                        <a href="@Url.Action("Index", "Anh", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Anh" ? "active" : "")">
-                                            <i class="nav-icon fas fa-image"></i>
-                                            <span>Quản lý ảnh</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="@Url.Action("Index", "ChatLieu", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ChatLieu" ? "active" : "")">
-                                            <i class="nav-icon fas fa-cube"></i>
-                                            <span>Chất liệu</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="@Url.Action("Index", "ThuongHieu", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ThuongHieu" ? "active" : "")">
-                                            <i class="nav-icon fas fa-copyright"></i>
-                                            <span>Thương hiệu</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="@Url.Action("Index", "MauSac", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "MauSac" ? "active" : "")">
-                                            <i class="nav-icon fas fa-palette"></i>
-                                            <span>Màu sắc</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="@Url.Action("Index", "KichCo", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "KichCo" ? "active" : "")">
-                                            <i class="nav-icon fas fa-ruler-combined"></i>
-                                            <span>Kích cỡ</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="@Url.Action("Index", "ThanhPhan", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ThanhPhan" ? "active" : "")">
-                                            <i class="nav-icon fas fa-layer-group"></i>
-                                            <span>Thành phần</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        @* } *@
-                    </ul>
-                </div>
-
-              @*   @if (isAdmin)
-                { *@
-                    <div class="nav-section">
-                        <h3 class="nav-section-title">Hệ thống</h3>
-                        <ul class="nav-item">
-                            <li>
-                                <a href="@Url.Action("Index", "TaiKhoan", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "TaiKhoan" ? "active" : "")">
-                                    <i class="nav-icon fas fa-user-shield"></i>
-                                    <span>Tài khoản</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                }
 
 
             </nav>
@@ -386,18 +302,12 @@
         function initializeDropdowns() {
             // Auto-expand dropdown if current page is in dropdown menu
             const currentController = '@ViewContext.RouteData.Values["Controller"]?.ToString()';
-            const dropdownControllers = ['ChatLieu', 'ThuongHieu', 'MauSac', 'KichCo', 'ThanhPhan', 'Anh'];
+            const dropdownControllers = ['ChatLieu', 'ThuongHieu', 'MauSac', 'KichCo', 'ThanhPhan', 'Anh', 'LoaiThuocTinh'];
 
-            console.log('Current Controller:', currentController);
-            console.log('Dropdown Controllers:', dropdownControllers);
-            console.log('Should expand dropdown:', dropdownControllers.includes(currentController));
-
-            // Chỉ mở dropdown nếu controller hiện tại thực sự nằm trong danh sách
             if (dropdownControllers.includes(currentController)) {
                 const dropdown = document.querySelector('.nav-dropdown');
                 if (dropdown) {
                     dropdown.classList.add('active');
-                    console.log('Dropdown expanded for controller:', currentController);
 
                     // Ensure dropdown is visible in sidebar
                     setTimeout(() => {
@@ -419,7 +329,6 @@
                 const dropdown = document.querySelector('.nav-dropdown');
                 if (dropdown) {
                     dropdown.classList.remove('active');
-                    console.log('Dropdown closed for controller:', currentController);
                 }
             }
 

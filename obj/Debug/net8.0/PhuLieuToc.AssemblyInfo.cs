@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PhuLieuToc")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb9ead2d0c121a8b867b039fda49d72eecbfe3b5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bece0e90b6906ae0388412c363ab39a8d20773c7")]
 [assembly: System.Reflection.AssemblyProductAttribute("PhuLieuToc")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PhuLieuToc")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

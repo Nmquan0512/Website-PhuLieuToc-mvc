@@ -1,0 +1,63 @@
+@model IEnumerable<PhuLieuToc.Models.SanPham>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Quản lý sản phẩm</h4>
+        <a class="btn btn-primary" asp-area="Admin" asp-controller="SanPham" asp-action="Create">Thêm sản phẩm</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Tên</th>
+                    <th>Slug</th>
+                    <th>Danh mục</th>
+                    <th>Thương hiệu</th>
+                    <th>Biến thể</th>
+                    <th>Trạng thái</th>
+                    <th style="width:160px">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>@p.TenSanPham</td>
+                        <td>@p.Slug</td>
+                        <td>@p.Category?.TenDanhMuc</td>
+                        <td>@p.Brand?.TenThuongHieu</td>
+                        <td>@(p.SanPhamChiTiets?.Count ?? 0)</td>
+                        <td>
+                            <span class="badge @(p.TrangThai == 1 ? "bg-success" : "bg-secondary")">
+                                @(p.TrangThai == 1 ? "Hiển thị" : "Ẩn")
+                            </span>
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-primary" asp-area="Admin" asp-controller="SanPham" asp-action="Edit" asp-route-id="@p.SanPhamId">Sửa</a>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete" data-id="@p.SanPhamId">Xóa</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!confirm('Xóa sản phẩm này?')) return;
+                const id = btn.getAttribute('data-id');
+                const res = await fetch('@Url.Action("Delete", "SanPham", new { area = "Admin" })' + `?id=${id}`, {
+                    method: 'DELETE'
+                });
+                const json = await res.json();
+                if (json && json.success) location.reload(); else alert(json.message || 'Xóa thất bại');
+            });
+        });
+    </script>
+}
+
+

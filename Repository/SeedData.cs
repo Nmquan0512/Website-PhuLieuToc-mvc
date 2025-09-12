@@ -11,6 +11,33 @@ namespace PhuLieuToc.Repository
             // Tự động apply migration nếu chưa có
             _context.Database.Migrate();
 
+            // Tạo tài khoản test nếu chưa có
+            if (!_context.TaiKhoans.Any())
+            {
+                var adminUser = new TaiKhoan
+                {
+                    TenDangNhap = "admin",
+                    Email = "admin@phulieutoc.com",
+                    MatKhau = BCrypt.Net.BCrypt.HashPassword("123456"),
+                    TrangThai = true,
+                    VaiTro = "Admin",
+                    SoDienThoai = "0123456789"
+                };
+
+                var testUser = new TaiKhoan
+                {
+                    TenDangNhap = "test",
+                    Email = "test@phulieutoc.com",
+                    MatKhau = BCrypt.Net.BCrypt.HashPassword("123456"),
+                    TrangThai = true,
+                    VaiTro = "User",
+                    SoDienThoai = "0987654321"
+                };
+
+                _context.TaiKhoans.AddRange(adminUser, testUser);
+                _context.SaveChanges();
+            }
+
             // Nếu chưa có sản phẩm nào, tiến hành tạo dữ liệu mẫu
             if (!_context.SanPhamChiTiets.Any())
             {

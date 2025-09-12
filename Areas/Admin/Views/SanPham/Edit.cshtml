@@ -1,0 +1,196 @@
+@model PhuLieuToc.Models.ViewModels.ProductCreateEditViewModel
+
+<div class="container-fluid">
+    <h4 class="mb-3">Sửa sản phẩm</h4>
+
+    <form asp-area="Admin" asp-controller="SanPham" asp-action="Edit" asp-route-id="@Model.SanPhamId" method="post" enctype="multipart/form-data">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Tên sản phẩm</label>
+                <input asp-for="TenSanPham" class="form-control" />
+                <span asp-validation-for="TenSanPham" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Slug</label>
+                <input asp-for="Slug" class="form-control" />
+                <span asp-validation-for="Slug" class="text-danger"></span>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Mô tả</label>
+                <textarea asp-for="MoTa" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Danh mục</label>
+                <select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(Model.Categories, nameof(CategoryModel.Id), nameof(CategoryModel.TenDanhMuc), Model.CategoryId))">
+                    <option value="">-- Chọn danh mục --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Thương hiệu</label>
+                <select asp-for="BrandId" class="form-select" asp-items="@(new SelectList(Model.Brands, nameof(BrandModel.Id), nameof(BrandModel.TenThuongHieu), Model.BrandId))">
+                    <option value="">-- Chọn thương hiệu --</option>
+                </select>
+                <span asp-validation-for="BrandId" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Trạng thái</label>
+                <div class="form-check form-switch mt-2">
+                    <input type="hidden" asp-for="TrangThai" />
+                    <input class="form-check-input" type="checkbox" role="switch" id="TrangThaiToggleEdit" @(Model.TrangThai == 1 ? "checked" : "")>
+                    <label class="form-check-label" for="TrangThaiToggleEdit">Hiển thị</label>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div id="variants-section" class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">Biến thể</h5>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="btnAddVariant">+ Thêm dòng</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle" id="variants-table">
+                    <thead>
+                        <tr>
+                            <th>Thuộc tính</th>
+                            <th style="width:140px">Giá</th>
+                            <th style="width:140px">Số lượng</th>
+                            <th style="width:220px">Ảnh (URL)</th>
+                            <th style="width:120px">Trạng thái</th>
+                            <th style="width:60px"></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success">Lưu</button>
+            <a asp-area="Admin" asp-controller="SanPham" asp-action="Index" class="btn btn-secondary">Hủy</a>
+        </div>
+
+        <div id="variants-hidden-inputs"></div>
+    </form>
+</div>
+
+@section Scripts{
+    <partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" />
+    <script>
+        const api = {
+            getThuocTinhs: '@Url.Action("GetThuocTinhs", "SanPham", new { area = "Admin" })',
+            getGiaTriByThuocTinh: (id) => '@Url.Action("GetGiaTriByThuocTinh", "SanPham", new { area = "Admin" })' + `?thuocTinhId=${id}`
+        };
+        const variantsTableBody = document.querySelector('#variants-table tbody');
+        const variantsHidden = document.getElementById('variants-hidden-inputs');
+        const btnAddVariant = document.getElementById('btnAddVariant');
+
+        let allThuocTinhs = [];
+        async function loadThuocTinhs() {
+            const res = await fetch(api.getThuocTinhs);
+            allThuocTinhs = await res.json();
+        }
+
+        function createAttrItem(selectedTypeId, selectedValueId) {
+            const div = document.createElement('div');
+            div.className = 'd-flex gap-2 align-items-center mb-2 attr-item';
+            div.innerHTML = `
+                <select class="form-select form-select-sm attr-type" style="max-width:220px"><option value="">-- Thuộc tính --</option></select>
+                <select class="form-select form-select-sm attr-value" style="max-width:220px"><option value="">-- Giá trị --</option></select>
+                <button type="button" class="btn btn-sm btn-outline-danger attr-remove">X</button>`;
+
+            const typeSel = div.querySelector('.attr-type');
+            const valueSel = div.querySelector('.attr-value');
+            allThuocTinhs.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = t.name; if (String(selectedTypeId) === String(t.id)) o.selected = true; typeSel.appendChild(o); });
+
+            async function populateValues(typeId) {
+                valueSel.innerHTML = '<option value="">-- Giá trị --</option>';
+                if (!typeId) return;
+                const res = await fetch(api.getGiaTriByThuocTinh(typeId));
+                const vals = await res.json();
+                vals.forEach(v => { const o = document.createElement('option'); o.value = v.id; o.textContent = v.name; if (String(selectedValueId) === String(v.id)) o.selected = true; valueSel.appendChild(o); });
+            }
+
+            typeSel.addEventListener('change', async (e) => { await populateValues(e.target.value); });
+            if (selectedTypeId) { populateValues(selectedTypeId); }
+
+            div.querySelector('.attr-remove').addEventListener('click', () => div.remove());
+            return div;
+        }
+
+        function addVariantRow(preset) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <div class="attr-list"></div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary attr-add">+ Thêm thuộc tính</button>
+                </td>
+                <td><input type="number" min="0" step="0.01" class="form-control v-gia" value="${preset?.gia ?? preset?.Gia ?? 0}" /></td>
+                <td><input type="number" min="0" step="1" class="form-control v-qty" value="${preset?.soLuongTon ?? preset?.SoLuongTon ?? 0}" /></td>
+                <td>
+                    <input type="file" class="form-control v-anh-file" accept="image/*" />
+                </td>
+                <td>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input v-status" type="checkbox" role="switch" ${(preset?.trangThai ?? preset?.TrangThai ?? 1) == 1 ? 'checked' : ''}>
+                    </div>
+                </td>
+                <td><button type="button" class="btn btn-sm btn-outline-danger v-remove">X</button></td>`;
+
+            variantsTableBody.appendChild(tr);
+
+            const list = tr.querySelector('.attr-list');
+            const addBtn = tr.querySelector('.attr-add');
+            addBtn.addEventListener('click', () => list.appendChild(createAttrItem()));
+            tr.querySelector('.v-remove').addEventListener('click', () => tr.remove());
+
+            if (preset && (preset.giaTriThuocTinhIds || preset.GiaTriThuocTinhIds)) {
+                const ids = (preset.giaTriThuocTinhIds || preset.GiaTriThuocTinhIds).map(Number);
+                // For each value id, find its type via a fetch group (optional improvement)
+                ids.forEach(id => list.appendChild(createAttrItem(undefined, id)));
+            }
+        }
+
+        btnAddVariant.addEventListener('click', () => addVariantRow());
+
+        (async function init(){
+            await loadThuocTinhs();
+            const variants = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Variants));
+            if (variants && variants.length) variants.forEach(v => addVariantRow(v)); else addVariantRow();
+        })();
+
+        document.querySelector('form').addEventListener('submit', (e) => {
+            // sync product status from toggle to hidden input
+            const toggleEdit = document.getElementById('TrangThaiToggleEdit');
+            const hiddenTrangThai = document.querySelector('input[name="TrangThai"]');
+            if (toggleEdit && hiddenTrangThai) hiddenTrangThai.value = toggleEdit.checked ? '1' : '0';
+
+            const rows = [...variantsTableBody.querySelectorAll('tr')];
+            variantsHidden.querySelectorAll('.bundle').forEach(x => x.remove());
+            rows.forEach((tr, i) => {
+                const gia = tr.querySelector('.v-gia').value || '0';
+                const qty = tr.querySelector('.v-qty').value || '0';
+                const statusChecked = tr.querySelector('.v-status')?.checked;
+                const ids = [...tr.querySelectorAll('.attr-item')]
+                    .map(item => item.querySelector('.attr-value').value)
+                    .filter(x => x);
+                const wrap = document.createElement('div');
+                wrap.className = 'bundle';
+                const add = (name, val) => { const input = document.createElement('input'); input.type = 'hidden'; input.name = name; input.value = val; wrap.appendChild(input); };
+                add(`Variants[${i}].Gia`, gia);
+                add(`Variants[${i}].SoLuongTon`, qty);
+                const fileInput = tr.querySelector('.v-anh-file');
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    fileInput.name = `Variants[${i}].AnhFile`;
+                }
+                add(`Variants[${i}].TrangThai`, statusChecked ? '1' : '0');
+                ids.forEach((id, k) => add(`Variants[${i}].GiaTriThuocTinhIds[${k}]`, id));
+                variantsHidden.appendChild(wrap);
+            });
+        });
+    </script>
+}
+
+

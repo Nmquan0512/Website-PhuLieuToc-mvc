@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuLieuToc.Models;
 using PhuLieuToc.Models.ViewModels;
@@ -7,6 +8,7 @@ using PhuLieuToc.Repository;
 namespace PhuLieuToc.Areas.Admin.Controllers
 {
 	[Area("Admin")]  
+	[Authorize(Roles = "Admin")]
 	public class LoaiThuocTinhController : Controller
 	{
 		private readonly AppDbContext _context;
@@ -50,7 +52,7 @@ namespace PhuLieuToc.Areas.Admin.Controllers
 				};
 				ThemThuocTinh.GiaTriThuocTinhs.Add(newGiaTri);
 			}
-		 		_context.ThuocTinhs.Add(ThemThuocTinh);
+			 		_context.ThuocTinhs.Add(ThemThuocTinh);
 
 
 			 await _context.SaveChangesAsync();

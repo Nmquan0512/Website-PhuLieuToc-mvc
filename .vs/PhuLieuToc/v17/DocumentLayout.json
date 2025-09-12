@@ -3,48 +3,128 @@
   "WorkspaceRootPath": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\hoadonchitiet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\hoadonchitiet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\controllers\\loaithuoctinhcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\controllers\\loaithuoctinhcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\hoadon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\hoadon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\viewmodels\\createthuoctinhspviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\viewmodels\\createthuoctinhspviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\views\\loaithuoctinh\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\views\\loaithuoctinh\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\controllers\\danhmuccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\controllers\\danhmuccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\lichsutrangthaihoadon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\lichsutrangthaihoadon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\giatrithuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\giatrithuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\diachigiaohang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\diachigiaohang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\categorymodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\categorymodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\brandmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\brandmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\sanphamchitiet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\sanphamchitiet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\sanphamchitietthuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\sanphamchitietthuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\thuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\thuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\sanpham.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\sanpham.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\hoadon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\hoadon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\hoadonchitiet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\hoadonchitiet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\views\\taikhoan\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\views\\taikhoan\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\controllers\\taikhoancontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\controllers\\taikhoancontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\views\\taikhoan\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\views\\taikhoan\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\views\\thuonghieu\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\views\\thuonghieu\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\taikhoan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\taikhoan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\thuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\thuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\controllers\\thuonghieucontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\controllers\\thuonghieucontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\views\\thuonghieu\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\views\\thuonghieu\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\areas\\admin\\views\\thuonghieu\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:areas\\admin\\views\\thuonghieu\\edit.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\controllers\\brandcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:controllers\\brandcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\repository\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:repository\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\repository\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:repository\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\categorymodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\categorymodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\giohang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\giohang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\giohangchitiet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\giohangchitiet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\sanpham.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\sanpham.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\diachigiaohang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\diachigiaohang.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\brandmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\brandmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\models\\sanphamchitietthuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:models\\sanphamchitietthuoctinh.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|c:\\users\\windows\\downloads\\website-phulieutoc-mvc\\migrations\\20250908124316_nmq.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4A245828-0735-4508-BCC3-954BEE84CD7A}|PhuLieuToc.csproj|solutionrelative:migrations\\20250908124316_nmq.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -54,93 +134,132 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\LoaiThuocTinh\\Edit.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Views\\LoaiThuocTinh\\Edit.cshtml",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\LoaiThuocTinh\\Edit.cshtml",
+              "RelativeToolTip": "Areas\\Admin\\Views\\LoaiThuocTinh\\Edit.cshtml",
+              "ViewState": "AQIAADkAAAAAAAAAAAAQwEYAAABdAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-10T13:24:12.321Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
+              "Title": "LoaiThuocTinhController.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Controllers\\LoaiThuocTinhController.cs",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Controllers\\LoaiThuocTinhController.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Controllers\\LoaiThuocTinhController.cs",
+              "RelativeToolTip": "Areas\\Admin\\Controllers\\LoaiThuocTinhController.cs",
+              "ViewState": "AQIAAFQAAAAAAAAAAAAswG0AAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-10T13:16:30.915Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CreateThuocTinhSPViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\ViewModels\\CreateThuocTinhSPViewModel.cs",
+              "RelativeDocumentMoniker": "Models\\ViewModels\\CreateThuocTinhSPViewModel.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\ViewModels\\CreateThuocTinhSPViewModel.cs",
+              "RelativeToolTip": "Models\\ViewModels\\CreateThuocTinhSPViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAcAAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-10T13:09:19.217Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "LichSuTrangThaiHoaDon.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\LichSuTrangThaiHoaDon.cs",
+              "RelativeDocumentMoniker": "Models\\LichSuTrangThaiHoaDon.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\LichSuTrangThaiHoaDon.cs",
+              "RelativeToolTip": "Models\\LichSuTrangThaiHoaDon.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T15:21:13.641Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\ThuongHieu\\Create.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Views\\ThuongHieu\\Create.cshtml",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\ThuongHieu\\Create.cshtml",
+              "RelativeToolTip": "Areas\\Admin\\Views\\ThuongHieu\\Create.cshtml",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAAFwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-07T14:05:03.573Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\ThuongHieu\\Index.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Views\\ThuongHieu\\Index.cshtml",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\ThuongHieu\\Index.cshtml",
+              "RelativeToolTip": "Areas\\Admin\\Views\\ThuongHieu\\Index.cshtml",
+              "ViewState": "AQIAACoAAAAAAAAAAIBJwEkAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-07T13:42:25.331Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DanhMucController.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Controllers\\DanhMucController.cs",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Controllers\\DanhMucController.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Controllers\\DanhMucController.cs",
+              "RelativeToolTip": "Areas\\Admin\\Controllers\\DanhMucController.cs",
+              "ViewState": "AQIAAJsAAAAAAAAAAAAcwEgAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T13:19:06.595Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CategoryController.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Controllers\\CategoryController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CategoryController.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Controllers\\CategoryController.cs",
+              "RelativeToolTip": "Controllers\\CategoryController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T13:14:48.654Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ThuocTinh.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\ThuocTinh.cs",
+              "RelativeDocumentMoniker": "Models\\ThuocTinh.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\ThuocTinh.cs",
+              "RelativeToolTip": "Models\\ThuocTinh.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T12:36:41.659Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "SanPhamChiTiet.cs",
               "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPhamChiTiet.cs",
               "RelativeDocumentMoniker": "Models\\SanPhamChiTiet.cs",
               "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPhamChiTiet.cs",
               "RelativeToolTip": "Models\\SanPhamChiTiet.cs",
-              "ViewState": "AQIAAAoAAAAAAAAAAAAIwCUAAAAAAAAA",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAgwCQAAABgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T12:19:09.247Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-04T12:19:09.247Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "HoaDonChiTiet.cs",
-              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\HoaDonChiTiet.cs",
-              "RelativeDocumentMoniker": "Models\\HoaDonChiTiet.cs",
-              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\HoaDonChiTiet.cs",
-              "RelativeToolTip": "Models\\HoaDonChiTiet.cs",
-              "ViewState": "AQIAABQAAAAAAAAAAAAIwCsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T12:04:51.224Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "SanPhamChiTietThuocTinh.cs",
-              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPhamChiTietThuocTinh.cs",
-              "RelativeDocumentMoniker": "Models\\SanPhamChiTietThuocTinh.cs",
-              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPhamChiTietThuocTinh.cs",
-              "RelativeToolTip": "Models\\SanPhamChiTietThuocTinh.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAbAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T12:55:57.416Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "BrandModel.cs",
-              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\BrandModel.cs",
-              "RelativeDocumentMoniker": "Models\\BrandModel.cs",
-              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\BrandModel.cs",
-              "RelativeToolTip": "Models\\BrandModel.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABgAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T12:30:42.089Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CategoryModel.cs",
-              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\CategoryModel.cs",
-              "RelativeDocumentMoniker": "Models\\CategoryModel.cs",
-              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\CategoryModel.cs",
-              "RelativeToolTip": "Models\\CategoryModel.cs",
-              "ViewState": "AQIAAAoAAAAAAAAAAAAgwBwAAABRAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T12:17:18.092Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "DiaChiGiaoHang.cs",
-              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\DiaChiGiaoHang.cs",
-              "RelativeDocumentMoniker": "Models\\DiaChiGiaoHang.cs",
-              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\DiaChiGiaoHang.cs",
-              "RelativeToolTip": "Models\\DiaChiGiaoHang.cs",
-              "ViewState": "AQIAAA0AAAAAAAAAAAA1wCAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T11:19:52.565Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "GiaTriThuocTinh.cs",
               "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\GiaTriThuocTinh.cs",
               "RelativeDocumentMoniker": "Models\\GiaTriThuocTinh.cs",
@@ -148,60 +267,247 @@
               "RelativeToolTip": "Models\\GiaTriThuocTinh.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T12:52:28.224Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-04T12:52:28.224Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 12,
+              "Title": "TaiKhoanController.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Controllers\\TaiKhoanController.cs",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Controllers\\TaiKhoanController.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Controllers\\TaiKhoanController.cs",
+              "RelativeToolTip": "Areas\\Admin\\Controllers\\TaiKhoanController.cs",
+              "ViewState": "AQIAABYAAAAAAAAAAAAUwGYAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T12:31:51.982Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "20250908124316_nmq.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Migrations\\20250908124316_nmq.cs",
+              "RelativeDocumentMoniker": "Migrations\\20250908124316_nmq.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Migrations\\20250908124316_nmq.cs",
+              "RelativeToolTip": "Migrations\\20250908124316_nmq.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-08T12:43:16.998Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\TaiKhoan\\Create.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Views\\TaiKhoan\\Create.cshtml",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\TaiKhoan\\Create.cshtml",
+              "RelativeToolTip": "Areas\\Admin\\Views\\TaiKhoan\\Create.cshtml",
+              "ViewState": "AQIAABUAAAAAAAAAAAAWwC4AAABCAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-08T12:53:07.972Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "HoaDon.cs",
               "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\HoaDon.cs",
               "RelativeDocumentMoniker": "Models\\HoaDon.cs",
               "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\HoaDon.cs",
               "RelativeToolTip": "Models\\HoaDon.cs",
-              "ViewState": "AQIAAB8AAAAAAAAAAAAcwDAAAAA4AAAA",
+              "ViewState": "AQIAABMAAAAAAAAAAAAqwCwAAAAuAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T11:46:29.609Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-04T11:46:29.609Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "SanPham.cs",
-              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPham.cs",
-              "RelativeDocumentMoniker": "Models\\SanPham.cs",
-              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPham.cs",
-              "RelativeToolTip": "Models\\SanPham.cs",
-              "ViewState": "AQIAAAoAAAAAAAAAAAAqwCIAAAAoAAAA",
+              "DocumentIndex": 10,
+              "Title": "HoaDonChiTiet.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\HoaDonChiTiet.cs",
+              "RelativeDocumentMoniker": "Models\\HoaDonChiTiet.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\HoaDonChiTiet.cs",
+              "RelativeToolTip": "Models\\HoaDonChiTiet.cs",
+              "ViewState": "AQIAABQAAAAAAAAAAAAIwCYAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T12:09:05.526Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-04T12:04:51.224Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 13,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\TaiKhoan\\Edit.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Views\\TaiKhoan\\Edit.cshtml",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\TaiKhoan\\Edit.cshtml",
+              "RelativeToolTip": "Areas\\Admin\\Views\\TaiKhoan\\Edit.cshtml",
+              "ViewState": "AQIAAA8AAAAAAAAAAAAAACAAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-08T13:26:17.668Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "SeedData.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Repository\\SeedData.cs",
+              "RelativeDocumentMoniker": "Repository\\SeedData.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Repository\\SeedData.cs",
+              "RelativeToolTip": "Repository\\SeedData.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T13:14:32.54Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "BrandController.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Controllers\\BrandController.cs",
+              "RelativeDocumentMoniker": "Controllers\\BrandController.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Controllers\\BrandController.cs",
+              "RelativeToolTip": "Controllers\\BrandController.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAADgvxQAAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T13:13:57.56Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T13:13:49.409Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
               "Title": "TaiKhoan.cs",
               "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\TaiKhoan.cs",
               "RelativeDocumentMoniker": "Models\\TaiKhoan.cs",
               "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\TaiKhoan.cs",
               "RelativeToolTip": "Models\\TaiKhoan.cs",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAqwCgAAAAAAAAA",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAABIAAAAmAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T11:11:22.32Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-04T11:11:22.32Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "ThuocTinh.cs",
-              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\ThuocTinh.cs",
-              "RelativeDocumentMoniker": "Models\\ThuocTinh.cs",
-              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\ThuocTinh.cs",
-              "RelativeToolTip": "Models\\ThuocTinh.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAAAAAA",
+              "DocumentIndex": 18,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\ThuongHieu\\Edit.cshtml",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Views\\ThuongHieu\\Edit.cshtml",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Views\\ThuongHieu\\Edit.cshtml",
+              "RelativeToolTip": "Areas\\Admin\\Views\\ThuongHieu\\Edit.cshtml",
+              "ViewState": "AQIAABgAAAAAAAAAAIBJwCgAAABJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-09-07T14:05:10.385Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ThuongHieuController.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Controllers\\ThuongHieuController.cs",
+              "RelativeDocumentMoniker": "Areas\\Admin\\Controllers\\ThuongHieuController.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Areas\\Admin\\Controllers\\ThuongHieuController.cs",
+              "RelativeToolTip": "Areas\\Admin\\Controllers\\ThuongHieuController.cs",
+              "ViewState": "AQIAAEIAAAAAAAAAAAAgwFIAAAAiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-04T12:36:41.659Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-07T13:09:29.685Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Repository\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Repository\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Repository\\AppDbContext.cs",
+              "RelativeToolTip": "Repository\\AppDbContext.cs",
+              "ViewState": "AQIAAEEAAAAAAAAAAAAwwFwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T12:48:58.141Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "GioHangChiTiet.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\GioHangChiTiet.cs",
+              "RelativeDocumentMoniker": "Models\\GioHangChiTiet.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\GioHangChiTiet.cs",
+              "RelativeToolTip": "Models\\GioHangChiTiet.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAxwCMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T12:19:31.879Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "GioHang.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\GioHang.cs",
+              "RelativeDocumentMoniker": "Models\\GioHang.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\GioHang.cs",
+              "RelativeToolTip": "Models\\GioHang.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-07T12:14:43.111Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "BrandModel.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\BrandModel.cs",
+              "RelativeDocumentMoniker": "Models\\BrandModel.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\BrandModel.cs",
+              "RelativeToolTip": "Models\\BrandModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABgAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T12:30:42.089Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "CategoryModel.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\CategoryModel.cs",
+              "RelativeDocumentMoniker": "Models\\CategoryModel.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\CategoryModel.cs",
+              "RelativeToolTip": "Models\\CategoryModel.cs",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAgwBwAAABRAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T12:17:18.092Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "DiaChiGiaoHang.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\DiaChiGiaoHang.cs",
+              "RelativeDocumentMoniker": "Models\\DiaChiGiaoHang.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\DiaChiGiaoHang.cs",
+              "RelativeToolTip": "Models\\DiaChiGiaoHang.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAAQwCAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T11:19:52.565Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "SanPham.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPham.cs",
+              "RelativeDocumentMoniker": "Models\\SanPham.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPham.cs",
+              "RelativeToolTip": "Models\\SanPham.cs",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAQwCAAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T12:09:05.526Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "SanPhamChiTietThuocTinh.cs",
+              "DocumentMoniker": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPhamChiTietThuocTinh.cs",
+              "RelativeDocumentMoniker": "Models\\SanPhamChiTietThuocTinh.cs",
+              "ToolTip": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\Models\\SanPhamChiTietThuocTinh.cs",
+              "RelativeToolTip": "Models\\SanPhamChiTietThuocTinh.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-04T12:55:57.416Z"
             }
           ]
         }

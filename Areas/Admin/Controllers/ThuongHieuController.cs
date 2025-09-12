@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhuLieuToc.Models;
 using PhuLieuToc.Repository;
@@ -6,6 +7,7 @@ using PhuLieuToc.Repository;
 namespace PhuLieuToc.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ThuongHieuController : Controller
     {
 

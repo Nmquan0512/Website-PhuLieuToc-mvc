@@ -7,6 +7,13 @@
 
 <!-- Sản phẩm nổi bật -->
 <div class="col-sm-9 padding-right">
+	@if (TempData["Success"] != null)
+	{
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+			@TempData["Success"]
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	}
 	<div class="features_items">
 		<h2 class="title text-center">Sản phẩm nổi bật</h2>
 		@foreach (var item in Model)

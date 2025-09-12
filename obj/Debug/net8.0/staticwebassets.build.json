@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "79J2UH56/j8vES2YKGOLuHcS/JTzQrjj6HsmwHAupEQ=",
+  "Hash": "Th3UX31JZ99RJv/HSK4/e307CKgDSprEFTcg5rRssZY=",
   "Source": "PhuLieuToc",
   "BasePath": "_content/PhuLieuToc",
   "Mode": "Default",
@@ -756,25 +756,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\home\\map.png"
-    },
-    {
-      "Identity": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\home\\may-duoi-toc-x1.png",
-      "SourceId": "PhuLieuToc",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\",
-      "BasePath": "_content/PhuLieuToc",
-      "RelativePath": "images/home/may-duoi-toc-x1.png",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\home\\may-duoi-toc-x1.png"
     },
     {
       "Identity": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\home\\new.png",
