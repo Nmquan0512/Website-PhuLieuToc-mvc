@@ -19,13 +19,34 @@ namespace PhuLieuToc.Controllers
             _context = context;
             _logger = logger;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var ListProduct = _context.SanPhamChiTiets
+            var featuredProducts = await _context.SanPhamChiTiets
                 .Include(x => x.SanPham)
-                .ThenInclude(s => s.Brand)
-                .ToList();
-            return View(ListProduct);
+                    .ThenInclude(s => s.Brand)
+                .Include(x => x.SanPham)
+                    .ThenInclude(s => s.Category)
+                .Include(x => x.SanPhamChiTietThuocTinhs)
+                    .ThenInclude(t => t.GiaTriThuocTinh)
+                .Where(x => x.TrangThai == 1 && x.SanPham.TrangThai == 1)
+                .OrderByDescending(x => x.SanPham.SanPhamId)
+                .Take(8)
+                .ToListAsync();
+
+            var categories = await _context.Categorys
+                .Where(c => c.TrangThai == 1)
+                .Take(6)
+                .ToListAsync();
+
+            var brands = await _context.Brands
+                .Where(b => b.TrangThai == 1)
+                .Take(6)
+                .ToListAsync();
+
+            ViewBag.Categories = categories;
+            ViewBag.Brands = brands;
+
+            return View(featuredProducts);
         }
 
         public IActionResult Privacy()

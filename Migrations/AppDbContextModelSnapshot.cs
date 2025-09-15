@@ -103,9 +103,15 @@ namespace PhuLieuToc.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DiaChiDayDu")
+                    b.Property<string>("DiaChiCuThe")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("GhiChu")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("HoTen")
                         .IsRequired()
@@ -115,11 +121,6 @@ namespace PhuLieuToc.Migrations
                     b.Property<bool>("LaMacDinh")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MoTa")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("SoDienThoai")
                         .IsRequired()
                         .HasMaxLength(15)
@@ -128,8 +129,18 @@ namespace PhuLieuToc.Migrations
                     b.Property<int>("TaiKhoanId")
                         .HasColumnType("int");
 
+                    b.Property<string>("TinhThanh")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<int>("TrangThai")
                         .HasColumnType("int");
+
+                    b.Property<string>("XaPhuong")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -320,6 +331,34 @@ namespace PhuLieuToc.Migrations
                     b.HasIndex("SanPhamChiTietId");
 
                     b.ToTable("HoaDonChiTiets");
+                });
+
+            modelBuilder.Entity("PhuLieuToc.Models.LichSuTrangThaiHoaDon", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("GhiChu")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("HoaDonId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ThoiGianThayDoi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TrangThaiCu")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrangThaiMoi")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HoaDonId");
+
+                    b.ToTable("LichSuTrangThaiHoaDon");
                 });
 
             modelBuilder.Entity("PhuLieuToc.Models.SanPham", b =>
@@ -593,6 +632,17 @@ namespace PhuLieuToc.Migrations
                     b.Navigation("SanPhamChiTiet");
                 });
 
+            modelBuilder.Entity("PhuLieuToc.Models.LichSuTrangThaiHoaDon", b =>
+                {
+                    b.HasOne("PhuLieuToc.Models.HoaDon", "HoaDon")
+                        .WithMany("LichSuTrangThaiHoaDons")
+                        .HasForeignKey("HoaDonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("HoaDon");
+                });
+
             modelBuilder.Entity("PhuLieuToc.Models.SanPham", b =>
                 {
                     b.HasOne("PhuLieuToc.Models.BrandModel", "Brand")
@@ -667,6 +717,8 @@ namespace PhuLieuToc.Migrations
             modelBuilder.Entity("PhuLieuToc.Models.HoaDon", b =>
                 {
                     b.Navigation("HoaDonChiTiets");
+
+                    b.Navigation("LichSuTrangThaiHoaDons");
                 });
 
             modelBuilder.Entity("PhuLieuToc.Models.SanPham", b =>

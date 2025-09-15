@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="utf-8">
+<html lang="vi">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +10,9 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 	<link href="~/css/bootstrap.min.css" rel="stylesheet">
 	<link href="~/css/font-awesome.min.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,400italic,500,700,100" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,800,300,600,700" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
 	<link href="~/css/prettyPhoto.css" rel="stylesheet">
 	<link href="~/css/price-range.css" rel="stylesheet">
 	<link href="~/css/animate.css" rel="stylesheet">
@@ -24,6 +27,37 @@
 			position: relative;
 			box-shadow: 0 4px 15px rgba(153, 177, 143, 0.3);
 			padding: 0;
+		}
+
+		/* Fix dropdown menu display */
+		.dropdown-menu {
+			display: none !important;
+		}
+		
+		.dropdown-menu.show {
+			display: block !important;
+		}
+
+		/* Cart counter badge */
+		.cart-badge {
+			position: absolute;
+			top: -8px;
+			right: -8px;
+			background: #dc3545;
+			color: white;
+			border-radius: 50%;
+			width: 20px;
+			height: 20px;
+			font-size: 12px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: bold;
+		}
+
+		.cart-icon-container {
+			position: relative;
+			display: inline-block;
 		}
 
 			.header-bottom::before {
@@ -992,13 +1026,13 @@
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="logo pull-left">
-							<img src="images/home/logo.jpg" alt="" width="100" height="auto" />
+							<img src="~/images/home/logo.jpg" alt="" width="100" height="auto" />
 						</div>
 						<div class="btn-group pull-right">
 							<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-									USA
-									<span class="caret"></span>
+								<button type="button" class="btn btn-default dropdown-toggle usa" data-bs-toggle="dropdown">
+									Việt Nam
+									<i class="fa fa-chevron-down"></i>
 								</button>
 								<ul class="dropdown-menu">
 									<li><a href="#">Canada</a></li>
@@ -1007,9 +1041,9 @@
 							</div>
 
 							<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-									DOLLAR
-									<span class="caret"></span>
+								<button type="button" class="btn btn-default dropdown-toggle usa" data-bs-toggle="dropdown">
+									VND
+									<i class="fa fa-chevron-down"></i>
 								</button>
 								<ul class="dropdown-menu">
 									<li><a href="#">Canadian Dollar</a></li>
@@ -1023,22 +1057,36 @@
 							<ul class="nav navbar-nav">
 								@if (User.Identity.IsAuthenticated)
 								{
-									<li><a href="#"><i class="fa fa-user"></i> @User.Identity.Name</a></li>
-									<li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-									<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-									<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-									<li><a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fa fa-sign-out"></i> Logout</a></li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+											<i class="fa fa-user"></i> @User.Identity.Name <b class="caret"></b>
+										</a>
+										<ul class="dropdown-menu">
+											<li><a asp-controller="User" asp-action="Profile"><i class="fa fa-user me-2"></i>Thông tin cá nhân</a></li>
+											<li><a asp-controller="User" asp-action="Orders"><i class="fa fa-shopping-bag me-2"></i>Đơn hàng của tôi</a></li>
+											<li class="divider"></li>
+											<li><a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fa fa-sign-out me-2"></i>Đăng xuất</a></li>
+										</ul>
+									</li>
+									<li class="cart-icon-container">
+										<a asp-controller="Cart" asp-action="Index">
+											<i class="fa fa-shopping-cart"></i> Giỏ hàng
+											<span class="cart-badge" id="cartCount">0</span>
+										</a>
+									</li>
 									<form id="logoutForm" method="post" asp-controller="Login" asp-action="Logout" style="display: none;">
 										@Html.AntiForgeryToken()
 									</form>
 								}
 								else
 								{
-									<li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-									<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-									<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-									<li><a asp-controller="Login" asp-action="Index"><i class="fa fa-lock"></i> Login</a></li>
-									<li><a asp-controller="Login" asp-action="Register"><i class="fa fa-user-plus"></i> Register</a></li>
+									<li class="cart-icon-container">
+										<a asp-controller="Cart" asp-action="Index">
+											<i class="fa fa-shopping-cart"></i> Giỏ hàng
+											<span class="cart-badge" id="cartCount">0</span>
+										</a>
+									</li>
+									<li><a asp-controller="Login" asp-action="Index"><i class="fa fa-lock"></i> Đăng nhập</a></li>
 								}
 							</ul>
 						</div>
@@ -1062,28 +1110,27 @@
 						</div>
 						<div class="mainmenu pull-left">
 							<ul id="main-nav" class="nav navbar-nav collapse navbar-collapse">
-								<li><a asp-action="Index" asp-controller="Home">Home</a></li>
+								<li><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
 								<li class="dropdown">
-									<a asp-action="Index" asp-controller="Product">Shop<i class="fa fa-angle-down"></i></a>
+									<a asp-action="Index" asp-controller="Product">Cửa hàng<i class="fa fa-chevron-down"></i></a>
 									<ul role="menu" class="sub-menu">
-										<li><a asp-controller="Category" asp-action="Index">Category</a></li>
-										<li><a asp-action="Index" asp-controller="Product">Product Details</a></li>
-										<li><a asp-action="Index" asp-controller="Cart">Cart</a></li>
+										<li><a asp-controller="Category" asp-action="Index">Danh mục</a></li>
+										<li><a asp-action="Index" asp-controller="Product">Sản phẩm</a></li>
+										<li><a asp-action="Index" asp-controller="Cart">Giỏ hàng</a></li>
 										@if (!User.Identity.IsAuthenticated)
 										{
-											<li><a asp-controller="Login" asp-action="Index">Login</a></li>
+											<li><a asp-controller="Login" asp-action="Index">Đăng nhập</a></li>
 										}
 									</ul>
 								</li>
 								<li class="dropdown">
-									<a href="#">Blog<i class="fa fa-angle-down"></i></a>
+									<a href="#">Blog<i class="fa fa-chevron-down"></i></a>
 									<ul role="menu" class="sub-menu">
-										<li><a href="blog.html">Blog List</a></li>
-										<li><a href="blog-single.html">Blog Single</a></li>
+										<li><a href="blog.html">Danh sách bài viết</a></li>
+										<li><a href="blog-single.html">Chi tiết bài viết</a></li>
 									</ul>
 								</li>
-								<li><a href="404.html">404</a></li>
-								<li><a href="contact-us.html">Contact</a></li>
+								<li><a href="contact-us.html">Liên hệ</a></li>
 							</ul>
 						</div>
 					</div>
@@ -1119,10 +1166,7 @@
 										<p>Khám phá bộ sưu tập phụ kiện tóc độc đáo và tinh tế, được thiết kế đặc biệt để tôn lên vẻ đẹp tự nhiên của bạn. Chất lượng premium, giá cả hợp lý.</p>
 										<button type="button" class="btn get">Khám phá ngay</button>
 									</div>
-									<div class="col-sm-6">
-										<img src="" class="girl img-responsive" alt="Hair Accessories" />
-										<img src="" class="pricing" alt="New" />
-									</div>
+	
 								</div>
 							</div>
 
@@ -1134,10 +1178,7 @@
 										<p>Mỗi sản phẩm đều được chọn lọc kỹ càng từ chất liệu đến thiết kế, đảm bảo mang đến cho bạn những phụ kiện tóc hoàn hảo nhất.</p>
 										<button type="button" class="btn get">Xem bộ sưu tập</button>
 									</div>
-									<div class="col-sm-6">
-										<img src="https://via.placeholder.com/400x300/99b18f/ffffff?text=Hair+Accessories+2" class="girl img-responsive" alt="Hair Accessories" />
-										<img src="https://via.placeholder.com/100x100/ffffff/99b18f?text=SALE" class="pricing" alt="Sale" />
-									</div>
+									
 								</div>
 							</div>
 
@@ -1149,10 +1190,7 @@
 										<p>Từ những chiếc cài tóc đơn giản đến những phụ kiện tóc cầu kỳ, chúng tôi có tất cả để bạn thể hiện phong cách riêng của mình.</p>
 										<button type="button" class="btn get">Mua sắm ngay</button>
 									</div>
-									<div class="col-sm-6">
-										<img src="https://via.placeholder.com/400x300/99b18f/ffffff?text=Hair+Accessories+3" class="girl img-responsive" alt="Hair Accessories" />
-										<img src="https://via.placeholder.com/100x100/ffffff/99b18f?text=HOT" class="pricing" alt="Hot" />
-									</div>
+									
 								</div>
 							</div>
 						</div>
@@ -1288,5 +1326,33 @@
 
 <!-- Bootstrap JS -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
+
+<script>
+	// Cập nhật số lượng giỏ hàng
+	function updateCartCount() {
+		fetch('@Url.Action("GetCartCount", "Cart")')
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					document.getElementById('cartCount').textContent = data.count;
+					if (data.count > 0) {
+						document.getElementById('cartCount').style.display = 'flex';
+					} else {
+						document.getElementById('cartCount').style.display = 'none';
+					}
+				}
+			})
+			.catch(error => {
+				console.error('Error updating cart count:', error);
+			});
+	}
+
+	// Cập nhật số lượng giỏ hàng khi trang load
+	document.addEventListener('DOMContentLoaded', function() {
+		updateCartCount();
+	});
+</script>
 
 </html>

@@ -54,10 +54,6 @@
             {
                 <div class="alert alert-success mb-3">@TempData["Success"]</div>
             }
-            @if (ViewBag.Debug != null)
-            {
-                <div class="alert alert-info mb-3">@ViewBag.Debug</div>
-            }
             <form method="post" asp-controller="Login" asp-action="Index" id="loginForm">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
@@ -65,10 +61,16 @@
                     <label class="form-label"><i class="fa-regular fa-user me-1"></i> Tên đăng nhập</label>
                     <input name="username" class="form-control" autocomplete="username" />
                 </div>
-                <div class="mb-2">
+                <div class="mb-3">
                     <label class="form-label"><i class="fa-solid fa-key me-1"></i> Mật khẩu</label>
-                    <input name="password" type="password" class="form-control" autocomplete="current-password" />
+                    <div class="input-group">
+                        <input name="password" type="password" class="form-control" id="loginPassword" autocomplete="current-password" />
+                        <span class="input-group-text" onclick="togglePassword('loginPassword', this)">
+                            <i class="fa-solid fa-eye"></i>
+                        </span>
+                    </div>
                 </div>
+
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="remember" />
@@ -90,14 +92,26 @@
             const username = document.querySelector('input[name="username"]').value;
             const password = document.querySelector('input[name="password"]').value;
             
-            console.log('Form submitting:', { username, passwordLength: password.length });
-            
             if (!username || !password) {
                 e.preventDefault();
                 alert('Vui lòng nhập đầy đủ thông tin');
                 return false;
             }
+
         });
+        function togglePassword(id, el) {
+            const input = document.getElementById(id);
+            const icon = el.querySelector("i");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
     </script>
 </body>
 </html>

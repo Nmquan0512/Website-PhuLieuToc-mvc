@@ -25,7 +25,7 @@ namespace PhuLieuToc.Areas.Admin.Controllers
             var products = await _context.SanPhams
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
-                .Include(p => p.SanPhamChiTiets)
+                .Include(p => p.SanPhamChiTiets.OrderBy(ct => ct.SanPhamChiTietId))
                 .ToListAsync();
             return View(products);
         }

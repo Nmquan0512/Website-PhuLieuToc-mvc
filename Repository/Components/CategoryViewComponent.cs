@@ -19,8 +19,8 @@ namespace PhuLieuToc.Repository.Components
         {
             // Lấy ra các danh mục cha kèm theo danh mục con (nếu có)
             var categories = await _context.Categorys
-                .Where(c => c.ParentCategoryId == null)
-                .Include(c => c.Children)
+                .Where(c => c.ParentCategoryId == null && c.TrangThai == 1)
+                .Include(c => c.Children.Where(child => child.TrangThai == 1))
                 .ToListAsync();
 
             return View(categories);

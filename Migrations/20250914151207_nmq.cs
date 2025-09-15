@@ -123,8 +123,10 @@ namespace PhuLieuToc.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     HoTen = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     SoDienThoai = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    DiaChiDayDu = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MoTa = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    DiaChiCuThe = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    TinhThanh = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    XaPhuong = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    GhiChu = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false),
                     LaMacDinh = table.Column<bool>(type: "bit", nullable: false),
                     TaiKhoanId = table.Column<int>(type: "int", nullable: false)
@@ -229,6 +231,28 @@ namespace PhuLieuToc.Migrations
                         column: x => x.SanPhamId,
                         principalTable: "SanPhams",
                         principalColumn: "SanPhamId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LichSuTrangThaiHoaDon",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    HoaDonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TrangThaiCu = table.Column<int>(type: "int", nullable: false),
+                    TrangThaiMoi = table.Column<int>(type: "int", nullable: false),
+                    ThoiGianThayDoi = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LichSuTrangThaiHoaDon", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LichSuTrangThaiHoaDon_HoaDons_HoaDonId",
+                        column: x => x.HoaDonId,
+                        principalTable: "HoaDons",
+                        principalColumn: "HoaDonId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -378,6 +402,11 @@ namespace PhuLieuToc.Migrations
                 column: "TaiKhoanId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LichSuTrangThaiHoaDon_HoaDonId",
+                table: "LichSuTrangThaiHoaDon",
+                column: "HoaDonId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SanPhamChiTiets_SanPhamId",
                 table: "SanPhamChiTiets",
                 column: "SanPhamId");
@@ -439,6 +468,9 @@ namespace PhuLieuToc.Migrations
 
             migrationBuilder.DropTable(
                 name: "HoaDonChiTiets");
+
+            migrationBuilder.DropTable(
+                name: "LichSuTrangThaiHoaDon");
 
             migrationBuilder.DropTable(
                 name: "SanPhamChiTietThuocTinhs");

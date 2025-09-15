@@ -1,0 +1,230 @@
+@model PhuLieuToc.Models.TaiKhoan
+
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-user me-2"></i>Thông tin cá nhân
+            </h2>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Thông tin tài khoản</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="UpdateProfile">
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control" value="@Model.TenDangNhap" readonly>
+                                <small class="text-muted">Tên đăng nhập không thể thay đổi</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Vai trò</label>
+                                <input type="text" class="form-control" value="@Model.VaiTro" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label">Email *</label>
+                                <input asp-for="Email" class="form-control" required>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="SoDienThoai" class="form-label">Số điện thoại</label>
+                                <input asp-for="SoDienThoai" class="form-control">
+                                <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ngày tạo</label>
+                                <input type="text" class="form-control" value="@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cập nhật lần cuối</label>
+                                <input type="text" class="form-control" value="@(Model.NgayCapNhat?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa cập nhật")" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Trạng thái</label>
+                            <div>
+                                <span class="badge @(Model.TrangThai ? "bg-success" : "bg-danger")">
+                                    @(Model.TrangThai ? "Hoạt động" : "Bị khóa")
+                                </span>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Cập nhật thông tin
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Đổi mật khẩu</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="ChangePassword" id="changePasswordForm">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label class="form-label">Mật khẩu hiện tại *</label>
+                            <input type="password" name="currentPassword" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mật khẩu mới *</label>
+                            <input type="password" name="newPassword" class="form-control" required minlength="6">
+                            <small class="text-muted">Tối thiểu 6 ký tự</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Xác nhận mật khẩu mới *</label>
+                            <input type="password" name="confirmPassword" class="form-control" required minlength="6">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-key me-2"></i>Đổi mật khẩu
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Menu</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="@Url.Action("Profile")" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-user me-2"></i>Thông tin cá nhân
+                        </a>
+                        <a href="@Url.Action("Orders")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                        </a>
+                        <a href="@Url.Action("Index", "Cart")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-home me-2"></i>Trang chủ
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Địa chỉ giao hàng</h5>
+                </div>
+                <div class="card-body">
+                    <div id="defaultAddress">
+                        <p class="text-muted">Đang tải...</p>
+                    </div>
+                    <div class="d-grid gap-2 mt-3">
+                        <a asp-controller="Address" asp-action="Index" class="btn btn-primary">
+                            <i class="fas fa-map-marker-alt me-2"></i>Quản lý địa chỉ
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Thống kê</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4 class="text-primary mb-1" id="totalOrders">-</h4>
+                            <small class="text-muted">Tổng đơn hàng</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-success mb-1" id="totalSpent">-</h4>
+                            <small class="text-muted">Tổng chi tiêu</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            const newPassword = document.querySelector('input[name="newPassword"]').value;
+            const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+            
+            if (newPassword !== confirmPassword) {
+                e.preventDefault();
+                alert('Mật khẩu mới và xác nhận mật khẩu không khớp');
+                return false;
+            }
+        });
+
+        // Load địa chỉ mặc định
+        fetch('@Url.Action("GetDefaultAddress", "User")')
+            .then(response => response.json())
+            .then(data => {
+                const addressDiv = document.getElementById('defaultAddress');
+                if (data.success && data.address) {
+                    addressDiv.innerHTML = `
+                        <div class="border rounded p-3 bg-light">
+                            <h6 class="mb-2">${data.address.hoTen}</h6>
+                            <p class="mb-1"><i class="fas fa-phone me-2"></i>${data.address.soDienThoai}</p>
+                            <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>${data.address.diaChiDayDu}</p>
+                            ${data.address.ghiChu ? `<small class="text-muted"><i class="fas fa-sticky-note me-1"></i>${data.address.ghiChu}</small>` : ''}
+                        </div>
+                    `;
+                } else {
+                    addressDiv.innerHTML = '<p class="text-muted">Chưa có địa chỉ mặc định</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading address:', error);
+                document.getElementById('defaultAddress').innerHTML = '<p class="text-muted">Lỗi tải địa chỉ</p>';
+            });
+
+        // Load thống kê
+        fetch('@Url.Action("GetUserStats", "User")')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('totalOrders').textContent = data.totalOrders;
+                    document.getElementById('totalSpent').textContent = data.totalSpent.toLocaleString() + ' ₫';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading stats:', error);
+            });
+    </script>
+}

@@ -28,7 +28,7 @@
 							<p style="font-size: 15px; font-weight: bold;">@item.SanPham?.TenSanPham</p>
 
 
-							<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</a>
+							<button class="btn btn-default add-to-cart" onclick="addToCart(@item.SanPhamChiTietId)"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</button>
 
 						</div>
 
@@ -38,7 +38,7 @@
 								<p style="font-size: 15px; font-weight: bold;">@item.SanPham?.TenSanPham</p>
 								<p>@item.SanPham?.MoTa</p>
 								<p>@item.SanPham?.Brand?.TenThuongHieu</p>
-								<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</a>
+								<button class="btn btn-default add-to-cart" onclick="addToCart(@item.SanPhamChiTietId)"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</button>
 
 							</div>
 
@@ -60,4 +60,43 @@
 			}
 		});
 	});
+
+	function addToCart(sanPhamChiTietId) {
+		fetch('@Url.Action("AddToCart", "Cart")', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: `sanPhamChiTietId=${sanPhamChiTietId}&soLuong=1`
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				// Hiển thị thông báo thành công
+				const alertDiv = document.createElement('div');
+				alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+				alertDiv.style.top = '20px';
+				alertDiv.style.right = '20px';
+				alertDiv.style.zIndex = '9999';
+				alertDiv.innerHTML = `
+					<i class="fas fa-check-circle me-2"></i>${data.message}
+					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+				`;
+				document.body.appendChild(alertDiv);
+				
+				// Tự động ẩn sau 3 giây
+				setTimeout(() => {
+					if (alertDiv.parentNode) {
+						alertDiv.parentNode.removeChild(alertDiv);
+					}
+				}, 3000);
+			} else {
+				alert(data.message || 'Có lỗi xảy ra');
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			alert('Có lỗi xảy ra khi thêm vào giỏ hàng');
+		});
+	}
 </script>

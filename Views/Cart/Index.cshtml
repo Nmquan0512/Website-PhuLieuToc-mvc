@@ -1,6 +1,199 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-Gio Hang
+﻿@model PhuLieuToc.Models.ViewModels.CartViewModel
+
 @{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng của bạn
+            </h2>
+        </div>
+    </div>
+
+    @if (Model.Items.Any())
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th>Đơn giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Thành tiền</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Items)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(item.Anh))
+                                                    {
+                                                        <img src="@item.Anh" alt="@item.TenSanPham" class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="me-3 bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 8px;">
+                                                            <i class="fas fa-image text-muted"></i>
+                                                        </div>
+                                                    }
+                                                    <div>
+                                                        <h6 class="mb-1">@item.TenSanPham</h6>
+                                                        <small class="text-muted">
+                                                            @if (!string.IsNullOrEmpty(item.ThuongHieu))
+                                                            {
+                                                                <span>@item.ThuongHieu</span>
+                                                            }
+                                                            @if (!string.IsNullOrEmpty(item.ThuocTinh))
+                                                            {
+                                                                <span> - @item.ThuocTinh</span>
+                                                            }
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-primary">@item.DonGia.ToString("N0") ₫</span>
+                                            </td>
+                                            <td>
+                                                <div class="input-group" style="width: 120px;">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="updateQuantity(@item.GioHangChiTietId, @(item.SoLuong - 1))">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                    <input type="number" class="form-control form-control-sm text-center" value="@item.SoLuong" min="1" max="@item.SoLuongTon" onchange="updateQuantity(@item.GioHangChiTietId, this.value)" style="border-left: none; border-right: none;">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="updateQuantity(@item.GioHangChiTietId, @(item.SoLuong + 1))">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                                <small class="text-muted">Còn: @item.SoLuongTon</small>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold text-success">@item.ThanhTien.ToString("N0") ₫</span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-outline-danger btn-sm" onclick="removeItem(@item.GioHangChiTietId)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Tóm tắt đơn hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tạm tính:</span>
+                            <span>@Model.TotalAmount.ToString("N0") ₫</span>
+                        </div>
+                       
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Tổng cộng:</strong>
+                            <strong class="text-primary fs-5">@Model.TotalAmount.ToString("N0") ₫</strong>
+                        </div>
+                        <div class="d-grid">
+                            <a href="@Url.Action("Checkout")" class="btn btn-primary btn-lg">
+                                <i class="fas fa-credit-card me-2"></i>Thanh toán
+                            </a>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="@Url.Action("Index", "Home")" class="text-decoration-none">
+                                <i class="fas fa-arrow-left me-1"></i>Tiếp tục mua sắm
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">Giỏ hàng trống</h4>
+                    <p class="text-muted">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag me-2"></i>Mua sắm ngay
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function updateQuantity(gioHangChiTietId, soLuong) {
+            if (soLuong < 1) {
+                removeItem(gioHangChiTietId);
+                return;
+            }
+
+            fetch('@Url.Action("UpdateQuantity")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `gioHangChiTietId=${gioHangChiTietId}&soLuong=${soLuong}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra');
+            });
+        }
+
+        function removeItem(gioHangChiTietId) {
+            if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+                return;
+            }
+
+            fetch('@Url.Action("RemoveItem")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `gioHangChiTietId=${gioHangChiTietId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra');
+            });
+        }
+    </script>
 }

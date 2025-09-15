@@ -45,6 +45,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\fonts\\fontawesome-webfont.woff",
+      "PackagePath": "staticwebassets\\fonts\\fontawesome-webfont.woff"
+    },
+    {
       "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\404\\404.png",
       "PackagePath": "staticwebassets\\images\\404\\404.png"
     },
@@ -327,6 +331,14 @@
     {
       "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\js\\price-range.js",
       "PackagePath": "staticwebassets\\js\\price-range.js"
+    },
+    {
+      "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\json\\province.json",
+      "PackagePath": "staticwebassets\\json\\province.json"
+    },
+    {
+      "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\json\\ward.json",
+      "PackagePath": "staticwebassets\\json\\ward.json"
     },
     {
       "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\lib\\bootstrap\\LICENSE",

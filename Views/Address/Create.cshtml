@@ -1,0 +1,219 @@
+@model PhuLieuToc.Models.DiaChiGiaoHang
+
+@{
+    ViewData["Title"] = "Thêm địa chỉ mới";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-plus me-2"></i>Thêm địa chỉ mới</h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Create" method="post" id="addressForm">
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="HoTen" class="form-label">Họ và tên *</label>
+                                <input asp-for="HoTen" class="form-control" required>
+                                <span asp-validation-for="HoTen" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="SoDienThoai" class="form-label">Số điện thoại *</label>
+                                <input asp-for="SoDienThoai" class="form-control" required>
+                                <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DiaChiCuThe" class="form-label">Địa chỉ cụ thể *</label>
+                            <input asp-for="DiaChiCuThe" class="form-control" placeholder="Số nhà, tên đường, tòa nhà..." required>
+                            <span asp-validation-for="DiaChiCuThe" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="TinhThanh" class="form-label">Tỉnh/Thành phố *</label>
+                                <select id="TinhThanh" name="TinhThanh" class="form-select" required>
+                                    <option value="">Chọn tỉnh/thành phố</option>
+                                </select>
+                                <span asp-validation-for="TinhThanh" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="XaPhuong" class="form-label">Xã/Phường *</label>
+                                <select id="XaPhuong" name="XaPhuong" class="form-select" required disabled>
+                                    <option value="">Chọn xã/phường</option>
+                                </select>
+                                <span asp-validation-for="XaPhuong" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GhiChu" class="form-label">Ghi chú</label>
+                            <textarea asp-for="GhiChu" class="form-control" rows="3" placeholder="Ghi chú thêm cho địa chỉ này..."></textarea>
+                            <span asp-validation-for="GhiChu" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input name="LaMacDinh" class="form-check-input" type="checkbox" value="true">
+                            <label class="form-check-label">
+                                Đặt làm địa chỉ mặc định
+                            </label>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Lưu địa chỉ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let provinces = [];
+        let wards = [];
+
+        // Load provinces
+        async function loadProvinces() {
+            try {
+                console.log('Loading provinces...');
+                const response = await fetch('@Url.Action("GetProvinces")');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Provinces data:', data);
+                provinces = data || [];
+                
+                const select = document.getElementById('TinhThanh');
+                if (!select) {
+                    console.error('TinhThanh select element not found');
+                    return;
+                }
+                
+                select.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
+                
+                if (provinces.length > 0) {
+                    provinces.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.name;
+                        option.textContent = province.name_with_type;
+                        select.appendChild(option);
+                    });
+                    console.log('Provinces loaded successfully');
+                } else {
+                    console.warn('No provinces loaded');
+                }
+            } catch (error) {
+                console.error('Error loading provinces:', error);
+                const select = document.getElementById('TinhThanh');
+                if (select) {
+                    select.innerHTML = '<option value="">Lỗi tải danh sách tỉnh</option>';
+                }
+            }
+        }
+
+        // Load wards when province changes
+        async function loadWards(provinceName) {
+            try {
+                const province = provinces.find(p => p.name === provinceName);
+                if (!province) {
+                    console.warn('Province not found:', provinceName);
+                    return;
+                }
+
+                const response = await fetch(`@Url.Action("GetWards")?provinceCode=${province.code}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                wards = data || [];
+                
+                const select = document.getElementById('XaPhuong');
+                select.innerHTML = '<option value="">Chọn xã/phường</option>';
+                select.disabled = false;
+                
+                if (wards.length > 0) {
+                    wards.forEach(ward => {
+                        const option = document.createElement('option');
+                        option.value = ward.name;
+                        option.textContent = ward.name_with_type;
+                        select.appendChild(option);
+                    });
+                } else {
+                    console.warn('No wards loaded for province:', provinceName);
+                    select.innerHTML = '<option value="">Không có xã/phường</option>';
+                }
+            } catch (error) {
+                console.error('Error loading wards:', error);
+                const select = document.getElementById('XaPhuong');
+                select.innerHTML = '<option value="">Lỗi tải danh sách xã/phường</option>';
+                select.disabled = false;
+            }
+        }
+
+        // Event listeners
+        document.getElementById('TinhThanh').addEventListener('change', function() {
+            if (this.value) {
+                loadWards(this.value);
+            } else {
+                document.getElementById('XaPhuong').innerHTML = '<option value="">Chọn xã/phường</option>';
+                document.getElementById('XaPhuong').disabled = true;
+            }
+        });
+
+        // Form submit handler
+        document.getElementById('addressForm').addEventListener('submit', function(e) {
+            console.log('Form submitting...');
+            
+            // Validate required fields
+            const tinhThanh = document.getElementById('TinhThanh').value;
+            const xaPhuong = document.getElementById('XaPhuong').value;
+            
+            if (!tinhThanh) {
+                e.preventDefault();
+                alert('Vui lòng chọn tỉnh/thành phố');
+                return false;
+            }
+            
+            if (!xaPhuong) {
+                e.preventDefault();
+                alert('Vui lòng chọn xã/phường');
+                return false;
+            }
+            
+            const formData = new FormData(this);
+            console.log('Form data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ': ' + value);
+            }
+        });
+
+        // Load provinces on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProvinces();
+        });
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

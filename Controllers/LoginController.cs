@@ -45,10 +45,6 @@ namespace PhuLieuToc.Controllers
 		{
 			try
 			{
-				// Debug logging
-				System.Diagnostics.Debug.WriteLine($"Login attempt: username={username}, password length={password?.Length}");
-				ViewBag.Debug = $"Form submitted: username={username}, password length={password?.Length}";
-				
 				if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
 				{
 					ViewBag.Error = "Vui lòng nhập đầy đủ thông tin";
@@ -66,7 +62,7 @@ namespace PhuLieuToc.Controllers
 			
 			if (!BCrypt.Net.BCrypt.Verify(password, user.MatKhau))
 			{
-				ViewBag.Error = "Mật khẩu không đúng";
+				ViewBag.Error = "Mật khẩu hoặc tài khoản không đúng";
 				return View();
 			}
 
@@ -79,15 +75,20 @@ namespace PhuLieuToc.Controllers
 			};
 			var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 			var principal = new ClaimsPrincipal(identity);
+			
+			System.Diagnostics.Debug.WriteLine("Signing in user...");
 			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+			System.Diagnostics.Debug.WriteLine("User signed in successfully");
 
 			TempData["Success"] = $"Chào mừng {user.TenDangNhap}! Đăng nhập thành công.";
 
 			if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
 			{
+				System.Diagnostics.Debug.WriteLine($"Redirecting to returnUrl: {returnUrl}");
 				return LocalRedirect(returnUrl);
 			}
 
+			System.Diagnostics.Debug.WriteLine("Redirecting to Home/Index");
 			return RedirectToAction("Index", "Home");
 			}
 			catch (Exception ex)
@@ -114,14 +115,45 @@ namespace PhuLieuToc.Controllers
 				return View();
 			}
 
+			// Validate username length
+			if (username.Length < 3)
+			{
+				ViewBag.Error = "Tên đăng nhập phải có ít nhất 3 ký tự";
+				return View();
+			}
+
+			// Validate password length
+			if (password.Length < 6)
+			{
+				ViewBag.Error = "Mật khẩu phải có ít nhất 6 ký tự";
+				return View();
+			}
+
+			// Validate email format
+			if (!email.Contains("@") || !email.Contains("."))
+			{
+				ViewBag.Error = "Email không đúng định dạng";
+				return View();
+			}
+
+			// Check for duplicate username
 			if (await _context.TaiKhoans.AnyAsync(u => u.TenDangNhap == username))
 			{
 				ViewBag.Error = "Tên đăng nhập đã tồn tại";
 				return View();
 			}
+
+			// Check for duplicate email
 			if (await _context.TaiKhoans.AnyAsync(u => u.Email == email))
 			{
 				ViewBag.Error = "Email đã tồn tại";
+				return View();
+			}
+
+			// Check for duplicate phone if provided
+			if (!string.IsNullOrWhiteSpace(phone) && await _context.TaiKhoans.AnyAsync(u => u.SoDienThoai == phone))
+			{
+				ViewBag.Error = "Số điện thoại đã tồn tại";
 				return View();
 			}
 
@@ -152,5 +184,62 @@ namespace PhuLieuToc.Controllers
 
 		[HttpGet]
 		public IActionResult AccessDenied() => View();
+
+		[HttpGet]
+		public async Task<IActionResult> ResetAdminPassword()
+		{
+			try
+			{
+				var admin = await _context.TaiKhoans.FirstOrDefaultAsync(u => u.TenDangNhap == "admin");
+				if (admin != null)
+				{
+					// Reset password to "admin123"
+					admin.MatKhau = BCrypt.Net.BCrypt.HashPassword("admin123");
+					await _context.SaveChangesAsync();
+					return Content("Mật khẩu admin đã được reset thành 'admin123'");
+				}
+				return Content("Không tìm thấy tài khoản admin");
+			}
+			catch (Exception ex)
+			{
+				return Content($"Lỗi: {ex.Message}");
+			}
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> CreateAdmin()
+		{
+			try
+			{
+				// Check if admin already exists
+				var existingAdmin = await _context.TaiKhoans.FirstOrDefaultAsync(u => u.TenDangNhap == "admin");
+				if (existingAdmin != null)
+				{
+					return Content("Tài khoản admin đã tồn tại");
+				}
+
+				// Create new admin account
+				var admin = new TaiKhoan
+				{
+					TenDangNhap = "admin",
+					Email = "admin@phulieutoc.com",
+					MatKhau = BCrypt.Net.BCrypt.HashPassword("admin123"),
+					TrangThai = true,
+					VaiTro = "Admin",
+					SoDienThoai = "0123456789"
+				};
+
+				_context.TaiKhoans.Add(admin);
+				await _context.SaveChangesAsync();
+
+				return Content("Tài khoản admin đã được tạo thành công! Username: admin, Password: admin123");
+			}
+			catch (Exception ex)
+			{
+				return Content($"Lỗi: {ex.Message}");
+			}
+		}
+
+
 	}
 }

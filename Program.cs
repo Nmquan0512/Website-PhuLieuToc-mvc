@@ -11,10 +11,14 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Login";
+        options.LoginPath = "/Login/Index";
         options.AccessDeniedPath = "/Login/AccessDenied";
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
         options.SlidingExpiration = true;
+        options.Cookie.Name = "PhuLieuTocAuth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.Cookie.SameSite = SameSiteMode.Lax;
     });
 
 // Cấu hình DbContext (ví dụ, dùng SQL Server hoặc thay thế theo chuỗi kết nối của bạn)
@@ -59,7 +63,5 @@ app.MapControllerRoute(
 // Redirect legacy short URLs
 app.MapGet("/Register", () => Results.Redirect("/Login/Register"));
 app.MapPost("/Register", () => Results.Redirect("/Login/Register"));
-app.MapGet("/Login", () => Results.Redirect("/Login/Index"));
-app.MapPost("/Login", () => Results.Redirect("/Login/Index"));
 
 app.Run();

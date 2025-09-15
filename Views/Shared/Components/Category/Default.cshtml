@@ -33,7 +33,7 @@
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <!-- Tên danh mục chuyển hướng -->
-                        <a href="@Url.Action("Index", "Category", new { Slug = item.Slug })">
+                        <a href="@Url.Action("Index", "Product", new { categoryId = item.Id })">
                             @item.TenDanhMuc
                         </a>
                         <!-- Nút plus riêng, căn sang bên phải -->
@@ -48,7 +48,7 @@
                             @foreach (var child in item.Children)
                             {
                                 <li>
-                                    <a href="@Url.Action("Index", "Category", new { Slug = child.Slug })">
+                                    <a href="@Url.Action("Index", "Product", new { categoryId = child.Id })">
                                         @child.TenDanhMuc
                                     </a>
                                 </li>
@@ -64,7 +64,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a href="@Url.Action("Index", "Category", new { Slug = item.Slug })">
+                        <a href="@Url.Action("Index", "Product", new { categoryId = item.Id })">
                             @item.TenDanhMuc
                         </a>
                     </h4>

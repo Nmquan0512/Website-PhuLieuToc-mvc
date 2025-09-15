@@ -1,0 +1,369 @@
+@model PhuLieuToc.Models.ViewModels.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-credit-card me-2"></i>Thanh toán
+            </h2>
+        </div>
+    </div>
+
+    <form method="post" asp-action="Checkout" id="checkoutForm">
+        @Html.AntiForgeryToken()
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Thông tin giao hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Chọn địa chỉ giao hàng</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <select id="addressSelect" class="form-select" onchange="loadSelectedAddress()">
+                                        <option value="">Chọn địa chỉ có sẵn</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <a asp-controller="Address" asp-action="Index" class="btn btn-outline-primary">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Quản lý địa chỉ
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TenKhachHang" class="form-label">Họ và tên *</label>
+                                <input asp-for="TenKhachHang" class="form-control" required>
+                                <span asp-validation-for="TenKhachHang" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="SoDienThoai" class="form-label">Số điện thoại *</label>
+                                <input asp-for="SoDienThoai" class="form-control" required>
+                                <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DiaChiGiaoHang" class="form-label">Địa chỉ giao hàng *</label>
+                            <textarea asp-for="DiaChiGiaoHang" class="form-control" rows="3" required placeholder="Nhập địa chỉ chi tiết..."></textarea>
+                            <span asp-validation-for="DiaChiGiaoHang" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GhiChu" class="form-label">Ghi chú</label>
+                            <textarea asp-for="GhiChu" class="form-control" rows="2" placeholder="Ghi chú thêm cho đơn hàng..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Phương thức thanh toán</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="payment-method">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="PhuongThucThanhToan" id="cod" value="COD" checked>
+                                        <label class="form-check-label" for="cod">
+                                            <i class="fas fa-money-bill-wave me-2"></i>
+                                            <strong>Thanh toán khi nhận hàng (COD)</strong>
+                                            <br>
+                                            <small class="text-muted">Thanh toán bằng tiền mặt khi nhận hàng</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="payment-method">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="PhuongThucThanhToan" id="vnpay" value="VNPay">
+                                        <label class="form-check-label" for="vnpay">
+                                            <i class="fas fa-credit-card me-2"></i>
+                                            <strong>Thanh toán VNPay</strong>
+                                            <br>
+                                            <small class="text-muted">Thanh toán online qua VNPay</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="order-summary">
+                    <h5 class="mb-4"><i class="fas fa-shopping-bag me-2"></i>Đơn hàng của bạn</h5>
+                    @foreach (var item in Model.Cart.Items)
+                    {
+                        <div class="product-item">
+                            <div class="d-flex align-items-center">
+                                @if (!string.IsNullOrEmpty(item.Anh))
+                                {
+                                    <img src="@item.Anh" alt="@item.TenSanPham" class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                }
+                                else
+                                {
+                                    <div class="me-3 bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; border-radius: 8px;">
+                                        <i class="fas fa-image text-muted"></i>
+                                    </div>
+                                }
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">@item.TenSanPham</h6>
+                                    <small class="text-muted">Số lượng: @item.SoLuong</small>
+                                </div>
+                                <div class="text-end">
+                                    <strong class="text-primary">@item.ThanhTien.ToString("N0") ₫</strong>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Tạm tính:</span>
+                        <span>@Model.Cart.TotalAmount.ToString("N0") ₫</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Phí vận chuyển:</span>
+                        <span class="text-success">Miễn phí</span>
+                    </div>
+                    <hr>
+                    <div class="total-amount">
+                        <div>Tổng cộng: <strong>@Model.Cart.TotalAmount.ToString("N0") ₫</strong></div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-check me-2"></i>Đặt hàng
+                        </button>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <a href="@Url.Action("Index")" class="text-decoration-none">
+                            <i class="fas fa-arrow-left me-1"></i>Quay lại giỏ hàng
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .checkout-form {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(122,148,112,0.1);
+    }
+
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        border-color: #7a9470;
+        box-shadow: 0 0 0 0.2rem rgba(122,148,112,0.25);
+        transform: translateY(-2px);
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #7a9470, #99b18f);
+        border: none;
+        border-radius: 10px;
+        padding: 15px 30px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #6b835f, #7a9470);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(122,148,112,0.3);
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(122,148,112,0.1);
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #7a9470, #99b18f);
+        color: white;
+        border: none;
+        padding: 20px 25px;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .form-check-input:checked {
+        background-color: #7a9470;
+        border-color: #7a9470;
+    }
+
+    .form-check-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .payment-method {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .payment-method:hover {
+        border-color: #7a9470;
+        background-color: rgba(122,148,112,0.05);
+    }
+
+    .payment-method.selected {
+        border-color: #7a9470;
+        background-color: rgba(122,148,112,0.1);
+    }
+
+    .order-summary {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(122,148,112,0.1);
+    }
+
+    .product-item {
+        border-bottom: 1px solid #e9ecef;
+        padding: 15px 0;
+    }
+
+    .product-item:last-child {
+        border-bottom: none;
+    }
+
+    .total-amount {
+        background: linear-gradient(135deg, #7a9470, #99b18f);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            const tenKhachHang = document.querySelector('input[name="TenKhachHang"]').value;
+            const soDienThoai = document.querySelector('input[name="SoDienThoai"]').value;
+            const diaChiGiaoHang = document.querySelector('textarea[name="DiaChiGiaoHang"]').value;
+            
+            if (!tenKhachHang || !soDienThoai || !diaChiGiaoHang) {
+                e.preventDefault();
+                alert('Vui lòng điền đầy đủ thông tin bắt buộc');
+                return false;
+            }
+            
+            if (soDienThoai.length < 10) {
+                e.preventDefault();
+                alert('Số điện thoại không hợp lệ');
+                return false;
+            }
+        });
+
+        // Payment method selection
+        document.querySelectorAll('input[name="PhuongThucThanhToan"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.payment-method').forEach(method => {
+                    method.classList.remove('selected');
+                });
+                this.closest('.payment-method').classList.add('selected');
+            });
+        });
+
+        // Initialize first payment method as selected
+        document.querySelector('input[name="PhuongThucThanhToan"]:checked').closest('.payment-method').classList.add('selected');
+
+        // Load addresses
+        loadAddresses();
+
+        function loadAddresses() {
+            fetch('@Url.Action("GetAddresses", "Address")')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('addressSelect');
+                    select.innerHTML = '<option value="">Chọn địa chỉ có sẵn</option>';
+                    
+                    if (data.success && data.addresses.length > 0) {
+                        data.addresses.forEach(address => {
+                            const option = document.createElement('option');
+                            option.value = address.id;
+                            option.textContent = `${address.hoTen} - ${address.diaChiDayDu}`;
+                            if (address.laMacDinh) {
+                                option.textContent += ' (Mặc định)';
+                                option.selected = true;
+                                loadSelectedAddress();
+                            }
+                            select.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading addresses:', error);
+                });
+        }
+
+        function loadSelectedAddress() {
+            const select = document.getElementById('addressSelect');
+            const addressId = select.value;
+            
+            if (addressId) {
+                fetch(`@Url.Action("GetAddress", "Address")?id=${addressId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.address) {
+                            document.querySelector('input[name="TenKhachHang"]').value = data.address.hoTen;
+                            document.querySelector('input[name="SoDienThoai"]').value = data.address.soDienThoai;
+                            document.querySelector('textarea[name="DiaChiGiaoHang"]').value = data.address.diaChiDayDu;
+                            if (data.address.ghiChu) {
+                                document.querySelector('textarea[name="GhiChu"]').value = data.address.ghiChu;
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading address details:', error);
+                    });
+            }
+        }
+    </script>
+}

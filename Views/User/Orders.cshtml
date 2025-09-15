@@ -1,0 +1,208 @@
+@model IEnumerable<PhuLieuToc.Models.ViewModels.OrderStatusViewModel>
+
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+            </h2>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Menu</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="@Url.Action("Profile")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user me-2"></i>Thông tin cá nhân
+                        </a>
+                        <a href="@Url.Action("Orders")" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-shopping-bag me-2"></i>Đơn hàng của tôi
+                        </a>
+                        <a href="@Url.Action("Index", "Cart")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-home me-2"></i>Trang chủ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            @if (Model.Any())
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thanh toán</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>#@order.HoaDonId.ToString().Substring(0, 8).ToUpper()</strong>
+                                            </td>
+                                            <td>@order.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+                                            <td>
+                                                <strong class="text-primary">@order.TongTien.ToString("N0") ₫</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge @GetStatusBadgeClass(order.TrangThai)">
+                                                    @order.TrangThaiText
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @(order.PhuongThucThanhToan == "COD" ? "bg-warning" : "bg-info")">
+                                                    @order.PhuongThucThanhToan
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="@Url.Action("OrderDetails", new { orderId = order.HoaDonId })" 
+                                                       class="btn btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @if (order.TrangThai <= 1)
+                                                    {
+                                                        <button class="btn btn-outline-danger" 
+                                                                onclick="cancelOrder('@order.HoaDonId')">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Chưa có đơn hàng nào</h4>
+                        <p class="text-muted">Bạn chưa có đơn hàng nào. Hãy bắt đầu mua sắm!</p>
+                        <a href="@Url.Action("Index", "Product")" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag me-2"></i>Mua sắm ngay
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(int status)
+    {
+        return status switch
+        {
+            0 => "bg-warning",
+            1 => "bg-info", 
+            2 => "bg-primary",
+            3 => "bg-success",
+            4 => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        function cancelOrder(orderId) {
+            if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+                return;
+            }
+
+            fetch('@Url.Action("CancelOrder")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `orderId=${orderId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Hiển thị thông báo thành công
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                    alertDiv.style.top = '20px';
+                    alertDiv.style.right = '20px';
+                    alertDiv.style.zIndex = '9999';
+                    alertDiv.innerHTML = `
+                        <i class="fas fa-check-circle me-2"></i>${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    document.body.appendChild(alertDiv);
+                    
+                    // Tự động ẩn sau 3 giây
+                    setTimeout(() => {
+                        if (alertDiv.parentNode) {
+                            alertDiv.parentNode.removeChild(alertDiv);
+                        }
+                    }, 3000);
+
+                    // Reload trang sau 1 giây
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi hủy đơn hàng');
+            });
+        }
+
+        // Auto refresh trang mỗi 30 giây để cập nhật trạng thái real-time
+        setInterval(() => {
+            // Chỉ refresh nếu không có modal hoặc form đang mở
+            if (!document.querySelector('.modal.show') && !document.querySelector('form:focus')) {
+                location.reload();
+            }
+        }, 30000);
+    </script>
+}
