@@ -39,10 +39,9 @@ namespace PhuLieuToc.Models
         [StringLength(50)]
         public string? PhuongThucThanhToan { get; set; }
 
-        [Required]
         [ForeignKey("TaiKhoan")]
-        public int TaiKhoanId { get; set; }
-        public TaiKhoan TaiKhoan { get; set; }
+        public int? TaiKhoanId { get; set; }
+        public TaiKhoan? TaiKhoan { get; set; }
 
         public ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; } = new List<HoaDonChiTiet>();
 

@@ -38,7 +38,7 @@
                                                 <div class="d-flex align-items-center">
                                                     @if (!string.IsNullOrEmpty(item.Anh))
                                                     {
-                                                        <img src="@item.Anh" alt="@item.TenSanPham" class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                                        <img src="@Url.Content(item.Anh)" alt="@item.TenSanPham" class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
                                                     }
                                                     else
                                                     {

@@ -12,7 +12,7 @@ using PhuLieuToc.Repository;
 namespace PhuLieuToc.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250914151207_nmq")]
+    [Migration("20250915145228_nmq")]
     partial class nmq
     {
         /// <inheritdoc />
@@ -264,7 +264,7 @@ namespace PhuLieuToc.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<int>("TaiKhoanId")
+                    b.Property<int?>("TaiKhoanId")
                         .HasColumnType("int");
 
                     b.Property<string>("TenKhachHang")
@@ -361,7 +361,7 @@ namespace PhuLieuToc.Migrations
 
                     b.HasIndex("HoaDonId");
 
-                    b.ToTable("LichSuTrangThaiHoaDon");
+                    b.ToTable("LichSuTrangThaiHoaDons");
                 });
 
             modelBuilder.Entity("PhuLieuToc.Models.SanPham", b =>
@@ -609,9 +609,7 @@ namespace PhuLieuToc.Migrations
                 {
                     b.HasOne("PhuLieuToc.Models.TaiKhoan", "TaiKhoan")
                         .WithMany("HoaDons")
-                        .HasForeignKey("TaiKhoanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TaiKhoanId");
 
                     b.Navigation("TaiKhoan");
                 });

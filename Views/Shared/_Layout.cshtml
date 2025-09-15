@@ -1059,11 +1059,15 @@
 								{
 									<li class="dropdown">
 										<a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
-											<i class="fa fa-user"></i> @User.Identity.Name <b class="caret"></b>
+											<i class="fa fa-user"></i> @User.Identity.Name
 										</a>
 										<ul class="dropdown-menu">
 											<li><a asp-controller="User" asp-action="Profile"><i class="fa fa-user me-2"></i>Thông tin cá nhân</a></li>
 											<li><a asp-controller="User" asp-action="Orders"><i class="fa fa-shopping-bag me-2"></i>Đơn hàng của tôi</a></li>
+											@if (User.IsInRole("Admin"))
+											{
+												<li><a asp-area="Admin" asp-controller="Home" asp-action="Index"><i class="fa fa-tools me-2"></i>Trang quản trị</a></li>
+											}
 											<li class="divider"></li>
 											<li><a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fa fa-sign-out me-2"></i>Đăng xuất</a></li>
 										</ul>
@@ -1114,7 +1118,7 @@
 								<li class="dropdown">
 									<a asp-action="Index" asp-controller="Product">Cửa hàng<i class="fa fa-chevron-down"></i></a>
 									<ul role="menu" class="sub-menu">
-										<li><a asp-controller="Category" asp-action="Index">Danh mục</a></li>
+										<li><a asp-controller="Home" asp-action="Categories">Danh mục</a></li>
 										<li><a asp-action="Index" asp-controller="Product">Sản phẩm</a></li>
 										<li><a asp-action="Index" asp-controller="Cart">Giỏ hàng</a></li>
 										@if (!User.Identity.IsAuthenticated)
@@ -1123,14 +1127,8 @@
 										}
 									</ul>
 								</li>
-								<li class="dropdown">
-									<a href="#">Blog<i class="fa fa-chevron-down"></i></a>
-									<ul role="menu" class="sub-menu">
-										<li><a href="blog.html">Danh sách bài viết</a></li>
-										<li><a href="blog-single.html">Chi tiết bài viết</a></li>
-									</ul>
-								</li>
-								<li><a href="contact-us.html">Liên hệ</a></li>
+								<li><a asp-controller="Home" asp-action="Blog">Blog</a></li>
+								<li><a asp-controller="Home" asp-action="Contact">Liên hệ</a></li>
 							</ul>
 						</div>
 					</div>
@@ -1325,7 +1323,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- Bootstrap JS -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<!-- Removed Bootstrap 3 to avoid conflicts with Bootstrap 5 modal -->
 
 @await RenderSectionAsync("Scripts", required: false)
 
@@ -1353,6 +1351,43 @@
 	document.addEventListener('DOMContentLoaded', function() {
 		updateCartCount();
 	});
+
+    // Toast container (non-blocking, auto hide)
+    (function ensureToastContainer(){
+        if (document.getElementById('toastContainer')) return;
+        const c = document.createElement('div');
+        c.id = 'toastContainer';
+        c.className = 'position-fixed top-0 end-0 p-3';
+        c.style.zIndex = '1080';
+        c.style.pointerEvents = 'none';
+        document.body.appendChild(c);
+    })();
+
+    window.showToast = function(message, type = 'success') {
+        const container = document.getElementById('toastContainer') || (function(){
+            const c = document.createElement('div');
+            c.id = 'toastContainer';
+            c.className = 'position-fixed top-0 end-0 p-3';
+            c.style.zIndex = '1080';
+            c.style.pointerEvents = 'none';
+            document.body.appendChild(c);
+            return c;
+        })();
+
+        const toastEl = document.createElement('div');
+        toastEl.className = 'toast align-items-center text-bg-' + (type === 'success' ? 'success' : 'secondary') + ' border-0 show';
+        toastEl.role = 'alert';
+        toastEl.ariaLive = 'assertive';
+        toastEl.ariaAtomic = 'true';
+        toastEl.style.pointerEvents = 'auto';
+        toastEl.innerHTML = '<div class="d-flex"><div class="toast-body">' + message + '</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>';
+        container.appendChild(toastEl);
+
+        // Auto-hide after 2s
+        setTimeout(() => {
+            if (toastEl && toastEl.parentNode) toastEl.parentNode.removeChild(toastEl);
+        }, 2000);
+    }
 </script>
 
 </html>

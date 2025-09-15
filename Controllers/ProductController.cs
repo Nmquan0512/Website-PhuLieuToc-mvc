@@ -16,30 +16,26 @@ namespace PhuLieuToc.Controllers
 
 		public async Task<IActionResult> Index(int? categoryId, int? brandId, string? search)
 		{
-			var query = _context.SanPhamChiTiets
-				.Include(s => s.SanPham)
-					.ThenInclude(p => p.Category)
-				.Include(s => s.SanPham)
-					.ThenInclude(p => p.Brand)
-				.Include(s => s.SanPhamChiTietThuocTinhs)
-					.ThenInclude(t => t.GiaTriThuocTinh)
-				.Where(s => s.TrangThai == 1 && s.SanPham.TrangThai == 1);
+			var query = _context.SanPhams
+				.Include(p => p.Category)
+				.Include(p => p.Brand)
+				.Include(p => p.SanPhamChiTiets)
+				.Where(p => p.TrangThai == 1);
 
             if (categoryId.HasValue)
             {
-                // Lấy danh mục và tất cả danh mục con
                 var categoryIds = await GetCategoryAndChildrenIds(categoryId.Value);
-                query = query.Where(s => categoryIds.Contains(s.SanPham.CategoryId));
+                query = query.Where(p => categoryIds.Contains(p.CategoryId));
             }
 
 			if (brandId.HasValue)
 			{
-				query = query.Where(s => s.SanPham.BrandId == brandId.Value);
+				query = query.Where(p => p.BrandId == brandId.Value);
 			}
 
 			if (!string.IsNullOrEmpty(search))
 			{
-				query = query.Where(s => s.SanPham.TenSanPham.Contains(search));
+				query = query.Where(p => p.TenSanPham.Contains(search));
 			}
 
             var products = await query.ToListAsync();
@@ -50,11 +46,9 @@ namespace PhuLieuToc.Controllers
             ViewBag.SelectedBrandId = brandId;
             ViewBag.SearchTerm = search;
 
-            // Lấy tên danh mục đã chọn
             if (categoryId.HasValue)
             {
-                var selectedCategory = await _context.Categorys
-                    .FirstOrDefaultAsync(c => c.Id == categoryId.Value);
+                var selectedCategory = await _context.Categorys.FirstOrDefaultAsync(c => c.Id == categoryId.Value);
                 ViewBag.SelectedCategoryName = selectedCategory?.TenDanhMuc;
             }
 
@@ -89,6 +83,30 @@ namespace PhuLieuToc.Controllers
 			ViewBag.RelatedVariants = relatedVariants;
 
             return View(product);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetVariants(int productId)
+        {
+            var variants = await _context.SanPhamChiTiets
+                .Include(v => v.SanPhamChiTietThuocTinhs)
+                    .ThenInclude(t => t.GiaTriThuocTinh)
+                        .ThenInclude(g => g.ThuocTinh)
+                .Where(v => v.SanPhamId == productId && v.TrangThai == 1)
+                .Select(v => new {
+                    id = v.SanPhamChiTietId,
+                    gia = v.Gia,
+                    soLuongTon = v.SoLuongTon,
+                    anh = v.Anh,
+                    thuocTinh = v.SanPhamChiTietThuocTinhs.Select(t => new { loai = t.GiaTriThuocTinh.ThuocTinh.TenThuocTinh, giaTri = t.GiaTriThuocTinh.TenGiaTri })
+                })
+                .ToListAsync();
+
+            var prices = variants.Select(v => v.gia).ToList();
+            var min = prices.Count > 0 ? prices.Min() : 0;
+            var max = prices.Count > 0 ? prices.Max() : 0;
+
+            return Json(new { success = true, variants, minPrice = min, maxPrice = max });
         }
 
         private async Task<List<int>> GetCategoryAndChildrenIds(int categoryId)

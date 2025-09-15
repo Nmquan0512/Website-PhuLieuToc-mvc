@@ -221,14 +221,30 @@ namespace PhuLieuToc.Controllers
                     return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
                 }
 
-                // Chỉ cho phép hủy đơn hàng khi đang chờ duyệt hoặc đã duyệt
-                if (order.TrangThai > 1)
+                // Chỉ cho phép hủy đơn hàng khi trạng thái là Chờ duyệt (0)
+                if (order.TrangThai != 0)
                 {
                     return Json(new { success = false, message = "Không thể hủy đơn hàng ở trạng thái này" });
                 }
 
+                var oldStatus = order.TrangThai;
                 order.TrangThai = 4; // Đã hủy
                 order.NgayCapNhat = DateTime.Now;
+
+                // Ghi lịch sử trạng thái (an toàn nếu chưa có bảng)
+                try
+                {
+                    _context.LichSuTrangThaiHoaDons.Add(new LichSuTrangThaiHoaDon
+                    {
+                        Id = Guid.NewGuid(),
+                        HoaDonId = order.HoaDonId,
+                        TrangThaiCu = oldStatus,
+                        TrangThaiMoi = 4,
+                        ThoiGianThayDoi = DateTime.Now,
+                        GhiChu = "Người dùng hủy đơn"
+                    });
+                }
+                catch { }
 
                 // Hoàn lại số lượng tồn kho
                 var orderDetails = await _context.HoaDonChiTiets

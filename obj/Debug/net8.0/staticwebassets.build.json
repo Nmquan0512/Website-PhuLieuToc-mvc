@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "erWP8F5OezhuFgycxqZX0ynJ/N9oTgmOAGtsdVwEpRI=",
+  "Hash": "/JM2GmBb+4VFDLTkTOVWZytchOLWeUHbPtTD0Vj3mnk=",
   "Source": "PhuLieuToc",
   "BasePath": "_content/PhuLieuToc",
   "Mode": "Default",
@@ -1081,25 +1081,6 @@
       "OriginalItemSpec": "wwwroot\\images\\home\\sale.png"
     },
     {
-      "Identity": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\home\\sanpham1.jpg",
-      "SourceId": "PhuLieuToc",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\",
-      "BasePath": "_content/PhuLieuToc",
-      "RelativePath": "images/home/sanpham1.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\home\\sanpham1.jpg"
-    },
-    {
       "Identity": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\home\\searchicon.png",
       "SourceId": "PhuLieuToc",
       "SourceType": "Discovered",
@@ -1136,25 +1117,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\home\\shipping.jpg"
-    },
-    {
-      "Identity": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\home\\thuoc-nhuom-do-ruby.jpg",
-      "SourceId": "PhuLieuToc",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\",
-      "BasePath": "_content/PhuLieuToc",
-      "RelativePath": "images/home/thuoc-nhuom-do-ruby.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\home\\thuoc-nhuom-do-ruby.jpg"
     },
     {
       "Identity": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\product-details\\1.jpg",
@@ -2732,6 +2694,44 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\uploads\\variants\\spct_8_tinhdaukerastase1-25072025153044.jpg",
+      "SourceId": "PhuLieuToc",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\",
+      "BasePath": "_content/PhuLieuToc",
+      "RelativePath": "uploads/variants/spct_8_tinhdaukerastase1-25072025153044.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\variants\\spct_8_tinhdaukerastase1-25072025153044.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\uploads\\variants\\spct_9_95505-body- (6).jpg",
+      "SourceId": "PhuLieuToc",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\",
+      "BasePath": "_content/PhuLieuToc",
+      "RelativePath": "uploads/variants/spct_9_95505-body- (6).jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\variants\\spct_9_95505-body- (6).jpg"
     }
   ]
 }

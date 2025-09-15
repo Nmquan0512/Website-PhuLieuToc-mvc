@@ -176,7 +176,7 @@ namespace PhuLieuToc.Migrations
                     NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NgayCapNhat = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PhuongThucThanhToan = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    TaiKhoanId = table.Column<int>(type: "int", nullable: false)
+                    TaiKhoanId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -185,8 +185,7 @@ namespace PhuLieuToc.Migrations
                         name: "FK_HoaDons_TaiKhoans_TaiKhoanId",
                         column: x => x.TaiKhoanId,
                         principalTable: "TaiKhoans",
-                        principalColumn: "TaiKhoanId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "TaiKhoanId");
                 });
 
             migrationBuilder.CreateTable(
@@ -235,7 +234,7 @@ namespace PhuLieuToc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LichSuTrangThaiHoaDon",
+                name: "LichSuTrangThaiHoaDons",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -247,9 +246,9 @@ namespace PhuLieuToc.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LichSuTrangThaiHoaDon", x => x.Id);
+                    table.PrimaryKey("PK_LichSuTrangThaiHoaDons", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LichSuTrangThaiHoaDon_HoaDons_HoaDonId",
+                        name: "FK_LichSuTrangThaiHoaDons_HoaDons_HoaDonId",
                         column: x => x.HoaDonId,
                         principalTable: "HoaDons",
                         principalColumn: "HoaDonId",
@@ -402,8 +401,8 @@ namespace PhuLieuToc.Migrations
                 column: "TaiKhoanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LichSuTrangThaiHoaDon_HoaDonId",
-                table: "LichSuTrangThaiHoaDon",
+                name: "IX_LichSuTrangThaiHoaDons_HoaDonId",
+                table: "LichSuTrangThaiHoaDons",
                 column: "HoaDonId");
 
             migrationBuilder.CreateIndex(
@@ -470,7 +469,7 @@ namespace PhuLieuToc.Migrations
                 name: "HoaDonChiTiets");
 
             migrationBuilder.DropTable(
-                name: "LichSuTrangThaiHoaDon");
+                name: "LichSuTrangThaiHoaDons");
 
             migrationBuilder.DropTable(
                 name: "SanPhamChiTietThuocTinhs");

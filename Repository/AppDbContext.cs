@@ -90,6 +90,7 @@ namespace PhuLieuToc.Repository
 		public DbSet<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
         public DbSet<GioHang> GioHangs { get; set; }
         public DbSet<GioHangChiTiet> GioHangChiTiets { get; set; }
+        public DbSet<LichSuTrangThaiHoaDon> LichSuTrangThaiHoaDons { get; set; }
 
 
 

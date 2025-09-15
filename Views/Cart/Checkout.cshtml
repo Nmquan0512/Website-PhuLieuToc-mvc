@@ -15,6 +15,11 @@
 
     <form method="post" asp-action="Checkout" id="checkoutForm">
         @Html.AntiForgeryToken()
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
         
         <div class="row">
             <div class="col-lg-8">
@@ -323,7 +328,7 @@
                 .then(data => {
                     const select = document.getElementById('addressSelect');
                     select.innerHTML = '<option value="">Chọn địa chỉ có sẵn</option>';
-                    
+                    let defaultId = null;
                     if (data.success && data.addresses.length > 0) {
                         data.addresses.forEach(address => {
                             const option = document.createElement('option');
@@ -331,11 +336,14 @@
                             option.textContent = `${address.hoTen} - ${address.diaChiDayDu}`;
                             if (address.laMacDinh) {
                                 option.textContent += ' (Mặc định)';
-                                option.selected = true;
-                                loadSelectedAddress();
+                                defaultId = address.id;
                             }
                             select.appendChild(option);
                         });
+                        if (defaultId) {
+                            select.value = defaultId;
+                            loadSelectedAddress();
+                        }
                     }
                 })
                 .catch(error => {

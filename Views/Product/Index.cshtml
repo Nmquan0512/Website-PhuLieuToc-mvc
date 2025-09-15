@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PhuLieuToc.Models.SanPhamChiTiet>
+﻿@model IEnumerable<PhuLieuToc.Models.SanPham>
 
 @{
     ViewData["Title"] = "Sản phẩm";
@@ -76,9 +76,10 @@
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                     <div class="card h-100 product-card">
                         <div class="product-image-container">
-                            @if (!string.IsNullOrEmpty(product.Anh))
+                            @{ var firstVariant = product.SanPhamChiTiets?.Where(v => v.TrangThai == 1).OrderBy(v => v.SanPhamChiTietId).FirstOrDefault(); }
+                            @if (!string.IsNullOrEmpty(firstVariant?.Anh))
                             {
-                                <img src="@product.Anh" alt="@product.SanPham.TenSanPham" class="card-img-top product-image">
+                                <img src="@Url.Content(firstVariant.Anh)" alt="@product.TenSanPham" class="card-img-top product-image" style="width:100%;height:200px;object-fit:cover;">
                             }
                             else
                             {
@@ -87,39 +88,39 @@
                                 </div>
                             }
                             <div class="product-overlay">
-                                <a href="@Url.Action("Details", new { id = product.SanPhamChiTietId })" class="btn btn-primary btn-sm">
+                                @if (firstVariant != null) {
+                                <a href="@Url.Action("Details", new { id = firstVariant.SanPhamChiTietId })" class="btn btn-primary btn-sm">
                                     <i class="fas fa-eye me-1"></i>Xem chi tiết
                                 </a>
+                                }
                             </div>
                         </div>
                         <div class="card-body d-flex flex-column">
-                            <h6 class="card-title">@product.SanPham.TenSanPham</h6>
+                            <h6 class="card-title">@product.TenSanPham</h6>
                             
-                            @if (product.SanPhamChiTietThuocTinhs.Any())
+                            @if (firstVariant?.SanPhamChiTietThuocTinhs != null && firstVariant.SanPhamChiTietThuocTinhs.Any())
                             {
-                                <p class="card-text text-muted small">
-                                    @string.Join(", ", product.SanPhamChiTietThuocTinhs.Select(t => t.GiaTriThuocTinh.TenGiaTri))
-                                </p>
+                                <p class="card-text text-muted small">@string.Join(", ", firstVariant.SanPhamChiTietThuocTinhs.Select(t => t.GiaTriThuocTinh.TenGiaTri))</p>
                             }
                             
-                            @if (!string.IsNullOrEmpty(product.SanPham.Brand?.TenThuongHieu))
+                            @if (!string.IsNullOrEmpty(product.Brand?.TenThuongHieu))
                             {
                                 <p class="card-text">
                                     <small class="text-muted">
-                                        <i class="fas fa-tag me-1"></i>@product.SanPham.Brand.TenThuongHieu
+                                        <i class="fas fa-tag me-1"></i>@product.Brand.TenThuongHieu
                                     </small>
                                 </p>
                             }
                             
                             <div class="mt-auto">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="h5 text-primary mb-0">@product.Gia.ToString("N0") ₫</span>
-                                    <small class="text-muted">Còn: @product.SoLuongTon</small>
+                                    <span class="h5 text-primary mb-0">@(firstVariant?.Gia.ToString("N0") ?? "0") ₫</span>
+                                    <small class="text-muted">Còn: @(firstVariant?.SoLuongTon ?? 0)</small>
                                 </div>
                                 
-                                @if (product.SoLuongTon > 0)
+                                @if ((firstVariant?.SoLuongTon ?? 0) > 0)
                                 {
-                                    <button class="btn btn-outline-primary w-100" onclick="addToCart(@product.SanPhamChiTietId)">
+                                    <button class="btn btn-outline-primary w-100" onclick="openVariantOrAdd(@product.SanPhamId, @firstVariant.SanPhamChiTietId)">
                                         <i class="fas fa-shopping-cart me-1"></i>Thêm vào giỏ
                                     </button>
                                 }
@@ -201,6 +202,68 @@
 
 @section Scripts {
     <script>
+        async function openVariantOrAdd(productId, defaultVariantId) {
+            try {
+                const res = await fetch('@Url.Action("GetVariants","Product")' + `?productId=${productId}`);
+                const data = await res.json();
+                if (!data.success) return addToCart(defaultVariantId);
+                if (!data.variants || data.variants.length === 0) return addToCart(defaultVariantId);
+                if (data.variants.length === 1) {
+                    const onlyId = data.variants[0]?.id || defaultVariantId;
+                    return addToCart(onlyId);
+                }
+
+                const variants = data.variants;
+                const html = `
+<div class="modal fade" id="variantModal" tabindex="-1">
+ <div class="modal-dialog">
+  <div class="modal-content">
+   <div class="modal-header"><h5 class="modal-title">Chọn biến thể</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+   <div class="modal-body">
+     ${variants.map(v => `<div class='form-check'>
+        <input class='form-check-input' type='radio' name='variantOption' value='${v.id}' id='v_${v.id}'>
+        <label class='form-check-label' for='v_${v.id}'>${v.thuocTinh.map(t=>`${t.loai}: ${t.giaTri}`).join(', ')} - ${Number(v.gia).toLocaleString()} (${v.soLuongTon} tồn)</label>
+     </div>`).join('')}
+   </div>
+   <div class="modal-footer">
+     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+     <button type="button" class="btn btn-primary" id="variantAddBtn">Thêm vào giỏ</button>
+   </div>
+  </div>
+ </div>
+</div>`;
+                const container = document.createElement('div');
+                container.style.position = 'relative';
+                container.style.zIndex = '1056';
+                container.innerHTML = html;
+                document.body.appendChild(container);
+                const modalEl = container.querySelector('#variantModal');
+                const modal = new bootstrap.Modal(modalEl, {backdrop:true,focus:true});
+                container.querySelector('#variantAddBtn').addEventListener('click', () => {
+                    const checked = container.querySelector("input[name='variantOption']:checked");
+                    if (!checked) return;
+                    addToCart(checked.value);
+                    modal.hide();
+                    container.remove();
+                });
+                modalEl.addEventListener('hidden.bs.modal', () => container.remove());
+                modal.show();
+                setTimeout(() => {
+                    if (!modalEl.classList.contains('show')) {
+                        modalEl.classList.add('show');
+                        modalEl.style.display = 'block';
+                        modalEl.removeAttribute('aria-hidden');
+                        modalEl.setAttribute('aria-modal', 'true');
+                        const bd = document.createElement('div');
+                        bd.className = 'modal-backdrop fade show';
+                        document.body.appendChild(bd);
+                    }
+                }, 50);
+            } catch (e) {
+                addToCart(defaultVariantId);
+            }
+        }
+
         function addToCart(sanPhamChiTietId) {
             fetch('@Url.Action("AddToCart", "Cart")', {
                 method: 'POST',
@@ -212,24 +275,8 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Hiển thị thông báo thành công
-                    const alertDiv = document.createElement('div');
-                    alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
-                    alertDiv.style.top = '20px';
-                    alertDiv.style.right = '20px';
-                    alertDiv.style.zIndex = '9999';
-                    alertDiv.innerHTML = `
-                        <i class="fas fa-check-circle me-2"></i>${data.message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    `;
-                    document.body.appendChild(alertDiv);
-                    
-                    // Tự động ẩn sau 3 giây
-                    setTimeout(() => {
-                        if (alertDiv.parentNode) {
-                            alertDiv.parentNode.removeChild(alertDiv);
-                        }
-                    }, 3000);
+                    if (window.showToast) window.showToast(data.message, 'success');
+                    if (window.updateCartCount) window.updateCartCount();
                 } else {
                     alert(data.message || 'Có lỗi xảy ra');
                 }

@@ -221,20 +221,12 @@
       "PackagePath": "staticwebassets\\images\\home\\sale.png"
     },
     {
-      "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\home\\sanpham1.jpg",
-      "PackagePath": "staticwebassets\\images\\home\\sanpham1.jpg"
-    },
-    {
       "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\home\\searchicon.png",
       "PackagePath": "staticwebassets\\images\\home\\searchicon.png"
     },
     {
       "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\home\\shipping.jpg",
       "PackagePath": "staticwebassets\\images\\home\\shipping.jpg"
-    },
-    {
-      "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\home\\thuoc-nhuom-do-ruby.jpg",
-      "PackagePath": "staticwebassets\\images\\home\\thuoc-nhuom-do-ruby.jpg"
     },
     {
       "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\images\\product-details\\1.jpg",
@@ -567,6 +559,14 @@
     {
       "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\uploads\\variants\\spct_8_tinhdaukerastase1-25072025153044.jpg",
+      "PackagePath": "staticwebassets\\uploads\\variants\\spct_8_tinhdaukerastase1-25072025153044.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\wwwroot\\uploads\\variants\\spct_9_95505-body- (6).jpg",
+      "PackagePath": "staticwebassets\\uploads\\variants\\spct_9_95505-body- (6).jpg"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.PhuLieuToc.Microsoft.AspNetCore.StaticWebAssets.props",

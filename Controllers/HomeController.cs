@@ -21,17 +21,29 @@ namespace PhuLieuToc.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var featuredProducts = await _context.SanPhamChiTiets
-                .Include(x => x.SanPham)
-                    .ThenInclude(s => s.Brand)
-                .Include(x => x.SanPham)
-                    .ThenInclude(s => s.Category)
-                .Include(x => x.SanPhamChiTietThuocTinhs)
-                    .ThenInclude(t => t.GiaTriThuocTinh)
-                .Where(x => x.TrangThai == 1 && x.SanPham.TrangThai == 1)
-                .OrderByDescending(x => x.SanPham.SanPhamId)
+            // Lấy sản phẩm cha (SanPham) và kèm 1 biến thể đầu tiên để hiển thị ảnh/giá
+            var productsRaw = await _context.SanPhams
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.SanPhamChiTiets)
+                .Where(p => p.TrangThai == 1)
+                .OrderByDescending(p => p.SanPhamId)
                 .Take(8)
                 .ToListAsync();
+
+            var featuredProducts = productsRaw.Select(p => new
+            {
+                SanPham = p,
+                FirstVariant = (
+                    p.SanPhamChiTiets
+                        .Where(v => v.TrangThai == 1 && !string.IsNullOrEmpty(v.Anh))
+                        .OrderBy(v => v.SanPhamChiTietId)
+                        .FirstOrDefault()
+                ) ?? p.SanPhamChiTiets
+                        .Where(v => v.TrangThai == 1)
+                        .OrderBy(v => v.SanPhamChiTietId)
+                        .FirstOrDefault()
+            }).ToList();
 
             var categories = await _context.Categorys
                 .Where(c => c.TrangThai == 1)
@@ -46,7 +58,25 @@ namespace PhuLieuToc.Controllers
             ViewBag.Categories = categories;
             ViewBag.Brands = brands;
 
+            ViewBag.ContactsEnabled = true;
+
             return View(featuredProducts);
+        }
+
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> Categories()
+        {
+            var categories = await _context.Categorys.Where(c => c.TrangThai == 1).ToListAsync();
+            return View(categories);
+        }
+
+        public IActionResult Blog()
+        {
+            return View();
         }
 
         public IActionResult Privacy()

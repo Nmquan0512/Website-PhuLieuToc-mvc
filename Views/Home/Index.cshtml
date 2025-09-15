@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SanPhamChiTiet>
+﻿@model IEnumerable<dynamic>
 
 <div class="col-sm-3">
 
@@ -23,30 +23,21 @@
 					<div class="single-products">
 						<div class="productinfo text-center">
 
-							<img src="@item.Anh" />
-							<h2>@item.Gia.ToString("N0")</h2>
-							<p style="font-size: 15px; font-weight: bold;">@item.SanPham?.TenSanPham</p>
+							<img src="@Url.Content(!string.IsNullOrEmpty(item.FirstVariant?.Anh) ? item.FirstVariant.Anh : "/images/home/logo.jpg")" style="width:260px;height:260px;object-fit:cover;" />
+							<h2 class="price-text" data-product-id="@item.SanPham.SanPhamId">@(item.FirstVariant?.Gia.ToString("N0") ?? "0")</h2>
+							<p style="font-size: 15px; font-weight: bold;">@item.SanPham.TenSanPham</p>
 
 
-							<button class="btn btn-default add-to-cart" onclick="addToCart(@item.SanPhamChiTietId)"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</button>
+							<button class="btn btn-default add-to-cart" onclick="openVariantOrAdd(@item.SanPham.SanPhamId, @(item.FirstVariant?.SanPhamChiTietId ?? 0))"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</button>
 
 						</div>
 
-						<div class="product-overlay">
-							<div class="overlay-content">
-								<h2>@item.Gia.ToString("N0")</h2>
-								<p style="font-size: 15px; font-weight: bold;">@item.SanPham?.TenSanPham</p>
-								<p>@item.SanPham?.MoTa</p>
-								<p>@item.SanPham?.Brand?.TenThuongHieu</p>
-								<button class="btn btn-default add-to-cart" onclick="addToCart(@item.SanPhamChiTietId)"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</button>
-
-							</div>
+						
 
 						</div>
 					</div>
 				</div>
 
-			</div>
 		}
 	</div><!-- /features_items -->
 </div>
@@ -58,6 +49,23 @@
 			if ($target.hasClass('in')) {
 				$target.collapse('hide');
 			}
+		});
+
+		// Tải min-max price cho mỗi sản phẩm trong danh sách
+		$('.price-text').each(function () {
+			const pid = $(this).data('product-id');
+			fetch('@Url.Action("GetVariants","Product")' + `?productId=${pid}`)
+				.then(r => r.json())
+				.then(d => {
+					if (!d.success) return;
+					if (d.variants && d.variants.length > 1) {
+						if (d.minPrice === d.maxPrice) {
+							$(this).text(Number(d.minPrice).toLocaleString());
+						} else {
+							$(this).text(`${Number(d.minPrice).toLocaleString()} - ${Number(d.maxPrice).toLocaleString()}`);
+						}
+					}
+				});
 		});
 	});
 
@@ -72,24 +80,8 @@
 		.then(response => response.json())
 		.then(data => {
 			if (data.success) {
-				// Hiển thị thông báo thành công
-				const alertDiv = document.createElement('div');
-				alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
-				alertDiv.style.top = '20px';
-				alertDiv.style.right = '20px';
-				alertDiv.style.zIndex = '9999';
-				alertDiv.innerHTML = `
-					<i class="fas fa-check-circle me-2"></i>${data.message}
-					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-				`;
-				document.body.appendChild(alertDiv);
-				
-				// Tự động ẩn sau 3 giây
-				setTimeout(() => {
-					if (alertDiv.parentNode) {
-						alertDiv.parentNode.removeChild(alertDiv);
-					}
-				}, 3000);
+				if (window.showToast) window.showToast(data.message, 'success');
+				if (window.updateCartCount) window.updateCartCount();
 			} else {
 				alert(data.message || 'Có lỗi xảy ra');
 			}
@@ -98,5 +90,69 @@
 			console.error('Error:', error);
 			alert('Có lỗi xảy ra khi thêm vào giỏ hàng');
 		});
+	}
+
+	async function openVariantOrAdd(productId, defaultVariantId) {
+		try {
+			const res = await fetch('@Url.Action("GetVariants","Product")' + `?productId=${productId}`);
+			const data = await res.json();
+			if (!data.success) return addToCart(defaultVariantId);
+			if (!data.variants || data.variants.length === 0) return addToCart(defaultVariantId);
+			if (data.variants.length === 1) {
+				const onlyId = data.variants[0]?.id || defaultVariantId;
+				return addToCart(onlyId);
+			}
+
+			// Tạo modal đơn giản liệt kê biến thể
+			const variants = data.variants;
+			const html = `
+<div class="modal fade" id="variantModal" tabindex="-1">
+ <div class="modal-dialog">
+  <div class="modal-content">
+   <div class="modal-header"><h5 class="modal-title">Chọn biến thể</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+   <div class="modal-body">
+     ${variants.map(v => `<div class='form-check'>
+        <input class='form-check-input' type='radio' name='variantOption' value='${v.id}' id='v_${v.id}'>
+        <label class='form-check-label' for='v_${v.id}'>${v.thuocTinh.map(t=>`${t.loai}: ${t.giaTri}`).join(', ')} - ${Number(v.gia).toLocaleString()} (${v.soLuongTon} tồn)</label>
+     </div>`).join('')}
+   </div>
+   <div class="modal-footer">
+     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+     <button type="button" class="btn btn-primary" id="variantAddBtn">Thêm vào giỏ</button>
+   </div>
+  </div>
+ </div>
+</div>`;
+			const container = document.createElement('div');
+			container.style.position = 'relative';
+			container.style.zIndex = '1056';
+			container.innerHTML = html;
+			document.body.appendChild(container);
+			const modalEl = container.querySelector('#variantModal');
+			const modal = new bootstrap.Modal(modalEl, {backdrop:true,focus:true});
+			container.querySelector('#variantAddBtn').addEventListener('click', () => {
+				const checked = container.querySelector("input[name='variantOption']:checked");
+				if (!checked) return;
+				addToCart(checked.value);
+				modal.hide();
+				container.remove();
+			});
+			modalEl.addEventListener('hidden.bs.modal', () => container.remove());
+			modal.show();
+			// Fallback in case Bootstrap API is blocked by stylesheet conflicts
+			setTimeout(() => {
+				if (!modalEl.classList.contains('show')) {
+					modalEl.classList.add('show');
+					modalEl.style.display = 'block';
+					modalEl.removeAttribute('aria-hidden');
+					modalEl.setAttribute('aria-modal', 'true');
+					const bd = document.createElement('div');
+					bd.className = 'modal-backdrop fade show';
+					document.body.appendChild(bd);
+				}
+			}, 50);
+		} catch (e) {
+			addToCart(defaultVariantId);
+		}
 	}
 </script>

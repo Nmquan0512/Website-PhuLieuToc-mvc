@@ -1,0 +1,23 @@
+@model IEnumerable<PhuLieuToc.Models.CategoryModel>
+@{
+    ViewData["Title"] = "Danh mục";
+}
+
+<div class="container my-5">
+    <h2 class="mb-4">Danh mục sản phẩm</h2>
+    <div class="row">
+        @foreach (var c in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@c.TenDanhMuc</h5>
+                        <p class="card-text">@c.MoTa</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+

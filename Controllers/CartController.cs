@@ -5,10 +5,10 @@ using PhuLieuToc.Models;
 using PhuLieuToc.Models.ViewModels;
 using PhuLieuToc.Repository;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace PhuLieuToc.Controllers
 {
-    [Authorize]
 	public class CartController : Controller
 	{
         private readonly AppDbContext _context;
@@ -21,17 +21,20 @@ namespace PhuLieuToc.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = GetCurrentUserId();
-            if (userId == null) return RedirectToAction("Index", "Login");
+            if (userId == null)
+            {
+                var cart = GetCartFromSession();
+                return View(cart);
+            }
 
-            var cart = await GetCartViewModel(userId.Value);
-            return View(cart);
+            var cartDb = await GetCartViewModel(userId.Value);
+            return View(cartDb);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddToCart(int sanPhamChiTietId, int soLuong = 1)
         {
             var userId = GetCurrentUserId();
-            if (userId == null) return Json(new { success = false, message = "Vui lòng đăng nhập" });
 
             try
             {
@@ -45,39 +48,74 @@ namespace PhuLieuToc.Controllers
                 if (sanPham.SoLuongTon < soLuong)
                     return Json(new { success = false, message = "Số lượng không đủ" });
 
-                var gioHang = await _context.GioHangs
-                    .FirstOrDefaultAsync(g => g.TaiKhoanId == userId);
-
-                if (gioHang == null)
+                if (userId == null)
                 {
-                    gioHang = new GioHang { TaiKhoanId = userId.Value };
-                    _context.GioHangs.Add(gioHang);
-                    await _context.SaveChangesAsync();
-                }
+                    var cart = GetCartFromSession();
+                    var existing = cart.Items.FirstOrDefault(i => i.SanPhamChiTietId == sanPhamChiTietId);
+                    if (existing != null)
+                    {
+                        existing.SoLuong += soLuong;
+                    }
+                    else
+                    {
+                        var thuocTinh = string.Join(", ", _context.SanPhamChiTietThuocTinhs
+                            .Where(t => t.SanPhamChiTietId == sanPhamChiTietId)
+                            .Include(t => t.GiaTriThuocTinh)
+                            .Select(t => t.GiaTriThuocTinh.TenGiaTri));
 
-                var existingItem = await _context.GioHangChiTiets
-                    .FirstOrDefaultAsync(g => g.GioHangId == gioHang.GioHangId && g.SanPhamChiTietId == sanPhamChiTietId);
-
-                if (existingItem != null)
-                {
-                    existingItem.SoLuong += soLuong;
-                    existingItem.ThanhTien = existingItem.SoLuong * existingItem.DonGia;
+                        cart.Items.Add(new CartItemViewModel
+                        {
+                            GioHangChiTietId = sanPhamChiTietId,
+                            SanPhamChiTietId = sanPhamChiTietId,
+                            TenSanPham = sanPham.SanPham.TenSanPham,
+                            Anh = sanPham.Anh,
+                            ThuongHieu = sanPham.SanPham.Brand?.TenThuongHieu,
+                            DanhMuc = sanPham.SanPham.Category?.TenDanhMuc,
+                            ThuocTinh = thuocTinh,
+                            DonGia = sanPham.Gia,
+                            SoLuong = soLuong,
+                            SoLuongTon = sanPham.SoLuongTon
+                        });
+                    }
+                    SaveCartToSession(cart);
+                    return Json(new { success = true, message = "Đã thêm vào giỏ hàng" });
                 }
                 else
                 {
-                    var newItem = new GioHangChiTiet
-                    {
-                        GioHangId = gioHang.GioHangId,
-                        SanPhamChiTietId = sanPhamChiTietId,
-                        SoLuong = soLuong,
-                        DonGia = sanPham.Gia,
-                        ThanhTien = sanPham.Gia * soLuong
-                    };
-                    _context.GioHangChiTiets.Add(newItem);
-                }
+                    var gioHang = await _context.GioHangs
+                        .FirstOrDefaultAsync(g => g.TaiKhoanId == userId);
 
-                await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "Đã thêm vào giỏ hàng" });
+                    if (gioHang == null)
+                    {
+                        gioHang = new GioHang { TaiKhoanId = userId.Value };
+                        _context.GioHangs.Add(gioHang);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    var existingItem = await _context.GioHangChiTiets
+                        .FirstOrDefaultAsync(g => g.GioHangId == gioHang.GioHangId && g.SanPhamChiTietId == sanPhamChiTietId);
+
+                    if (existingItem != null)
+                    {
+                        existingItem.SoLuong += soLuong;
+                        existingItem.ThanhTien = existingItem.SoLuong * existingItem.DonGia;
+                    }
+                    else
+                    {
+                        var newItem = new GioHangChiTiet
+                        {
+                            GioHangId = gioHang.GioHangId,
+                            SanPhamChiTietId = sanPhamChiTietId,
+                            SoLuong = soLuong,
+                            DonGia = sanPham.Gia,
+                            ThanhTien = sanPham.Gia * soLuong
+                        };
+                        _context.GioHangChiTiets.Add(newItem);
+                    }
+
+                    await _context.SaveChangesAsync();
+                    return Json(new { success = true, message = "Đã thêm vào giỏ hàng" });
+                }
             }
             catch (Exception ex)
             {
@@ -89,7 +127,6 @@ namespace PhuLieuToc.Controllers
         public async Task<IActionResult> UpdateQuantity(int gioHangChiTietId, int soLuong)
         {
             var userId = GetCurrentUserId();
-            if (userId == null) return Json(new { success = false, message = "Vui lòng đăng nhập" });
 
             try
             {
@@ -123,7 +160,17 @@ namespace PhuLieuToc.Controllers
         public async Task<IActionResult> RemoveItem(int gioHangChiTietId)
         {
             var userId = GetCurrentUserId();
-            if (userId == null) return Json(new { success = false, message = "Vui lòng đăng nhập" });
+            if (userId == null)
+            {
+                var cart = GetCartFromSession();
+                var item = cart.Items.FirstOrDefault(i => i.SanPhamChiTietId == gioHangChiTietId);
+                if (item != null)
+                {
+                    cart.Items.Remove(item);
+                    SaveCartToSession(cart);
+                }
+                return Json(new { success = true });
+            }
 
             try
             {
@@ -148,9 +195,7 @@ namespace PhuLieuToc.Controllers
         public async Task<IActionResult> Checkout()
         {
             var userId = GetCurrentUserId();
-            if (userId == null) return RedirectToAction("Index", "Login");
-
-            var cart = await GetCartViewModel(userId.Value);
+            var cart = userId == null ? GetCartFromSession() : await GetCartViewModel(userId.Value);
             if (!cart.Items.Any())
             {
                 TempData["Error"] = "Giỏ hàng trống";
@@ -170,21 +215,27 @@ namespace PhuLieuToc.Controllers
         public async Task<IActionResult> Checkout(CheckoutViewModel model)
         {
             var userId = GetCurrentUserId();
-            if (userId == null) return RedirectToAction("Index", "Login");
 
             if (!ModelState.IsValid)
             {
-                model.Cart = await GetCartViewModel(userId.Value);
+                model.Cart = userId == null ? GetCartFromSession() : await GetCartViewModel(userId.Value);
                 return View(model);
             }
 
             try
             {
-                var cart = await GetCartViewModel(userId.Value);
+                var cart = userId == null ? GetCartFromSession() : await GetCartViewModel(userId.Value);
                 if (!cart.Items.Any())
                 {
                     TempData["Error"] = "Giỏ hàng trống";
                     return RedirectToAction("Index");
+                }
+
+                if (string.IsNullOrWhiteSpace(model.TenKhachHang) || string.IsNullOrWhiteSpace(model.SoDienThoai) || string.IsNullOrWhiteSpace(model.DiaChiGiaoHang))
+                {
+                    ModelState.AddModelError("", "Vui lòng điền đầy đủ Họ tên, SĐT và Địa chỉ giao hàng.");
+                    model.Cart = cart;
+                    return View(model);
                 }
 
                 var hoaDon = new HoaDon
@@ -196,10 +247,25 @@ namespace PhuLieuToc.Controllers
                     TongTien = cart.TotalAmount,
                     TrangThai = 0,
                     PhuongThucThanhToan = model.PhuongThucThanhToan,
-                    TaiKhoanId = userId.Value
+                    TaiKhoanId = userId
                 };
 
                 _context.HoaDons.Add(hoaDon);
+
+                // Ghi lịch sử trạng thái tạo mới (bỏ qua nếu bảng chưa có migration)
+                try
+                {
+                    _context.LichSuTrangThaiHoaDons.Add(new LichSuTrangThaiHoaDon
+                    {
+                        Id = Guid.NewGuid(),
+                        HoaDonId = hoaDon.HoaDonId,
+                        TrangThaiCu = -1,
+                        TrangThaiMoi = 0,
+                        ThoiGianThayDoi = DateTime.Now,
+                        GhiChu = "Tạo đơn hàng"
+                    });
+                }
+                catch { /* ignore when table doesn't exist yet */ }
 
                 foreach (var item in cart.Items)
                 {
@@ -215,6 +281,7 @@ namespace PhuLieuToc.Controllers
                     {
                         var thuocTinh = string.Join(", ", sanPham.SanPhamChiTietThuocTinhs
                             .Select(t => $"{t.GiaTriThuocTinh.ThuocTinh.TenThuocTinh}: {t.GiaTriThuocTinh.TenGiaTri}"));
+                        if (thuocTinh.Length > 95) thuocTinh = thuocTinh.Substring(0, 95);
 
                         var chiTiet = new HoaDonChiTiet
                         {
@@ -235,37 +302,43 @@ namespace PhuLieuToc.Controllers
                     }
                 }
 
-                var gioHang = await _context.GioHangs
-                    .Include(g => g.GioHangChiTiets)
-                    .FirstOrDefaultAsync(g => g.TaiKhoanId == userId);
-
-                if (gioHang != null)
-                {
-                    _context.GioHangChiTiets.RemoveRange(gioHang.GioHangChiTiets);
-                    _context.GioHangs.Remove(gioHang);
-                }
-
                 await _context.SaveChangesAsync();
+
+                if (userId == null)
+                {
+                    HttpContext.Session.Remove("CART");
+                }
+                else
+                {
+                    var gioHang = await _context.GioHangs
+                        .Include(g => g.GioHangChiTiets)
+                        .FirstOrDefaultAsync(g => g.TaiKhoanId == userId);
+
+                    if (gioHang != null)
+                    {
+                        _context.GioHangChiTiets.RemoveRange(gioHang.GioHangChiTiets);
+                        _context.GioHangs.Remove(gioHang);
+                        await _context.SaveChangesAsync();
+                    }
+                }
 
                 TempData["Success"] = "Đặt hàng thành công!";
                 return RedirectToAction("OrderSuccess", new { orderId = hoaDon.HoaDonId });
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Có lỗi xảy ra khi đặt hàng: " + ex.Message);
-                model.Cart = await GetCartViewModel(userId.Value);
+                var details = ex.InnerException?.Message ?? ex.Message;
+                ModelState.AddModelError("", "Có lỗi xảy ra khi đặt hàng: " + details);
+                model.Cart = userId == null ? GetCartFromSession() : await GetCartViewModel(userId.Value);
                 return View(model);
             }
         }
 
         public async Task<IActionResult> OrderSuccess(Guid orderId)
         {
-            var userId = GetCurrentUserId();
-            if (userId == null) return RedirectToAction("Index", "Login");
-
             var order = await _context.HoaDons
                 .Include(h => h.HoaDonChiTiets)
-                .FirstOrDefaultAsync(h => h.HoaDonId == orderId && h.TaiKhoanId == userId);
+                .FirstOrDefaultAsync(h => h.HoaDonId == orderId);
 
             if (order == null)
             {
@@ -299,7 +372,11 @@ namespace PhuLieuToc.Controllers
         public async Task<IActionResult> GetCartCount()
         {
             var userId = GetCurrentUserId();
-            if (userId == null) return Json(new { success = false, count = 0 });
+            if (userId == null)
+            {
+                var sessionCart = GetCartFromSession();
+                return Json(new { success = true, count = sessionCart.TotalItems });
+            }
 
             try
             {
@@ -359,6 +436,45 @@ namespace PhuLieuToc.Controllers
             }
 
             return cartViewModel;
-		}
-	}
+        }
+
+        private CartViewModel GetCartFromSession()
+        {
+            var json = HttpContext.Session.GetString("CART");
+            if (string.IsNullOrEmpty(json)) return new CartViewModel();
+            try
+            {
+                return System.Text.Json.JsonSerializer.Deserialize<CartViewModel>(json) ?? new CartViewModel();
+            }
+            catch
+            {
+                return new CartViewModel();
+            }
+        }
+
+        private void SaveCartToSession(CartViewModel cart)
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(cart);
+            HttpContext.Session.SetString("CART", json);
+        }
+
+        private async Task<int> GetOrCreateGuestAccountId()
+        {
+            var guest = await _context.TaiKhoans.FirstOrDefaultAsync(t => t.TenDangNhap == "guest");
+            if (guest == null)
+            {
+                guest = new TaiKhoan
+                {
+                    TenDangNhap = "guest",
+                    Email = "guest@local",
+                    MatKhau = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()),
+                    TrangThai = true,
+                    VaiTro = "User"
+                };
+                _context.TaiKhoans.Add(guest);
+                await _context.SaveChangesAsync();
+            }
+            return guest.TaiKhoanId;
+        }
+    }
 }

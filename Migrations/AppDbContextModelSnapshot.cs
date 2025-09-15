@@ -261,7 +261,7 @@ namespace PhuLieuToc.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<int>("TaiKhoanId")
+                    b.Property<int?>("TaiKhoanId")
                         .HasColumnType("int");
 
                     b.Property<string>("TenKhachHang")
@@ -358,7 +358,7 @@ namespace PhuLieuToc.Migrations
 
                     b.HasIndex("HoaDonId");
 
-                    b.ToTable("LichSuTrangThaiHoaDon");
+                    b.ToTable("LichSuTrangThaiHoaDons");
                 });
 
             modelBuilder.Entity("PhuLieuToc.Models.SanPham", b =>
@@ -606,9 +606,7 @@ namespace PhuLieuToc.Migrations
                 {
                     b.HasOne("PhuLieuToc.Models.TaiKhoan", "TaiKhoan")
                         .WithMany("HoaDons")
-                        .HasForeignKey("TaiKhoanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TaiKhoanId");
 
                     b.Navigation("TaiKhoan");
                 });
