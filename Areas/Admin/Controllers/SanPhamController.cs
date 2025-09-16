@@ -7,6 +7,7 @@ using PhuLieuToc.Repository;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.IO;
 
 namespace PhuLieuToc.Areas.Admin.Controllers
 {
@@ -192,15 +193,7 @@ namespace PhuLieuToc.Areas.Admin.Controllers
             {
                 var oldLinks = _context.SanPhamChiTietThuocTinhs.Where(x => x.SanPhamChiTietId == ct.SanPhamChiTietId);
                 _context.SanPhamChiTietThuocTinhs.RemoveRange(oldLinks);
-                // delete old image file
-                if (!string.IsNullOrEmpty(ct.Anh) && ct.Anh.StartsWith("/"))
-                {
-                    var physical = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", ct.Anh.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
-                    if (System.IO.File.Exists(physical))
-                    {
-                        System.IO.File.Delete(physical);
-                    }
-                }
+                // KHÔNG xóa file ảnh cũ tại đây để có thể tái sử dụng đường dẫn ảnh khi người dùng không upload ảnh mới
             }
             _context.SanPhamChiTiets.RemoveRange(oldDetails);
             await _context.SaveChangesAsync();
@@ -231,6 +224,13 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                             await v.AnhFile.CopyToAsync(stream);
                         }
                         detail.Anh = $"/uploads/variants/{fileName}";
+                        _context.Update(detail);
+                        await _context.SaveChangesAsync();
+                    }
+                    else if (!string.IsNullOrEmpty(v.Anh))
+                    {
+                        // Giữ lại ảnh cũ
+                        detail.Anh = v.Anh;
                         _context.Update(detail);
                         await _context.SaveChangesAsync();
                     }

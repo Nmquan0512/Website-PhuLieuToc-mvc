@@ -5,10 +5,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="">
 	<meta name="author" content="">
+	<link rel="icon" type="image/jpeg" href="~/images/home/logo.jpg" />
 	<title>Home | Linh Trang Hair Accessories</title>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-	<link href="~/css/bootstrap.min.css" rel="stylesheet">
+
 	<link href="~/css/font-awesome.min.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,400italic,500,700,100" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,800,300,600,700" rel="stylesheet">
@@ -20,6 +21,64 @@
 	@* 	<link href="~/css/responsive.css" rel="stylesheet"> *@
 	<link rel="shortcut icon" href="images/ico/favicon.ico">
 	<style>
+		/* Variant Modal (scoped to avoid Bootstrap 3 conflicts) */
+		.variant-modal.modal { /* ensure BS5 positioning wins */
+			position: fixed;
+			inset: 0;
+			z-index: 1055;
+		}
+
+		.variant-modal .modal-dialog {
+			max-width: 540px;
+		}
+
+		.variant-modal .modal-content {
+			border: 0;
+			border-radius: 16px;
+			box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+			overflow: hidden;
+		}
+
+		.variant-modal .modal-header {
+			background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+			color: #fff;
+		}
+
+		.variant-modal .modal-title {
+			font-size: 18px;
+			font-weight: 700;
+		}
+
+		.variant-modal .modal-body { font-size: 15px; }
+
+		/* Option chips */
+		.variant-options {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0,1fr));
+			gap: 10px;
+		}
+
+		.variant-chip {
+			border: 2px solid var(--primary-light);
+			background: #fff;
+			color: var(--text-dark);
+			padding: 10px 12px;
+			border-radius: 12px;
+			cursor: pointer;
+			transition: var(--transition);
+			user-select: none;
+		}
+
+		.variant-chip:hover { border-color: var(--primary-dark); transform: translateY(-1px); }
+		.variant-chip.active { background: var(--primary-light); border-color: var(--primary-dark); }
+
+		/* Qty control (simple) */
+		.qty-control { display:flex; align-items:center; gap:8px; }
+		.qty-control button { width:32px; height:32px; border-radius:8px; border:0; background: var(--primary-light); color:#2c3e50; font-weight:700; }
+		.qty-control input { width:64px; text-align:center; padding:6px 8px; border:1px solid #ced4da; border-radius:8px; }
+
+		.variant-modal .btn-primary { background: var(--primary-dark); border-color: var(--primary-dark); }
+		.variant-modal .btn-primary:hover { background: var(--primary-color); border-color: var(--primary-color); }
 		/* Header Bottom Styling */
 		.header-bottom {
 			background: linear-gradient(135deg, #99b18f 0%, #7a9470 50%, #99b18f 100%);
@@ -1104,16 +1163,9 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-sm-9">
-						<div class="navbar-header">
-							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav">
-								<span class="sr-only">Toggle navigation</span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-							</button>
-						</div>
+						<!-- navbar toggle removed to keep menu always visible -->
 						<div class="mainmenu pull-left">
-							<ul id="main-nav" class="nav navbar-nav collapse navbar-collapse">
+							<ul id="main-nav" class="nav navbar-nav">
 								<li><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
 								<li class="dropdown">
 									<a asp-action="Index" asp-controller="Product">Cửa hàng<i class="fa fa-chevron-down"></i></a>
@@ -1207,8 +1259,6 @@
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
-
 	<section>
 		<div class="container">
 			<div class="row">
@@ -1313,17 +1363,13 @@
 
 
 
-<script src="~/js/jquery.js"></script>
-<script src="~/js/bootstrap.min.js"></script>
+<!-- removed legacy jquery and bootstrap 3 -->
 <script src="~/js/jquery.scrollUp.min.js"></script>
 <script src="~/js/price-range.js"></script>
 <script src="~/js/jquery.prettyPhoto.js"></script>
 <script src="~/js/main.js"></script>
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Bootstrap JS -->
-<!-- Removed Bootstrap 3 to avoid conflicts with Bootstrap 5 modal -->
+<!-- Keep a single modern jQuery for legacy plugins (prettyPhoto, etc.). Remove if unused. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 @await RenderSectionAsync("Scripts", required: false)
 

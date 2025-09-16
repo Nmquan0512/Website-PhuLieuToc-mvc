@@ -6,49 +6,96 @@
 </div>
 	<!-- Sản phẩm nổi bật -->
 	<div class="col-sm-9 padding-right">
-		<div class="features_items">
-			<h2 class="title text-center">Sản phẩm nổi bật</h2>
-			@foreach (var item in Model)
+		<div class="features_items row g-4">
+			<h2 class="title text-center">Sản phẩm</h2>
+			@{ var parents = Model
+				.GroupBy(v => v.SanPhamId)
+				.Select(g => new { SanPham = g.First().SanPham, FirstVariant = g.OrderBy(v=>v.SanPhamChiTietId).First() })
+				.ToList(); }
+			@foreach (var item in parents)
 			{
-				<div class="col-sm-4">
-					<div class="product-image-wrapper">
+				<div class="col-12 col-sm-6 col-md-4 d-flex">
+					<div class="product-image-wrapper w-100">
 						<div class="single-products">
 							<div class="productinfo text-center">
-
-								<img src="@item.Anh" />
-								<h2>@item.Gia.ToString("N0")</h2>
-								<p style="font-size: 15px; font-weight: bold;">@item.SanPham?.TenSanPham</p>
-
-
-								<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</a>
-
-							</div>
-
-							<div class="product-overlay">
-								<div class="overlay-content">
-									<h2>@item.Gia.ToString("N0")</h2>
-									<p style="font-size: 15px; font-weight: bold;">@item.SanPham?.TenSanPham</p>
-									<p>@item.SanPham?.MoTa</p>
-									<p>@item.SanPham?.Brand?.TenThuongHieu</p>
-									<a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</a>
-
-								</div>
-
+								<img src="@Url.Content(!string.IsNullOrEmpty(item.FirstVariant?.Anh) ? item.FirstVariant.Anh : "/images/home/logo.jpg")" style="width:260px;height:260px;object-fit:cover;" />
+								<h2 class="price-text" data-product-id="@item.SanPham.SanPhamId">@(item.FirstVariant?.Gia.ToString("N0") ?? "0")</h2>
+								<p style="font-size: 15px; font-weight: bold;">@item.SanPham.TenSanPham</p>
+								<button class="btn btn-default add-to-cart" onclick="openVariantOrAdd(@item.SanPham.SanPhamId, @(item.FirstVariant?.SanPhamChiTietId ?? 0))"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</button>
 							</div>
 						</div>
 					</div>
-
 				</div>
 			}
 		</div><!-- /features_items -->
 	</div>
 	<script>
 		$(document).ready(function () {
-			$('.panel-title a').click(function (e) {
-				var $target = $($(this).attr('href'));
-				if ($target.hasClass('in')) {
-					$target.collapse('hide');
-				}
+			$('.price-text').each(function () {
+				const pid = $(this).data('product-id');
+				fetch('@Url.Action("GetVariants","Product")' + `?productId=${pid}`)
+					.then(r => r.json())
+					.then(d => {
+						if (!d.success) return;
+						if (d.variants && d.variants.length > 1) {
+							if (d.minPrice === d.maxPrice) {
+								$(this).text(Number(d.minPrice).toLocaleString());
+							} else {
+								$(this).text(`${Number(d.minPrice).toLocaleString()} - ${Number(d.maxPrice).toLocaleString()}`);
+							}
+						}
+					});
 			});
 		});
+
+		function addToCart(sanPhamChiTietId, selectedThuocTinhText = '') {
+			fetch('@Url.Action("AddToCart", "Cart")', {
+				method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: `sanPhamChiTietId=${sanPhamChiTietId}&soLuong=1&selectedThuocTinh=${encodeURIComponent(selectedThuocTinhText)}`
+			}).then(r=>r.json()).then(d=>{ if (d.success){ if (window.showToast) showToast(d.message,'success'); if (window.updateCartCount) updateCartCount(); } else alert(d.message||'Có lỗi');});
+		}
+
+		async function openVariantOrAdd(productId, defaultVariantId) {
+			try {
+				const res = await fetch('@Url.Action("GetVariants","Product")' + `?productId=${productId}`);
+				const data = await res.json();
+				if (!data.success) return addToCart(defaultVariantId);
+				if (!data.variants || data.variants.length === 0) return addToCart(defaultVariantId);
+				if (data.variants.length === 1) {
+					const onlyId = data.variants[0]?.id || defaultVariantId;
+					return addToCart(onlyId, data.variants[0]?.thuocTinh?.map(t=>`${t.loai}: ${t.giaTri}`).join(', '));
+				}
+				const variants = data.variants;
+				const loaiToValues = {}; variants.forEach(v => { (v.thuocTinh||[]).forEach(t => { (loaiToValues[t.loai] ||= new Set()).add(String(t.giaTri)); }); });
+				const loais = Object.keys(loaiToValues); const selected = {}; loais.forEach(l => { selected[l] = Array.from(loaiToValues[l])[0] || ''; });
+				const html = `
+<div class="modal fade variant-modal" id="variantModal" tabindex="-1" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title">Chọn biến thể</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+  <div class="modal-body">
+    ${loais.map(loai => `
+      <div class="mb-2" style="font-weight:600;color:var(--text-dark)">${loai}</div>
+      <div class="variant-options" data-loai="${loai}">
+        ${Array.from(loaiToValues[loai]).map(val => `<div class='variant-chip' data-value='${val}'><div style='font-size:14px;font-weight:600'>${val}</div></div>`).join('')}
+      </div>`).join('')}
+    <div class="mt-3 d-flex align-items-center justify-content-between">
+      <div class="qty-control"><button type="button" id="qtyMinus">-</button><input type="number" id="qtyInput" value="1" min="1" /><button type="button" id="qtyPlus">+</button></div>
+      <div id="pricePreview" style="font-weight:700;color:var(--primary-dark)"></div>
+    </div>
+  </div>
+  <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button><button type="button" class="btn btn-primary" id="variantAddBtn">Thêm vào giỏ</button></div>
+ </div></div>
+</div>`;
+				const container = document.createElement('div'); container.style.position='relative'; container.style.zIndex='1056'; container.innerHTML=html; document.body.appendChild(container);
+				const modalEl = container.querySelector('#variantModal'); const modal = new bootstrap.Modal(modalEl,{backdrop:true,focus:true}); let selectedId=null; const pricePreview = container.querySelector('#pricePreview'); const qtyInput = container.querySelector('#qtyInput');
+				container.querySelectorAll('.variant-options').forEach(g=>{ const c=g.querySelector('.variant-chip'); if(c) c.classList.add('active'); });
+				function normalize(v){return String(v??'').trim().toLowerCase();}
+				function findMatching(sel){ const keys=Object.keys(sel).filter(k=>sel[k]); if(!keys.length) return null; return variants.find(v=>{ const map={}; (v.thuocTinh||[]).forEach(t=>{ (map[t.loai] ||= new Set()).add(normalize(String(t.giaTri))); }); return keys.every(l=> map[l] && map[l].has(normalize(sel[l])) );}) || null; }
+				function refresh(){ container.querySelectorAll('.variant-options').forEach(g=>{ const loai=g.getAttribute('data-loai'); const act=g.querySelector('.variant-chip.active'); if(loai&&act) selected[loai]=act.getAttribute('data-value'); }); const v=findMatching(selected); selectedId= v? v.id:null; pricePreview.textContent= v? (Number(v.gia).toLocaleString()+ ' đ') : '' }
+				container.querySelectorAll('.variant-options .variant-chip').forEach(c=>{ c.addEventListener('click',()=>{ const p=c.closest('.variant-options'); const loai=p.getAttribute('data-loai'); const value=c.getAttribute('data-value'); p.querySelectorAll('.variant-chip').forEach(x=>x.classList.remove('active')); c.classList.add('active'); selected[loai]=value; refresh();});});
+				refresh();
+				container.querySelector('#variantAddBtn').addEventListener('click', ()=>{ refresh(); if(!selectedId){ if(window.showToast) showToast('Vui lòng chọn đủ thuộc tính','secondary'); return;} const selectedPairs = loais.map(l=>`${l}: ${selected[l]}`).join(', '); addToCart(selectedId, selectedPairs); modal.hide(); container.remove(); });
+				modalEl.addEventListener('hidden.bs.modal',()=>container.remove()); modal.show();
+			} catch(e){ addToCart(defaultVariantId); }
+		}
 	</script>

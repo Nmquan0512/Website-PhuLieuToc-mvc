@@ -81,7 +81,8 @@
     <script>
         const api = {
             getThuocTinhs: '@Url.Action("GetThuocTinhs", "SanPham", new { area = "Admin" })',
-            getGiaTriByThuocTinh: (id) => '@Url.Action("GetGiaTriByThuocTinh", "SanPham", new { area = "Admin" })' + `?thuocTinhId=${id}`
+            getGiaTriByThuocTinh: (id) => '@Url.Action("GetGiaTriByThuocTinh", "SanPham", new { area = "Admin" })' + `?thuocTinhId=${id}`,
+            getGiaTriByIds: '@Url.Action("GetGiaTriByIds", "SanPham", new { area = "Admin" })'
         };
         const variantsTableBody = document.querySelector('#variants-table tbody');
         const variantsHidden = document.getElementById('variants-hidden-inputs');
@@ -120,7 +121,7 @@
             return div;
         }
 
-        function addVariantRow(preset) {
+        function addVariantRow(preset, valueToTypeMap) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>
@@ -131,6 +132,8 @@
                 <td><input type="number" min="0" step="1" class="form-control v-qty" value="${preset?.soLuongTon ?? preset?.SoLuongTon ?? 0}" /></td>
                 <td>
                     <input type="file" class="form-control v-anh-file" accept="image/*" />
+                    ${preset?.Anh ? `<div class="small text-muted mt-1">Ảnh hiện tại:</div><img src="${preset.Anh}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-top:4px;">` : ''}
+                    <input type="hidden" class="v-anh-old" value="${preset?.Anh ?? ''}" />
                 </td>
                 <td>
                     <div class="form-check form-switch">
@@ -148,8 +151,10 @@
 
             if (preset && (preset.giaTriThuocTinhIds || preset.GiaTriThuocTinhIds)) {
                 const ids = (preset.giaTriThuocTinhIds || preset.GiaTriThuocTinhIds).map(Number);
-                // For each value id, find its type via a fetch group (optional improvement)
-                ids.forEach(id => list.appendChild(createAttrItem(undefined, id)));
+                ids.forEach(id => {
+                    const typeId = valueToTypeMap ? valueToTypeMap[id] : undefined;
+                    list.appendChild(createAttrItem(typeId, id));
+                });
             }
         }
 
@@ -158,7 +163,19 @@
         (async function init(){
             await loadThuocTinhs();
             const variants = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Variants));
-            if (variants && variants.length) variants.forEach(v => addVariantRow(v)); else addVariantRow();
+            if (variants && variants.length) {
+                // Build map valueId -> typeId so we can preselect attribute type
+                const allIds = [...new Set(variants.flatMap(v => (v.giaTriThuocTinhIds || v.GiaTriThuocTinhIds || [])))];
+                let valueToTypeMap = {};
+                if (allIds.length) {
+                    const res = await fetch(api.getGiaTriByIds, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(allIds) });
+                    const data = await res.json();
+                    data.forEach(x => valueToTypeMap[x.id] = x.thuocTinhId);
+                }
+                variants.forEach(v => addVariantRow(v, valueToTypeMap));
+            } else {
+                addVariantRow();
+            }
         })();
 
         document.querySelector('form').addEventListener('submit', (e) => {
@@ -182,8 +199,11 @@
                 add(`Variants[${i}].Gia`, gia);
                 add(`Variants[${i}].SoLuongTon`, qty);
                 const fileInput = tr.querySelector('.v-anh-file');
+                const oldInput = tr.querySelector('.v-anh-old');
                 if (fileInput && fileInput.files && fileInput.files[0]) {
                     fileInput.name = `Variants[${i}].AnhFile`;
+                } else if (oldInput && oldInput.value) {
+                    add(`Variants[${i}].Anh`, oldInput.value);
                 }
                 add(`Variants[${i}].TrangThai`, statusChecked ? '1' : '0');
                 ids.forEach((id, k) => add(`Variants[${i}].GiaTriThuocTinhIds[${k}]`, id));

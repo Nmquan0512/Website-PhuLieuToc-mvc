@@ -32,7 +32,7 @@ namespace PhuLieuToc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCart(int sanPhamChiTietId, int soLuong = 1)
+        public async Task<IActionResult> AddToCart(int sanPhamChiTietId, int soLuong = 1, string? selectedThuocTinh = null)
         {
             var userId = GetCurrentUserId();
 
@@ -51,17 +51,22 @@ namespace PhuLieuToc.Controllers
                 if (userId == null)
                 {
                     var cart = GetCartFromSession();
-                    var existing = cart.Items.FirstOrDefault(i => i.SanPhamChiTietId == sanPhamChiTietId);
+                    var existing = cart.Items.FirstOrDefault(i => i.SanPhamChiTietId == sanPhamChiTietId && (
+                        string.IsNullOrWhiteSpace(selectedThuocTinh) || string.Equals(i.ThuocTinh, selectedThuocTinh, StringComparison.OrdinalIgnoreCase)));
                     if (existing != null)
                     {
                         existing.SoLuong += soLuong;
+                        if (!string.IsNullOrWhiteSpace(selectedThuocTinh)) existing.ThuocTinh = selectedThuocTinh;
                     }
                     else
                     {
-                        var thuocTinh = string.Join(", ", _context.SanPhamChiTietThuocTinhs
-                            .Where(t => t.SanPhamChiTietId == sanPhamChiTietId)
-                            .Include(t => t.GiaTriThuocTinh)
-                            .Select(t => t.GiaTriThuocTinh.TenGiaTri));
+                        var thuocTinh = string.IsNullOrWhiteSpace(selectedThuocTinh)
+                            ? string.Join(", ", _context.SanPhamChiTietThuocTinhs
+                                .Where(t => t.SanPhamChiTietId == sanPhamChiTietId)
+                                .Include(t => t.GiaTriThuocTinh)
+                                    .ThenInclude(g => g.ThuocTinh)
+                                .Select(t => t.GiaTriThuocTinh.TenGiaTri))
+                            : selectedThuocTinh;
 
                         cart.Items.Add(new CartItemViewModel
                         {
@@ -78,6 +83,13 @@ namespace PhuLieuToc.Controllers
                         });
                     }
                     SaveCartToSession(cart);
+                    // Store selected attributes for guests as well
+                    if (!string.IsNullOrWhiteSpace(selectedThuocTinh))
+                    {
+                        var map = GetCartSelectedAttrMap();
+                        map[sanPhamChiTietId] = selectedThuocTinh;
+                        SaveCartSelectedAttrMap(map);
+                    }
                     return Json(new { success = true, message = "Đã thêm vào giỏ hàng" });
                 }
                 else
@@ -92,9 +104,25 @@ namespace PhuLieuToc.Controllers
                         await _context.SaveChangesAsync();
                     }
 
-                    var existingItem = await _context.GioHangChiTiets
-                        .FirstOrDefaultAsync(g => g.GioHangId == gioHang.GioHangId && g.SanPhamChiTietId == sanPhamChiTietId);
+                    // Find existing row that matches both product and selected attributes (if provided)
+                    var sameProductItems = await _context.GioHangChiTiets
+                        .Where(g => g.GioHangId == gioHang.GioHangId && g.SanPhamChiTietId == sanPhamChiTietId)
+                        .ToListAsync();
+                    GioHangChiTiet existingItem = null;
+                    if (!string.IsNullOrWhiteSpace(selectedThuocTinh))
+                    {
+                        var rowMap = GetCartSelectedAttrMapByRow();
+                        existingItem = sameProductItems.FirstOrDefault(it => rowMap.TryGetValue(it.GioHangChiTietId, out var picked)
+                            && string.Equals((picked ?? "").Trim(), selectedThuocTinh.Trim(), StringComparison.OrdinalIgnoreCase));
+                        // If no exact attribute match, do NOT merge → keep existingItem null to create new row
+                    }
+                    else
+                    {
+                        // No attribute text provided → safe to merge into any existing row for the product
+                        existingItem = sameProductItems.FirstOrDefault();
+                    }
 
+                    int insertedRowId = 0;
                     if (existingItem != null)
                     {
                         existingItem.SoLuong += soLuong;
@@ -111,9 +139,20 @@ namespace PhuLieuToc.Controllers
                             ThanhTien = sanPham.Gia * soLuong
                         };
                         _context.GioHangChiTiets.Add(newItem);
+                        await _context.SaveChangesAsync();
+                        insertedRowId = newItem.GioHangChiTietId;
                     }
-
-                    await _context.SaveChangesAsync();
+                    if (existingItem != null)
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    // persist chosen attributes too
+                    if (!string.IsNullOrWhiteSpace(selectedThuocTinh))
+                    {
+                        var rowMap = GetCartSelectedAttrMapByRow();
+                        var rowId = existingItem?.GioHangChiTietId > 0 ? existingItem.GioHangChiTietId : insertedRowId;
+                        if (rowId > 0) { rowMap[rowId] = selectedThuocTinh; SaveCartSelectedAttrMapByRow(rowMap); }
+                    }
                     return Json(new { success = true, message = "Đã thêm vào giỏ hàng" });
                 }
             }
@@ -279,8 +318,11 @@ namespace PhuLieuToc.Controllers
 
                     if (sanPham != null)
                     {
-                        var thuocTinh = string.Join(", ", sanPham.SanPhamChiTietThuocTinhs
-                            .Select(t => $"{t.GiaTriThuocTinh.ThuocTinh.TenThuocTinh}: {t.GiaTriThuocTinh.TenGiaTri}"));
+                        // Prefer the exact attributes selected by user at add-to-cart time
+                        var thuocTinh = !string.IsNullOrWhiteSpace(item.ThuocTinh)
+                            ? item.ThuocTinh
+                            : string.Join(", ", sanPham.SanPhamChiTietThuocTinhs
+                                .Select(t => $"{t.GiaTriThuocTinh.ThuocTinh.TenThuocTinh}: {t.GiaTriThuocTinh.TenGiaTri}"));
                         if (thuocTinh.Length > 95) thuocTinh = thuocTinh.Substring(0, 95);
 
                         var chiTiet = new HoaDonChiTiet
@@ -414,10 +456,14 @@ namespace PhuLieuToc.Controllers
 
             if (gioHang != null)
             {
+                var rowMap = GetCartSelectedAttrMapByRow();
                 foreach (var item in gioHang.GioHangChiTiets)
                 {
-                    var thuocTinh = string.Join(", ", item.SanPhamChiTiet.SanPhamChiTietThuocTinhs
-                        .Select(t => t.GiaTriThuocTinh.TenGiaTri));
+                    // Prefer user-selected attributes captured for this specific row
+                    var thuocTinh = rowMap.TryGetValue(item.GioHangChiTietId, out var picked)
+                        ? picked
+                        : string.Join(", ", item.SanPhamChiTiet.SanPhamChiTietThuocTinhs
+                            .Select(t => t.GiaTriThuocTinh.TenGiaTri));
 
                     cartViewModel.Items.Add(new CartItemViewModel
                     {
@@ -436,6 +482,32 @@ namespace PhuLieuToc.Controllers
             }
 
             return cartViewModel;
+        }
+
+        private Dictionary<int,string> GetCartSelectedAttrMap()
+        {
+            var json = HttpContext.Session.GetString("CART_ATTR_MAP");
+            if (string.IsNullOrEmpty(json)) return new Dictionary<int, string>();
+            try { return System.Text.Json.JsonSerializer.Deserialize<Dictionary<int,string>>(json) ?? new Dictionary<int,string>(); }
+            catch { return new Dictionary<int, string>(); }
+        }
+
+        private void SaveCartSelectedAttrMap(Dictionary<int,string> map)
+        {
+            HttpContext.Session.SetString("CART_ATTR_MAP", System.Text.Json.JsonSerializer.Serialize(map));
+        }
+
+        private Dictionary<int,string> GetCartSelectedAttrMapByRow()
+        {
+            var json = HttpContext.Session.GetString("CART_ATTR_MAP_ROW");
+            if (string.IsNullOrEmpty(json)) return new Dictionary<int, string>();
+            try { return System.Text.Json.JsonSerializer.Deserialize<Dictionary<int,string>>(json) ?? new Dictionary<int,string>(); }
+            catch { return new Dictionary<int, string>(); }
+        }
+
+        private void SaveCartSelectedAttrMapByRow(Dictionary<int,string> map)
+        {
+            HttpContext.Session.SetString("CART_ATTR_MAP_ROW", System.Text.Json.JsonSerializer.Serialize(map));
         }
 
         private CartViewModel GetCartFromSession()
