@@ -39,7 +39,7 @@
                         }
                     </div>
                 </div>
-                <h3 class="card-title">Tổng khách hàng</h3>
+                <h3 class="card-title">Tổng Tài Khoản</h3>
                 <p class="card-value">@ViewBag.TotalCustomers</p>
             </div>
             <div class="flip-card-back">
@@ -165,19 +165,7 @@
                         }
                     </div>
                 </div>
-                <h3 class="card-title">Tổng nhân viên</h3>
-                <p class="card-value">@ViewBag.TotalEmployees</p>
-            </div>
-            <div class="flip-card-back">
-                <div class="back-content">
-                    <div class="back-icon">
-                        <i class="fas fa-users-cog"></i>
-                    </div>
-                    <h4>Quản lý nhân viên</h4>
-                    <p>Nhân viên đang làm việc: @ViewBag.TotalEmployees</p>
-                    <p>Phòng ban: Quản lý, Bán hàng</p>
-                    <div class="flip-hint">Click để xem thêm</div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -364,7 +352,7 @@
                             <td><strong>@(order.TongTienSauKhiGiam?.ToString("N0") ?? "0") VNĐ</strong></td>
                             <td>
                                 <span class="status-badge status-@(GetStatusClass(order.TrangThai))">
-                                    @(order.StatusText ?? GetStatusText(order.TrangThai))
+                                    @GetStatusText(order.TrangThai)
                                 </span>
                             </td>
                             <td>@(order.NgayTao?.ToString("dd/MM/yyyy") ?? "N/A")</td>

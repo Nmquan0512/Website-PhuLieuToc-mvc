@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "xMUh6yLKlEY=",
+  "dgSpecHash": "w5ap6r0nROc=",
   "success": true,
   "projectFilePath": "C:\\Users\\Windows\\Downloads\\Website-PhuLieuToc-mvc\\PhuLieuToc.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,9 @@
     "C:\\Users\\Windows\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
     "C:\\Users\\Windows\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Windows\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\Windows\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\8.0.8\\microsoft.aspnetcore.authentication.google.8.0.8.nupkg.sha512",
+    "C:\\Users\\Windows\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.1.1\\microsoft.aspnetcore.http.abstractions.2.1.1.nupkg.sha512",
+    "C:\\Users\\Windows\\.nuget\\packages\\microsoft.aspnetcore.http.features\\2.1.1\\microsoft.aspnetcore.http.features.2.1.1.nupkg.sha512",
     "C:\\Users\\Windows\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "C:\\Users\\Windows\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.3.3\\microsoft.codeanalysis.analyzers.3.3.3.nupkg.sha512",
     "C:\\Users\\Windows\\.nuget\\packages\\microsoft.codeanalysis.common\\4.5.0\\microsoft.codeanalysis.common.4.5.0.nupkg.sha512",
@@ -80,7 +83,8 @@
     "C:\\Users\\Windows\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512",
     "C:\\Users\\Windows\\.nuget\\packages\\system.threading.channels\\6.0.0\\system.threading.channels.6.0.0.nupkg.sha512",
     "C:\\Users\\Windows\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
-    "C:\\Users\\Windows\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512"
+    "C:\\Users\\Windows\\.nuget\\packages\\system.windows.extensions\\6.0.0\\system.windows.extensions.6.0.0.nupkg.sha512",
+    "C:\\Users\\Windows\\.nuget\\packages\\vnpay.net\\8.5.0\\vnpay.net.8.5.0.nupkg.sha512"
   ],
   "logs": []
 }

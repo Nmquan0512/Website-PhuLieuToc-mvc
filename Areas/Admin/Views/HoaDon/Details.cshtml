@@ -1,0 +1,492 @@
+@model PhuLieuToc.Models.HoaDon
+
+<div class="container-fluid px-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="#" class="text-decoration-none" style="color: #99b18f;">
+          <i class="fas fa-home me-1"></i>Trang chủ
+        </a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="#" class="text-decoration-none" style="color: #99b18f;">Quản lý đơn hàng</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Chi tiết hóa đơn</li>
+    </ol>
+  </nav>
+
+  <!-- Header Actions -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <h4 class="mb-1 fw-bold text-dark">
+            <i class="fas fa-file-invoice me-2" style="color: #99b18f;"></i>
+            Chi tiết hóa đơn #@Model.HoaDonId.ToString().Substring(0,8).ToUpper()
+          </h4>
+          <p class="text-muted mb-0">Thông tin chi tiết và trạng thái đơn hàng</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+          <a href="#" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại
+          </a>
+          <button class="btn btn-outline-primary btn-sm" onclick="window.print()">
+            <i class="fas fa-print me-1"></i>In hóa đơn
+          </button>
+          <div class="dropdown">
+            <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    style="background: linear-gradient(135deg, #99b18f, #7a9470); color: white; border: none;">
+              <i class="fas fa-cog me-1"></i>Thao tác
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Chỉnh sửa</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-copy me-2"></i>Sao chép</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i>Xóa</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Main Invoice Content -->
+    <div class="col-lg-8">
+      <!-- Invoice Header -->
+      <div class="card border-0 shadow-sm mb-4" id="invoiceContent">
+        <div class="card-header py-4" style="background: linear-gradient(135deg, #5d7355 0%, #4a5d42 100%); color: white;">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <h5 class="mb-0 fw-bold">
+                <i class="fas fa-receipt me-2"></i>
+                HÓA ĐƠN BÁN HÀNG
+              </h5>
+              <p class="mb-0 opacity-75">Mã đơn hàng: #@Model.HoaDonId.ToString().Substring(0,8).ToUpper()</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+              <div class="d-inline-block p-3 rounded" style="background: rgba(255,255,255,0.1);">
+                <div class="fw-bold fs-5">PHU LIEU TOC LINH TRANG</div>
+                <small class="opacity-75">Salon chăm sóc tóc</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          <!-- Customer & Order Info -->
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="border-start border-3 ps-3" style="border-color: #99b18f !important;">
+                <h6 class="fw-bold mb-2 text-uppercase" style="color: #5d7355; font-size: 0.85rem; letter-spacing: 0.5px;">
+                  Thông tin khách hàng
+                </h6>
+                <div class="mb-2">
+                  <i class="fas fa-user me-2" style="color: #99b18f; width: 20px;"></i>
+                  <strong>@Model.TenKhachHang</strong>
+                </div>
+                <div class="mb-2">
+                  <i class="fas fa-phone me-2" style="color: #99b18f; width: 20px;"></i>
+                  <span>@Model.SoDienThoai</span>
+                </div>
+                <div class="mb-2">
+                  <i class="fas fa-map-marker-alt me-2" style="color: #99b18f; width: 20px;"></i>
+                  <span>@Model.DiaChiGiaoHang</span>
+                </div>
+                <div class="mb-2">
+                  <i class="fas fa-envelope me-2" style="color: #99b18f; width: 20px;"></i>
+                  <span>@(Model.TaiKhoanId != null ? Model.TaiKhoan?.Email : Model.EmailKhachHang)</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="border-start border-3 ps-3" style="border-color: #99b18f !important;">
+                <h6 class="fw-bold mb-2 text-uppercase" style="color: #5d7355; font-size: 0.85rem; letter-spacing: 0.5px;">
+                  Thông tin đơn hàng
+                </h6>
+                <div class="mb-2">
+                  <i class="fas fa-calendar me-2" style="color: #99b18f; width: 20px;"></i>
+                  <strong>Ngày tạo:</strong> @Model.NgayTao.ToString("dd/MM/yyyy HH:mm")
+                </div>
+                <div class="mb-2 ps-4">
+                  @{ var ts = DateTime.Now - Model.NgayTao; var d = ts.Days; var h = ts.Hours; }
+                  <small class="text-muted">@(d > 0 ? $"{d} ngày " : "")@(h > 0 ? $"{h} giờ trước" : "vừa xong")</small>
+                </div>
+                <div class="mb-2">
+                  <i class="fas fa-info-circle me-2" style="color: #99b18f; width: 20px;"></i>
+                  <strong>Trạng thái:</strong>
+                  @switch(Model.TrangThai){
+                    case 0:
+                      <span class="badge rounded-pill px-3 py-2 ms-1" style="background: rgba(108, 117, 125, 0.1); color: #6c757d;">
+                        <i class="fas fa-clock me-1"></i>Chờ duyệt
+                      </span>
+                      break;
+                    case 1:
+                      <span class="badge rounded-pill px-3 py-2 ms-1" style="background: rgba(13, 110, 253, 0.1); color: #0d6efd;">
+                        <i class="fas fa-check me-1"></i>Đã duyệt
+                      </span>
+                      break;
+                    case 2:
+                      <span class="badge rounded-pill px-3 py-2 ms-1" style="background: rgba(255, 193, 7, 0.1); color: #ffc107;">
+                        <i class="fas fa-truck me-1"></i>Đang giao
+                      </span>
+                      break;
+                    case 3:
+                      <span class="badge rounded-pill px-3 py-2 ms-1" style="background: rgba(25, 135, 84, 0.1); color: #198754;">
+                        <i class="fas fa-check-double me-1"></i>Đã giao
+                      </span>
+                      break;
+                    case -1:
+                    case 4:
+                      <span class="badge rounded-pill px-3 py-2 ms-1" style="background: rgba(220, 53, 69, 0.1); color: #dc3545;">
+                        <i class="fas fa-times me-1"></i>Đã hủy
+                      </span>
+                      break;
+                  }
+                </div>
+                <div class="mb-2">
+                  <i class="fas fa-credit-card me-2" style="color: #99b18f; width: 20px;"></i>
+                  <strong>Thanh toán:</strong> @Model.PhuongThucThanhToan
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products Table -->
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead style="background: #f8f9fa;">
+                <tr>
+                  <th class="border-0 py-3 fw-semibold" style="color: #5d7355;">Sản phẩm</th>
+                  <th class="border-0 py-3 fw-semibold text-center" style="color: #5d7355;">Thuộc tính</th>
+                  <th class="border-0 py-3 fw-semibold text-center" style="color: #5d7355;">Số lượng</th>
+                  <th class="border-0 py-3 fw-semibold text-end" style="color: #5d7355;">Đơn giá</th>
+                  <th class="border-0 py-3 fw-semibold text-end" style="color: #5d7355;">Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+              @foreach (var c in Model.HoaDonChiTiets)
+              {
+                <tr class="border-bottom">
+                  <td class="py-3">
+                    <div class="d-flex align-items-center">
+                      @if (!string.IsNullOrEmpty(c.HinhAnhLucMua)){
+                        <div class="me-3">
+                          <img src="@c.HinhAnhLucMua" class="rounded shadow-sm" 
+                               style="width: 50px; height: 50px; object-fit: cover;" />
+                        </div>
+                      }
+                      <div>
+                        <div class="fw-medium mb-1">@c.TenSanPhamLucMua</div>
+                        <small class="text-muted">Sản phẩm chăm sóc tóc</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3 text-center">
+                    @if (!string.IsNullOrEmpty(c.LoaiThuocTinhLucMua) || !string.IsNullOrEmpty(c.GiaTriThuocTinhLucMua)){
+                      <div class="d-inline-block px-3 py-1 rounded-pill" style="background: rgba(153, 177, 143, 0.1); color: #5d7355;">
+                        <small class="fw-medium">@c.LoaiThuocTinhLucMua: @c.GiaTriThuocTinhLucMua</small>
+                      </div>
+                    }
+                    else {
+                      <span class="text-muted">—</span>
+                    }
+                  </td>
+                  <td class="py-3 text-center">
+                     <span class="fw-medium">@c.SoLuong</span>
+                  </td>
+                  <td class="py-3 text-end">
+                    <span class="fw-medium">@c.DonGia.ToString("N0") đ</span>
+                  </td>
+                  <td class="py-3 text-end">
+                    <span class="fw-bold" style="color: #5d7355;">@c.ThanhTien.ToString("N0") đ</span>
+                  </td>
+                </tr>
+              }
+              </tbody>
+              <tfoot>
+                <tr class="border-top-2">
+                  <td colspan="4" class="py-3 text-end fw-bold fs-5" style="color: #5d7355;">
+                    TỔNG CỘNG:
+                  </td>
+                  <td class="py-3 text-end">
+                    <div class="fw-bold fs-4" style="color: #5d7355;">
+                      @Model.TongTien.ToString("N0") đ
+                    </div>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Footer Note -->
+          <div class="mt-4 p-3 rounded" style="background: rgba(153, 177, 143, 0.05); border-left: 4px solid #99b18f;">
+            <div class="row">
+              <div class="col-md-8">
+                <h6 class="fw-bold mb-2" style="color: #5d7355;">Lưu ý:</h6>
+                <small class="text-muted">
+                  • Sản phẩm đã mua không thể đổi trả sau 7 ngày<br>
+                  • Bảo hành sản phẩm theo quy định của nhà sản xuất<br>
+                  • Liên hệ hotline để được hỗ trợ tốt nhất
+                </small>
+              </div>
+              <div class="col-md-4 text-md-end">
+                <div class="text-muted">
+                  <small>Cảm ơn quý khách đã tin tưởng!</small><br>
+                  <strong style="color: #99b18f;">PHU LIEU TOC Linh Trang</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Status Timeline (with timestamps) -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <h6 class="mb-0 fw-semibold">
+            <i class="fas fa-history me-2" style="color: #99b18f;"></i>
+            Tiến trình đơn hàng
+          </h6>
+        </div>
+        <div class="card-body">
+          @{ 
+            var logs = (Model.LichSuTrangThaiHoaDons ?? new List<PhuLieuToc.Models.LichSuTrangThaiHoaDon>())
+                        .OrderBy(l => l.ThoiGianThayDoi)
+                        .ToList();
+            var latestByStatus = logs
+              .GroupBy(l => l.TrangThaiMoi)
+              .ToDictionary(g => g.Key, g => g.Max(x => x.ThoiGianThayDoi));
+            bool isCancelled = latestByStatus.ContainsKey(4);
+            DateTime t;
+          }
+          <div class="timeline">
+            <div class="timeline-item completed">
+              <div class="timeline-marker"></div>
+              <div class="timeline-content">
+                <h6 class="mb-1">Đơn hàng được tạo</h6>
+                <small class="text-muted">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</small>
+              </div>
+            </div>
+            @if (!isCancelled)
+            {
+              <div class="timeline-item @(Model.TrangThai >= 1 ? "completed" : "")">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <h6 class="mb-1">Admin xác nhận</h6>
+                  <small class="text-muted">@(latestByStatus.TryGetValue(1, out t) ? t.ToString("dd/MM/yyyy HH:mm") : "Chưa có")</small>
+                </div>
+              </div>
+              <div class="timeline-item @(Model.TrangThai >= 2 ? "completed" : "")">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <h6 class="mb-1">Bắt đầu giao hàng</h6>
+                  <small class="text-muted">@(latestByStatus.TryGetValue(2, out t) ? t.ToString("dd/MM/yyyy HH:mm") : "Chưa có")</small>
+                </div>
+              </div>
+              <div class="timeline-item @(Model.TrangThai >= 3 ? "completed" : "")">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <h6 class="mb-1">Giao hàng thành công</h6>
+                  <small class="text-muted">@(latestByStatus.TryGetValue(3, out t) ? t.ToString("dd/MM/yyyy HH:mm") : "Chưa có")</small>
+                </div>
+              </div>
+            }
+            else
+            {
+              <div class="timeline-item cancelled">
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <h6 class="mb-1 text-danger">Đơn hàng bị hủy</h6>
+                  <small class="text-muted">@latestByStatus[4].ToString("dd/MM/yyyy HH:mm")</small>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+          <h6 class="mb-0 fw-semibold">
+            <i class="fas fa-chart-bar me-2" style="color: #99b18f;"></i>
+            Thống kê nhanh
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-6 mb-3">
+              <div class="border-end">
+                <h4 class="fw-bold mb-1" style="color: #99b18f;">@Model.HoaDonChiTiets.Count()</h4>
+                <small class="text-muted">Sản phẩm</small>
+              </div>
+            </div>
+            <div class="col-6 mb-3">
+              <h4 class="fw-bold mb-1" style="color: #99b18f;">@Model.HoaDonChiTiets.Sum(x => x.SoLuong)</h4>
+              <small class="text-muted">Tổng SL</small>
+            </div>
+          </div>
+          <hr class="my-3">
+          <div class="text-center">
+            <div class="fw-bold fs-5" style="color: #5d7355;">@Model.TongTien.ToString("N0") đ</div>
+            <small class="text-muted">Tổng giá trị</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Support -->
+      <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #99b18f, #7a9470); color: white;">
+        <div class="card-body text-center p-4">
+          <i class="fas fa-headset fs-2 mb-3 opacity-75"></i>
+          <h6 class="fw-bold mb-2">Cần hỗ trợ?</h6>
+          <p class="mb-3 opacity-75">Liên hệ với chúng tôi để được giải đáp</p>
+          <button class="btn btn-light btn-sm">
+            <i class="fas fa-phone me-1"></i>Gọi ngay
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (ViewBag.Print == true){
+<script>setTimeout(()=>{ window.print(); }, 300);</script>
+}
+
+<style>
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e9ecef;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -2rem;
+  top: 0.25rem;
+  width: 12px;
+  height: 12px;
+  background: #e9ecef;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #e9ecef;
+}
+
+.timeline-item.completed .timeline-marker {
+  background: #99b18f;
+  box-shadow: 0 0 0 2px #99b18f;
+}
+
+.timeline-item.cancelled .timeline-marker {
+  background: #dc3545;
+  box-shadow: 0 0 0 2px #dc3545;
+}
+
+.timeline-content h6 {
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.timeline-item.completed .timeline-content h6 {
+  color: #99b18f;
+}
+
+.timeline-item.cancelled .timeline-content h6 {
+  color: #dc3545;
+}
+
+.border-top-2 {
+  border-top: 2px solid #dee2e6 !important;
+}
+
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.table tbody tr:hover {
+  background-color: rgba(153, 177, 143, 0.05) !important;
+}
+
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  content: ">";
+  color: #6c757d;
+}
+
+.breadcrumb-item.active {
+  color: #6c757d;
+}
+
+@@media print {
+  .container-fluid {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .col-lg-4, .breadcrumb, .btn, .dropdown {
+    display: none !important;
+  }
+  
+  .col-lg-8 {
+    width: 100% !important;
+  }
+  
+  .card {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .card-header {
+    background: #5d7355 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  body {
+    background: white !important;
+  }
+}
+
+@@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  animation: fadeIn 0.5s ease;
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>

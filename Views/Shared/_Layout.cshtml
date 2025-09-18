@@ -1046,6 +1046,23 @@
 				transform: translateY(0);
 			}
 		}
+
+		/* Zalo floating button */
+		.zalo-container img{max-width:100%;height:auto;}
+		.zalo-container{position:fixed;width:40px;height:40px;bottom:120px;z-index:9999999;}
+		.zalo-container:not(.right){left:35px;right:auto;}
+		.zalo-container a{display:block;}
+		.zalo-container span{display:-webkit-flex;display:-moz-flex;display:-ms-flex;display:-o-flex;display:flex;-ms-align-items:center;align-items:center;width:40px;height:40px;border-radius:50%;background:#1182FC;position:relative;}
+		.zoomIn_zalo{animation-name:zoomIn_zalo;}
+		.animated_zalo{animation-duration:1s;animation-fill-mode:both;}
+		.animated_zalo.infinite{animation-iteration-count:infinite;}
+		.cmoz-alo-circle{width:50px;height:50px;top:-5px;right:-5px;position:absolute;background-color:transparent;-webkit-border-radius:100%;-moz-border-radius:100%;border-radius:100%;border:2px solid rgba(17,130,252,.8);border-color:#1182FC;opacity:.5;}
+		.cmoz-alo-circle-fill{width:60px;height:60px;top:-10px;position:absolute;-webkit-transition:all 0.2s ease-in-out;-moz-transition:all 0.2s ease-in-out;-ms-transition:all 0.2s ease-in-out;-o-transition:all 0.2s ease-in-out;transition:all 0.2s ease-in-out;-webkit-border-radius:100%;-moz-border-radius:100%;border-radius:100%;border:2px solid transparent;-webkit-transition:all .5s;-moz-transition:all .5s;-o-transition:all .5s;transition:all .5s;background-color:rgba(17,130,252,.45);opacity:.75;right:-10px;}
+		.pulse_zalo{-webkit-animation-name:pulse_zalo;animation-name:pulse_zalo;}
+		.left{left:0;}
+		@@keyframes zoomIn_zalo{from{opacity:0;transform:scale3d(.3,.3,.3);}50%{opacity:1;}}
+		@@-webkit-keyframes pulse_zalo{from{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1);}50%{-webkit-transform:scale3d(1.05,1.05,1.05);transform:scale3d(1.05,1.05,1.05);}to{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1);}}
+		@@keyframes pulse_zalo{from{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1);}50%{-webkit-transform:scale3d(1.05,1.05,1.05);transform:scale3d(1.05,1.05,1.05);}to{-webkit-transform:scale3d(1,1,1);transform:scale3d(1,1,1);}}
 	</style>
 </head>
 
@@ -1059,19 +1076,19 @@
 					<div class="col-sm-6">
 						<div class="contactinfo">
 							<ul class="nav nav-pills">
-								<li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-								<li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+								<li><a href="tel:0919260172"><i class="fa fa-phone"></i> +84 919260172</a></li>
+								<li><a href="mailto:halinh26102005@gmail.com"><i class="fa fa-envelope"></i> halinh26102005@gmail.com</a></li>
 							</ul>
 						</div>
 					</div>
 					<div class="col-sm-6">
 						<div class="social-icons pull-right">
 							<ul class="nav navbar-nav">
-								<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-								<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-								<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-								<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-								<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+								<li><a href="https://www.facebook.com/p/Ph%E1%BB%A5-li%E1%BB%87u-t%C3%B3c-Linh-Trang-100095402465365/"><i class="fa fa-facebook"></i></a></li>
+								<li>
+									<a href="tel:0919260172"><i class="fa fa-phone"></i></a>
+								</li>
+								<li><a href="mailto:halinh26102005@gmail.com"><i class="fa fa-google-plus"></i></a></li>
 							</ul>
 						</div>
 					</div>
@@ -1085,31 +1102,10 @@
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="logo pull-left">
-							<img src="~/images/home/logo.jpg" alt="" width="100" height="auto" />
+							<a asp-action="Index" asp-controller="Home"><img src="~/images/home/logo.jpg" alt="" width="100" height="auto" />
+								</a>
 						</div>
-						<div class="btn-group pull-right">
-							<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle usa" data-bs-toggle="dropdown">
-									Việt Nam
-									<i class="fa fa-chevron-down"></i>
-								</button>
-								<ul class="dropdown-menu">
-									<li><a href="#">Canada</a></li>
-									<li><a href="#">UK</a></li>
-								</ul>
-							</div>
 
-							<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle usa" data-bs-toggle="dropdown">
-									VND
-									<i class="fa fa-chevron-down"></i>
-								</button>
-								<ul class="dropdown-menu">
-									<li><a href="#">Canadian Dollar</a></li>
-									<li><a href="#">Pound</a></li>
-								</ul>
-							</div>
-						</div>
 					</div>
 					<div class="col-sm-8">
 						<div class="shop-menu pull-right">
@@ -1269,7 +1265,17 @@
 	</section>
 
 	<footer class="footer">
+        <!-- Zalo floating button -->
+        <div class="zalo-container left">
+            <a id="zalo-btn" href="https://zalo.me/0919260172" target="_blank" rel="noopener nofollow">
+                <div class="animated_zalo infinite zoomIn_zalo cmoz-alo-circle"></div>
+                <div class="animated_zalo infinite pulse_zalo cmoz-alo-circle-fill"></div>
+                <span><img src="https://vutruso.com/wp-content/uploads/2024/05/zalo-2.png" alt="Contact Me on Zalo"></span>
+            </a>
+        </div>
 		<div class="footer-main">
+
+
 			<div class="container">
 				<div class="footer-grid">
 					<!-- About Section -->
@@ -1277,57 +1283,51 @@
 						<h3>Linh Trang Hair Accessories</h3>
 						<p>Chuyên cung cấp các sản phẩm phụ kiện tóc cao cấp, thiết kế tinh tế và hiện đại. Chúng tôi cam kết mang đến cho bạn những sản phẩm chất lượng nhất với giá cả hợp lý.</p>
 
-						<div class="social-links">
-							<a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-							<a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
-							<a href="#" title="Zalo"><i class="fas fa-phone"></i></a>
-							<a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
-							<a href="#" title="TikTok"><i class="fab fa-tiktok"></i></a>
-						</div>
+						
 					</div>
 
 					<!-- Quick Links -->
 					<div class="footer-section footer-links">
 						<h3>Liên kết nhanh</h3>
-						<ul>
-							<li><a href="#">Trang chủ</a></li>
-							<li><a href="#">Sản phẩm</a></li>
-							<li><a href="#">Về chúng tôi</a></li>
-							<li><a href="#">Tin tức</a></li>
-							<li><a href="#">Liên hệ</a></li>
-							<li><a href="#">Hướng dẫn mua hàng</a></li>
-						</ul>
+                        <ul>
+                            <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                            <li><a asp-controller="Product" asp-action="Index">Sản phẩm</a></li>
+                            <li><a asp-controller="Home" asp-action="Categories">Về chúng tôi</a></li>
+                            <li><a asp-controller="Home" asp-action="Blog">Tin tức</a></li>
+                            <li><a asp-controller="Home" asp-action="Contact">Liên hệ</a></li>
+                            <li><a asp-controller="Home" asp-action="Privacy">Hướng dẫn mua hàng</a></li>
+                        </ul>
 					</div>
 
 					<!-- Product Categories -->
 					<div class="footer-section footer-links">
 						<h3>Danh mục sản phẩm</h3>
-						<ul>
-							<li><a href="#">Cài tóc</a></li>
-							<li><a href="#">Băng đô</a></li>
-							<li><a href="#">Kẹp tóc</a></li>
-							<li><a href="#">Dây buộc tóc</a></li>
-							<li><a href="#">Phụ kiện cô dâu</a></li>
-							<li><a href="#">Set phụ kiện</a></li>
-						</ul>
+                        <ul>
+                            <li><a asp-controller="Home" asp-action="Categories">Cài tóc</a></li>
+                            <li><a asp-controller="Home" asp-action="Categories">Băng đô</a></li>
+                            <li><a asp-controller="Home" asp-action="Categories">Kẹp tóc</a></li>
+                            <li><a asp-controller="Home" asp-action="Categories">Dây buộc tóc</a></li>
+                            <li><a asp-controller="Home" asp-action="Categories">Phụ kiện cô dâu</a></li>
+                            <li><a asp-controller="Home" asp-action="Categories">Set phụ kiện</a></li>
+                        </ul>
 					</div>
 
 					<!-- Contact Info -->
 					<div class="footer-section">
 						<h3>Thông tin liên hệ</h3>
 						<ul class="contact-info">
-							<li>
-								<i class="fas fa-map-marker-alt"></i>
-								123 Đường ABC, Quận XYZ, TP.HCM
-							</li>
-							<li>
-								<i class="fas fa-phone"></i>
-								0123 456 789
-							</li>
-							<li>
-								<i class="fas fa-envelope"></i>
-								info@linhtranghair.com
-							</li>
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i>
+								<a href="https://www.google.com/maps/search/?api=1&query=123%20Duong%20ABC%2C%20Quan%20XYZ%2C%20TP.HCM" target="_blank" class="text-white text-decoration-none">14 Bùi Lâm, Phước Nguyễn, Bà Rịa, Bà Rịa - Vũng Tàu</a>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i>
+                                <a href="tel:0919260172" class="text-white text-decoration-none">0919 260 172</a>
+                            </li>
+                            <li>
+                                <i class="fas fa-envelope"></i>
+								<a href="mailto:halinh26102005@gmail.com" class="text-white text-decoration-none">halinh26102005@gmail.com</a>
+                            </li>
 							<li>
 								<i class="fas fa-clock"></i>
 								8:00 - 22:00 (Thứ 2 - Chủ nhật)
@@ -1435,5 +1435,19 @@
         }, 2000);
     }
 </script>
+
+@* Global TempData -> Toast *@
+@if (TempData["Success"] != null)
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){ if (window.showToast) showToast('@Html.Raw(TempData["Success"])', 'success'); });
+    </script>
+}
+@if (TempData["Error"] != null)
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){ if (window.showToast) showToast('@Html.Raw(TempData["Error"])', 'secondary'); });
+    </script>
+}
 
 </html>

@@ -48,6 +48,17 @@ namespace PhuLieuToc.Repository
                 .WithMany(gttt => gttt.SanPhamChiTietThuocTinhs)
                 .HasForeignKey(spcttt => spcttt.GiaTriThuocTinhId);
 
+            // Preserve order detail snapshots even if product variant is deleted/edited
+            try
+            {
+                modelBuilder.Entity<HoaDonChiTiet>()
+                    .HasOne(hd => hd.SanPhamChiTiet)
+                    .WithMany(spct => spct.HoaDonChiTiets)
+                    .HasForeignKey(hd => hd.SanPhamChiTietId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            }
+            catch { }
+
             // Unique indexes for Slug fields
             modelBuilder.Entity<SanPham>()
                 .HasIndex(p => p.Slug)

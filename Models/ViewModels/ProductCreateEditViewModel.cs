@@ -6,6 +6,7 @@ namespace PhuLieuToc.Models.ViewModels
 {
     public class VariantInputViewModel
     {
+        public int? SanPhamChiTietId { get; set; }
         public List<int> GiaTriThuocTinhIds { get; set; } = new List<int>();
 
         [Required]

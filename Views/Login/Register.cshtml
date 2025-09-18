@@ -80,7 +80,12 @@
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary"><i class="fa-solid fa-user-check me-1"></i>Đăng ký</button>
                     <div class="divider"></div>
+
                     <a asp-controller="Login" asp-action="Index" class="btn btn-outline-secondary"><i class="fa-solid fa-right-to-bracket me-1"></i>Đã có tài khoản? Đăng nhập</a>
+                    <form asp-controller="Login" asp-action="GoogleLogin" method="post" class="d-grid mt-2">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-secondary"><i class="fa-brands fa-google me-1"></i>Đăng nhập với Google</button>
+                    </form>
                     <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary"><i class="fa-solid fa-house me-1"></i>Về trang chủ</a>
                 </div>
             </form>

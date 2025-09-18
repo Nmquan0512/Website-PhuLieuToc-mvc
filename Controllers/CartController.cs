@@ -187,6 +187,7 @@ namespace PhuLieuToc.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+
                 return Json(new { success = true });
             }
             catch (Exception ex)
@@ -277,6 +278,24 @@ namespace PhuLieuToc.Controllers
                     return View(model);
                 }
 
+                // Nếu khách chưa đăng nhập, validate email không trùng email tài khoản
+                if (userId == null)
+                {
+                    if (string.IsNullOrWhiteSpace(model.EmailKhachHang))
+                    {
+                        ModelState.AddModelError("EmailKhachHang", "Vui lòng nhập email để nhận thông báo đơn hàng.");
+                        model.Cart = cart; return View(model);
+                    }
+
+                    var isTaken = await _context.TaiKhoans.AnyAsync(t => t.Email == model.EmailKhachHang.Trim());
+                    if (isTaken)
+                    {
+                        ModelState.AddModelError("", "Email đã tồn tại trong hệ thống. Vui lòng dùng email khác hoặc đăng nhập.");
+                        model.Cart = cart;
+                        return View(model);
+                    }
+                }
+
                 var hoaDon = new HoaDon
                 {
                     HoaDonId = Guid.NewGuid(),
@@ -286,7 +305,8 @@ namespace PhuLieuToc.Controllers
                     TongTien = cart.TotalAmount,
                     TrangThai = 0,
                     PhuongThucThanhToan = model.PhuongThucThanhToan,
-                    TaiKhoanId = userId
+                    TaiKhoanId = userId,
+                    EmailKhachHang = userId == null ? (string.IsNullOrWhiteSpace(model.EmailKhachHang) ? null : model.EmailKhachHang.Trim()) : null
                 };
 
                 _context.HoaDons.Add(hoaDon);
@@ -340,28 +360,95 @@ namespace PhuLieuToc.Controllers
                         };
 
                         _context.HoaDonChiTiets.Add(chiTiet);
-                        sanPham.SoLuongTon -= item.SoLuong;
+                        // Chỉ trừ tồn ngay đối với COD. Với VNPay, sẽ trừ sau khi thanh toán thành công
+                        if (!string.Equals(model.PhuongThucThanhToan, "VNPay", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sanPham.SoLuongTon -= item.SoLuong;
+                        }
                     }
                 }
 
                 await _context.SaveChangesAsync();
 
-                if (userId == null)
+                // Chỉ xoá giỏ hàng nếu là COD. Với VNPay, giữ giỏ cho đến khi thanh toán thành công
+                if (!string.Equals(model.PhuongThucThanhToan, "VNPay", StringComparison.OrdinalIgnoreCase))
                 {
-                    HttpContext.Session.Remove("CART");
-                }
-                else
-                {
-                    var gioHang = await _context.GioHangs
-                        .Include(g => g.GioHangChiTiets)
-                        .FirstOrDefaultAsync(g => g.TaiKhoanId == userId);
-
-                    if (gioHang != null)
+                    if (userId == null)
                     {
-                        _context.GioHangChiTiets.RemoveRange(gioHang.GioHangChiTiets);
-                        _context.GioHangs.Remove(gioHang);
-                        await _context.SaveChangesAsync();
+                        HttpContext.Session.Remove("CART");
                     }
+                    else
+                    {
+                        var gioHang = await _context.GioHangs
+                            .Include(g => g.GioHangChiTiets)
+                            .FirstOrDefaultAsync(g => g.TaiKhoanId == userId);
+
+                        if (gioHang != null)
+                        {
+                            _context.GioHangChiTiets.RemoveRange(gioHang.GioHangChiTiets);
+                            _context.GioHangs.Remove(gioHang);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                }
+
+                // Email admin notification chỉ dành cho COD. VNPay sẽ gửi sau khi thanh toán thành công
+                try
+                {
+                    if (!string.Equals(model.PhuongThucThanhToan, "VNPay", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var cfg = HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
+                        var adminEmail = cfg?["EmailSettings:AdminEmail"] ?? cfg?["EmailSettings:SenderEmail"];
+                        if (!string.IsNullOrWhiteSpace(adminEmail))
+                        {
+                            var htmlTemplate = CreateOrderNotificationEmailTemplate(hoaDon);
+                            _ = System.Threading.Tasks.Task.Run(async () =>
+                            {
+                                try { await SendEmailAsync(adminEmail, $"[Linh Trang - Phụ Liệu Tóc] 🛍️ Đơn hàng mới #{hoaDon.HoaDonId}", htmlTemplate); } catch { }
+                            });
+                        }
+                    }
+                }
+                catch { /* best effort notification */ }
+
+                // Email cảm ơn gửi cho khách chỉ dành cho COD
+                try
+                {
+                    if (!string.Equals(model.PhuongThucThanhToan, "VNPay", StringComparison.OrdinalIgnoreCase))
+                    {
+                        string customerEmail = userId != null
+                            ? (await _context.TaiKhoans.Where(t => t.TaiKhoanId == userId).Select(t => t.Email).FirstOrDefaultAsync())
+                            : hoaDon.EmailKhachHang;
+                        if (!string.IsNullOrWhiteSpace(customerEmail))
+                        {
+                            var items = await _context.HoaDonChiTiets.Where(x => x.HoaDonId == hoaDon.HoaDonId).ToListAsync();
+                            var rows = string.Join("", items.Select(c => $"<tr><td style='padding:8px 12px'>{c.TenSanPhamLucMua}</td><td style='padding:8px 12px;text-align:center'>{c.SoLuong}</td><td style='text-align:right;padding:8px 12px'>{c.DonGia:n0} đ</td><td style='text-align:right;padding:8px 12px'>{c.ThanhTien:n0} đ</td></tr>"));
+                            var html = $@"<div style='font-family:Segoe UI,Arial,sans-serif'>
+                                <div style='background:#7a9470;color:#fff;padding:14px;border-radius:8px 8px 0 0'>
+                                    <h3 style='margin:0'>Cảm ơn bạn đã đặt hàng</h3>
+                                </div>
+                                <div style='border:1px solid #e6efe6;border-top:none;padding:16px;border-radius:0 0 8px 8px'>
+                                    <p>Xin chào <strong>{hoaDon.TenKhachHang}</strong>, chúng tôi đã nhận được đơn hàng <strong>#{hoaDon.HoaDonId}</strong>.</p>
+                                    <p><strong>Thông tin giao hàng:</strong><br/>SĐT: {hoaDon.SoDienThoai}<br/>Địa chỉ: {hoaDon.DiaChiGiaoHang}</p>
+                                    <table style='width:100%;border-collapse:collapse;background:#fafdf9;border:1px solid #e6efe6'>
+                                        <thead><tr style='background:#eef5ea'><th style='text-align:left;padding:8px 12px'>Sản phẩm</th><th style='padding:8px 12px'>SL</th><th style='text-align:right;padding:8px 12px'>Đơn giá</th><th style='text-align:right;padding:8px 12px'>Thành tiền</th></tr></thead>
+                                        <tbody>{rows}</tbody>
+                                        <tfoot><tr><td colspan='3' style='padding:8px 12px;text-align:right'><strong>Tổng cộng:</strong></td><td style='padding:8px 12px;text-align:right'><strong>{hoaDon.TongTien:n0} đ</strong></td></tr></tfoot>
+                                    </table>
+                                    <p style='margin-top:12px'>Cảm ơn bạn đã tin tưởng Phụ Liệu Tóc.</p>
+                                </div></div>";
+                            _ = System.Threading.Tasks.Task.Run(async () => { try { await SendEmailAsync(customerEmail, $"Xác nhận đơn hàng #{hoaDon.HoaDonId}", html); } catch { } });
+                        }
+                    }
+                }
+                catch { }
+
+                // Redirect based on payment method
+                if (string.Equals(model.PhuongThucThanhToan, "VNPay", StringComparison.OrdinalIgnoreCase))
+                {
+                    var vnp = HttpContext.RequestServices.GetRequiredService<PhuLieuToc.Service.VNPayService>();
+                    var payUrl = vnp.CreatePaymentUrl(hoaDon.HoaDonId, hoaDon.TongTien, $"Thanh toan don hang #{hoaDon.HoaDonId.ToString().Substring(0,8)}");
+                    return Redirect(payUrl);
                 }
 
                 TempData["Success"] = "Đặt hàng thành công!";
@@ -394,6 +481,7 @@ namespace PhuLieuToc.Controllers
                 TenKhachHang = order.TenKhachHang,
                 SoDienThoai = order.SoDienThoai,
                 DiaChiGiaoHang = order.DiaChiGiaoHang,
+                Email = order.TaiKhoanId != null ? (await _context.TaiKhoans.Where(t=>t.TaiKhoanId==order.TaiKhoanId).Select(t=>t.Email).FirstOrDefaultAsync()) : order.EmailKhachHang,
                 TongTien = order.TongTien,
                 TrangThai = order.TrangThai,
                 PhuongThucThanhToan = order.PhuongThucThanhToan,
@@ -548,5 +636,175 @@ namespace PhuLieuToc.Controllers
             }
             return guest.TaiKhoanId;
         }
+
+        private async Task SendEmailAsync(string toEmail, string subject, string body)
+        {
+            try
+            {
+                var config = HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
+                var host = config?["EmailSettings:SmtpServer"];
+                var port = int.TryParse(config?["EmailSettings:SmtpPort"], out var p) ? p : 587;
+                var user = config?["EmailSettings:SenderEmail"];
+                var pass = config?["EmailSettings:SenderPassword"];
+                var display = config?["EmailSettings:SenderName"] ?? "Phụ Liệu Tóc";
+                using var client = new System.Net.Mail.SmtpClient(host, port) { EnableSsl = true, Credentials = new System.Net.NetworkCredential(user, pass) };
+                var mail = new System.Net.Mail.MailMessage(new System.Net.Mail.MailAddress(user!, display), new System.Net.Mail.MailAddress(toEmail)) { Subject = subject, Body = body, IsBodyHtml = true };
+                await client.SendMailAsync(mail);
+            }
+            catch { }
+        }
+
+        private string CreateOrderNotificationEmailTemplate(HoaDon hoaDon)
+{
+    var sb = new System.Text.StringBuilder();
+    
+    // Chi tiết sản phẩm
+    var chiTietSanPham = new System.Text.StringBuilder();
+    foreach (var c in _context.HoaDonChiTiets.Where(x => x.HoaDonId == hoaDon.HoaDonId))
+    {
+        chiTietSanPham.Append($@"
+            <tr>
+                <td style='padding: 12px; border-bottom: 1px solid #e5e7eb; font-weight: 500; color: #374151;'>
+                    {c.TenSanPhamLucMua}
+                </td>
+                <td style='padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: center; color: #6b7280;'>
+                    x{c.SoLuong}
+                </td>
+                <td style='padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right; color: #6b7280;'>
+                    {c.DonGia:n0} đ
+                </td>
+                <td style='padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: right; font-weight: 600; color: #374151;'>
+                    {c.ThanhTien:n0} đ
+                </td>
+            </tr>");
+        
+        if (!string.IsNullOrWhiteSpace(c.LoaiThuocTinhLucMua))
+        {
+            chiTietSanPham.Append($@"
+            <tr>
+                <td colspan='4' style='padding: 0 12px 8px 12px; font-size: 13px; color: #6b7280; font-style: italic;'>
+                    Thuộc tính: {c.LoaiThuocTinhLucMua}
+                </td>
+            </tr>");
+        }
+    }
+
+    sb.Append($@"
+<!DOCTYPE html>
+<html lang='vi'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Đơn hàng mới #{hoaDon.HoaDonId}</title>
+</head>
+<body style='margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f9fafb; line-height: 1.6;'>
+    <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);'>
+        
+        <!-- Header -->
+        <div style='background: linear-gradient(135deg, #6b835f 0%, #8fa876 100%); padding: 30px 20px; text-align: center;'>
+            <h1 style='margin: 0; color: #ffffff; font-size: 28px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.1);'>
+                🛍️ Đơn Hàng Mới
+            </h1>
+            <p style='margin: 8px 0 0 0; color: #f0f9ff; font-size: 16px; opacity: 0.9;'>
+                Linh Trang - Phụ Liệu Tóc
+            </p>
+        </div>
+
+        <!-- Order Info -->
+        <div style='padding: 30px 20px;'>
+            <div style='background-color: #f8fffe; border: 2px solid #6b835f; border-radius: 8px; padding: 20px; margin-bottom: 25px;'>
+                <h2 style='margin: 0 0 15px 0; color: #6b835f; font-size: 20px; font-weight: bold;'>
+                    📋 Thông Tin Đơn Hàng
+                </h2>
+                <div style='display: flex; flex-wrap: wrap; gap: 10px;'>
+                    <div style='background-color: #ffffff; padding: 15px; border-radius: 6px; flex: 1; min-width: 200px; border-left: 4px solid #6b835f;'>
+                        <p style='margin: 0; font-size: 14px; color: #6b7280;'>Mã đơn hàng</p>
+                        <p style='margin: 5px 0 0 0; font-size: 18px; font-weight: bold; color: #6b835f;'>#{hoaDon.HoaDonId}</p>
+                    </div>
+                    <div style='background-color: #ffffff; padding: 15px; border-radius: 6px; flex: 1; min-width: 200px; border-left: 4px solid #8fa876;'>
+                        <p style='margin: 0; font-size: 14px; color: #6b7280;'>Ngày đặt</p>
+                        <p style='margin: 5px 0 0 0; font-size: 16px; font-weight: 600; color: #374151;'>{DateTime.Now:dd/MM/yyyy HH:mm}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Info -->
+            <div style='margin-bottom: 25px;'>
+                <h3 style='margin: 0 0 15px 0; color: #374151; font-size: 18px; font-weight: bold; border-bottom: 2px solid #6b835f; padding-bottom: 8px;'>
+                    👤 Thông Tin Khách Hàng
+                </h3>
+                <div style='background-color: #f9fafb; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb;'>
+                    <div style='margin-bottom: 12px;'>
+                        <span style='display: inline-block; width: 120px; font-weight: 600; color: #6b835f;'>Tên khách hàng:</span>
+                        <span style='color: #374151; font-weight: 500;'>{hoaDon.TenKhachHang}</span>
+                    </div>
+                    <div style='margin-bottom: 12px;'>
+                        <span style='display: inline-block; width: 120px; font-weight: 600; color: #6b835f;'>Số điện thoại:</span>
+                        <span style='color: #374151; font-weight: 500;'>{hoaDon.SoDienThoai}</span>
+                    </div>
+
+                    <div style='margin-bottom: 0;'>
+                        <span style='display: inline-block; width: 120px; font-weight: 600; color: #6b835f; vertical-align: top;'>Địa chỉ:</span>
+                        <span style='color: #374151; font-weight: 500;'>{hoaDon.DiaChiGiaoHang}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div style='margin-bottom: 25px;'>
+                <h3 style='margin: 0 0 15px 0; color: #374151; font-size: 18px; font-weight: bold; border-bottom: 2px solid #6b835f; padding-bottom: 8px;'>
+                    🛒 Chi Tiết Sản Phẩm
+                </h3>
+                <div style='background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;'>
+                    <table style='width: 100%; border-collapse: collapse;'>
+                        <thead>
+                            <tr style='background-color: #6b835f;'>
+                                <th style='padding: 15px 12px; text-align: left; color: #ffffff; font-weight: 600; font-size: 14px;'>Sản phẩm</th>
+                                <th style='padding: 15px 12px; text-align: center; color: #ffffff; font-weight: 600; font-size: 14px;'>SL</th>
+                                <th style='padding: 15px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 14px;'>Đơn giá</th>
+                                <th style='padding: 15px 12px; text-align: right; color: #ffffff; font-weight: 600; font-size: 14px;'>Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {chiTietSanPham}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Total -->
+            <div style='background: linear-gradient(135deg, #6b835f 0%, #8fa876 100%); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 25px;'>
+                <p style='margin: 0 0 5px 0; color: #f0f9ff; font-size: 16px; opacity: 0.9;'>Tổng thanh toán</p>
+                <p style='margin: 0; color: #ffffff; font-size: 28px; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.1);'>
+                    {hoaDon.TongTien:n0} đ
+                </p>
+            </div>
+
+            <!-- Action Required -->
+            <div style='background-color: #fef3c7; border: 2px solid #f59e0b; border-radius: 8px; padding: 20px; text-align: center;'>
+                <h4 style='margin: 0 0 10px 0; color: #92400e; font-size: 16px; font-weight: bold;'>
+                    ⚠️ Cần Xử Lý Ngay
+                </h4>
+                <p style='margin: 0; color: #92400e; font-size: 14px; line-height: 1.5;'>
+                    Đơn hàng mới cần được xác nhận và chuẩn bị giao hàng. Vui lòng đăng nhập hệ thống để xử lý.
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style='background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;'>
+            <p style='margin: 0 0 10px 0; color: #6b7280; font-size: 14px;'>
+                Email này được gửi tự động từ hệ thống
+            </p>
+            <p style='margin: 0; color: #6b835f; font-weight: 600; font-size: 16px;'>
+                Linh Trang - Phụ Liệu Tóc 💇‍♀️
+            </p>
+        </div>
+    </div>
+</body>
+</html>");
+
+    return sb.ToString();
+}
     }
 }

@@ -2,6 +2,8 @@ using PhuLieuToc.Models;
 
 namespace PhuLieuToc.Models.ViewModels
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class CartViewModel
     {
         public List<CartItemViewModel> Items { get; set; } = new List<CartItemViewModel>();
@@ -30,8 +32,11 @@ namespace PhuLieuToc.Models.ViewModels
         public string TenKhachHang { get; set; }
         public string SoDienThoai { get; set; }
         public string DiaChiGiaoHang { get; set; }
-        public string GhiChu { get; set; }
+        public string? GhiChu { get; set; }
         public string PhuongThucThanhToan { get; set; } = "COD"; // COD hoặc VNPay
+        // Email khách (chỉ dùng khi chưa đăng nhập)
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string? EmailKhachHang { get; set; }
     }
 
     public class OrderStatusViewModel
@@ -40,6 +45,7 @@ namespace PhuLieuToc.Models.ViewModels
         public string TenKhachHang { get; set; }
         public string SoDienThoai { get; set; }
         public string DiaChiGiaoHang { get; set; }
+        public string? Email { get; set; }
         public decimal TongTien { get; set; }
         public int TrangThai { get; set; }
         public string TrangThaiText => GetTrangThaiText(TrangThai);

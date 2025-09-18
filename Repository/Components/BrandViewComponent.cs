@@ -13,7 +13,7 @@ namespace PhuLieuToc.Repository.Components
 			_context = context;
 		}
 
-		public async Task<IViewComponentResult> InvokeAsync() => View(await _context.Brands.ToListAsync());
+        public async Task<IViewComponentResult> InvokeAsync() => View(await _context.Brands.Where(b => b.TrangThai == 1).ToListAsync());
 
 
 	}

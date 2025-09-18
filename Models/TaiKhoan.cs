@@ -44,5 +44,13 @@ namespace PhuLieuToc.Models
         public ICollection<HoaDon>? HoaDons { get; set; } = new List<HoaDon>();
 
         public ICollection<GioHang>? GioHangs { get; set; } = new List<GioHang>();
+
+        // Password reset OTP snapshot
+        [StringLength(10)]
+        public string? ResetOtp { get; set; }
+
+        public DateTime? ResetOtpExpiryUtc { get; set; }
+
+        public int? ResetOtpAttempts { get; set; }
     }
 }

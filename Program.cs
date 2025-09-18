@@ -29,12 +29,37 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SameSite = SameSiteMode.Lax;
     });
 
+// Đăng ký Google OAuth chỉ khi có cấu hình đầy đủ để tránh lỗi thiếu ClientId
+var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
+var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+if (!string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret))
+{
+    builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddGoogle(options =>
+        {
+            options.ClientId = googleClientId;
+            options.ClientSecret = googleClientSecret;
+            // Use the conventional callback path expected by Google console
+            options.CallbackPath = "/signin-google";
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        });
+}
+
 // Cấu hình DbContext (ví dụ, dùng SQL Server hoặc thay thế theo chuỗi kết nối của bạn)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Nếu có các service khác, thêm ở đây
-// ...
+// VNPay service registration
+var vnpSection = builder.Configuration.GetSection("VNPay");
+var vnpOptions = new PhuLieuToc.Service.VNPayOptions
+{
+    TmnCode = vnpSection["TmnCode"] ?? "",
+    HashSecret = vnpSection["HashSecret"] ?? "",
+    BaseUrl = vnpSection["BaseUrl"] ?? "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html",
+    ReturnUrl = vnpSection["ReturnUrl"] ?? ""
+};
+builder.Services.AddSingleton(vnpOptions);
+builder.Services.AddSingleton<PhuLieuToc.Service.VNPayService>();
 
 var app = builder.Build();
 

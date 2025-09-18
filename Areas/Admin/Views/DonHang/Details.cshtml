@@ -1,0 +1,614 @@
+@model PhuLieuToc.Models.HoaDon
+
+<div class="container-fluid px-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#" class="text-decoration-none" style="color: #99b18f;">
+                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="#" class="text-decoration-none" style="color: #99b18f;">Quản lý đơn hàng</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Chi tiết đơn hàng</li>
+        </ol>
+    </nav>
+
+    <!-- Header with Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #99b18f 0%, #7a9470 100%);">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h4 class="text-white mb-1 fw-bold">
+                                <i class="fas fa-clipboard-list me-2"></i>
+                                Đơn hàng #@Model.HoaDonId.ToString().Substring(0, 8).ToUpper()
+                            </h4>
+                            <p class="text-white-50 mb-0">Quản lý và theo dõi chi tiết đơn hàng</p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <div class="d-flex flex-wrap justify-content-md-end gap-2">
+                                <a asp-action="Index" asp-controller="DonHang" class="btn btn-light btn-sm">
+                                    <i class="fas fa-arrow-left me-1"></i>Quay lại
+                                </a>
+                           
+                                    <ul class="dropdown-menu">
+                                        @if (Model.TrangThai == 0)
+                                        {
+                                            <li>
+                                                <form method="post" asp-action="UpdateStatus" asp-route-id="@Model.HoaDonId" asp-route-status="1" class="d-inline w-100">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="fas fa-check text-primary me-2"></i>Duyệt đơn hàng
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form method="post" asp-action="UpdateStatus" asp-route-id="@Model.HoaDonId" asp-route-status="-1" class="d-inline w-100">
+                                                    <button type="submit" class="dropdown-item text-danger">
+                                                        <i class="fas fa-times me-2"></i>Hủy đơn hàng
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        }
+                                        @if (Model.TrangThai == 1)
+                                        {
+                                            <li>
+                                                <form method="post" asp-action="UpdateStatus" asp-route-id="@Model.HoaDonId" asp-route-status="2" class="d-inline w-100">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="fas fa-truck text-warning me-2"></i>Bắt đầu giao hàng
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        }
+                                        @if (Model.TrangThai == 2)
+                                        {
+                                            <li>
+                                                <form method="post" asp-action="UpdateStatus" asp-route-id="@Model.HoaDonId" asp-route-status="3" class="d-inline w-100">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="fas fa-check-double text-success me-2"></i>Hoàn thành giao hàng
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Order Status Card -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="fas fa-info-circle me-2" style="color: #99b18f;"></i>
+                        Trạng thái đơn hàng
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                @switch (Model.TrangThai)
+                                {
+                                    case 0:
+                                        <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                             style="width: 60px; height: 60px; background: rgba(108, 117, 125, 0.1);">
+                                            <i class="fas fa-clock text-secondary fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1 text-secondary">Chờ duyệt</h5>
+                                            <p class="mb-0 text-muted">Đơn hàng đang chờ admin xác nhận</p>
+                                        </div>
+                                        break;
+                                    case 1:
+                                        <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                             style="width: 60px; height: 60px; background: rgba(13, 110, 253, 0.1);">
+                                            <i class="fas fa-check text-primary fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1 text-primary">Đã duyệt</h5>
+                                            <p class="mb-0 text-muted">Đơn hàng đã được xác nhận, chuẩn bị giao hàng</p>
+                                        </div>
+                                        break;
+                                    case 2:
+                                        <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                             style="width: 60px; height: 60px; background: rgba(255, 193, 7, 0.1);">
+                                            <i class="fas fa-truck text-warning fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1 text-warning">Đang giao hàng</h5>
+                                            <p class="mb-0 text-muted">Đơn hàng đang được vận chuyển</p>
+                                        </div>
+                                        break;
+                                    case 3:
+                                        <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                             style="width: 60px; height: 60px; background: rgba(25, 135, 84, 0.1);">
+                                            <i class="fas fa-check-double text-success fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1 text-success">Đã giao thành công</h5>
+                                            <p class="mb-0 text-muted">Đơn hàng đã được giao và hoàn thành</p>
+                                        </div>
+                                        break;
+                                    case -1:
+                                        <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                             style="width: 60px; height: 60px; background: rgba(220, 53, 69, 0.1);">
+                                            <i class="fas fa-times text-danger fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1 text-danger">Đã hủy</h5>
+                                            <p class="mb-0 text-muted">Đơn hàng đã bị hủy</p>
+                                        </div>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <div class="p-3 rounded" style="background: #f8f9fa;">
+                                <div class="fw-bold mb-1">Thời gian xử lý</div>
+                                <div class="text-muted">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</div>
+                                <small class="text-muted">
+                                    @{
+                                        var timeSpan = DateTime.Now - Model.NgayTao;
+                                        var days = timeSpan.Days;
+                                        var hours = timeSpan.Hours;
+                                    }
+                                    @(days > 0 ? $"{days} ngày " : "")@(hours > 0 ? $"{hours} giờ trước" : "vừa xong")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Info -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="fas fa-user me-2" style="color: #99b18f;"></i>
+                        Thông tin khách hàng
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                     style="width: 50px; height: 50px; background: linear-gradient(135deg, #99b18f, #7a9470); color: white;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 fw-bold">@Model.TenKhachHang</h6>
+                                    <p class="mb-0 text-muted">Khách hàng</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted fw-medium">Số điện thoại</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-phone me-2" style="color: #99b18f;"></i>
+                                    <span class="fw-medium">@Model.SoDienThoai</span>
+                                    <button class="btn btn-sm btn-outline-primary ms-2" onclick="window.open('tel:@Model.SoDienThoai')">
+                                        <i class="fas fa-phone"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted fw-medium">Email</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-envelope me-2" style="color: #99b18f;"></i>
+                                    <span class="fw-medium">@(Model.TaiKhoanId != null ? Model.TaiKhoan?.Email : Model.EmailKhachHang)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted fw-medium">Email</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-envelope me-2" style="color: #99b18f;"></i>
+                                    <span class="fw-medium">@(Model.TaiKhoanId != null ? Model.TaiKhoan?.Email : Model.EmailKhachHang)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label text-muted fw-medium">Địa chỉ giao hàng</label>
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-map-marker-alt me-2 mt-1" style="color: #99b18f;"></i>
+                                    <div class="flex-grow-1">
+                                        <span class="fw-medium">@Model.DiaChiGiaoHang</span>
+                                        <button class="btn btn-sm btn-outline-success ms-2" onclick="openGoogleMaps('@Model.DiaChiGiaoHang')">
+                                            <i class="fas fa-map-marked-alt"></i> Xem bản đồ
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted fw-medium">Phương thức thanh toán</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-credit-card me-2" style="color: #99b18f;"></i>
+                                    <span class="badge bg-light text-dark px-3 py-2">@Model.PhuongThucThanhToan</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label text-muted fw-medium">Tình trạng thanh toán</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-money-check-alt me-2" style="color: #99b18f;"></i>
+                                @if (Model.TrangThai == 0)
+                                {
+                                    <span class="badge bg-warning text-dark px-3 py-2">
+                                        <i class="fas fa-clock me-1"></i>Chờ duyệt
+                                    </span>
+                                }
+                                else if (Model.TrangThai == 1)
+                                {
+                                    <span class="badge bg-success px-3 py-2">
+                                        <i class="fas fa-check me-1"></i>Đã duyệt
+                                    </span>
+                                }
+                                else if (Model.TrangThai == 2)
+                                {
+                                    <span class="badge bg-info text-dark px-3 py-2">
+                                        <i class="fas fa-shipping-fast me-1"></i>Đang giao
+                                    </span>
+                                }
+                                else if (Model.TrangThai == 3)
+                                {
+                                    <span class="badge bg-primary px-3 py-2">
+                                        <i class="fas fa-box-open me-1"></i>Đã giao
+                                    </span>
+                                }
+                                else if (Model.TrangThai == 4)
+                                {
+                                    <span class="badge bg-danger px-3 py-2">
+                                        <i class="fas fa-times me-1"></i>Đã hủy
+                                    </span>
+                                }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="fas fa-shopping-cart me-2" style="color: #99b18f;"></i>
+                        Chi tiết sản phẩm
+                    </h6>
+                    <span class="badge bg-light text-dark">@Model.HoaDonChiTiets.Count() sản phẩm</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead style="background: #f8f9fa;">
+                                <tr>
+                                    <th class="border-0 py-3 ps-4">Sản phẩm</th>
+                                    <th class="border-0 py-3 text-center">Thuộc tính</th>
+                                    <th class="border-0 py-3 text-center">Số lượng</th>
+                                    <th class="border-0 py-3 text-end">Đơn giá</th>
+                                    <th class="border-0 py-3 text-end pe-4">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.HoaDonChiTiets)
+                                {
+                                    <tr class="border-bottom">
+                                        <td class="py-4 ps-4">
+                                            <div class="d-flex align-items-center">
+                                                @if (!string.IsNullOrEmpty(c.HinhAnhLucMua))
+                                                {
+                                                    <div class="me-3">
+                                                        <img src="@c.HinhAnhLucMua" class="rounded shadow-sm"
+                                                             style="width: 60px; height: 60px; object-fit: cover;" />
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="me-3 rounded d-flex align-items-center justify-content-center"
+                                                         style="width: 60px; height: 60px; background: #f8f9fa;">
+                                                        <i class="fas fa-image text-muted"></i>
+                                                    </div>
+                                                }
+                                                <div>
+                                                    <h6 class="mb-1 fw-medium">@c.TenSanPhamLucMua</h6>
+                                                    <small class="text-muted">Mã SP: @c.HoaDonChiTietId.ToString().Substring(0, 8).ToUpper()</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 text-center">
+                                            @if (!string.IsNullOrEmpty(c.LoaiThuocTinhLucMua) || !string.IsNullOrEmpty(c.GiaTriThuocTinhLucMua))
+                                            {
+                                                <div class="d-inline-block px-3 py-1 rounded-pill" style="background: rgba(153, 177, 143, 0.1);">
+                                                    <small class="fw-medium" style="color: #5d7355;">
+                                                        @c.LoaiThuocTinhLucMua: @c.GiaTriThuocTinhLucMua
+                                                    </small>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">—</span>
+                                            }
+                                        </td>
+                                        <td class="py-4 text-center">
+                                            <div class="d-inline-flex align-items-center px-3 py-2 rounded" style="background: #f8f9fa;">
+                                                <span class="fw-bold fs-6">@c.SoLuong</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 text-end">
+                                            <span class="fw-medium">@c.DonGia.ToString("N0") đ</span>
+                                        </td>
+                                        <td class="py-4 text-end pe-4">
+                                            <span class="fw-bold fs-6" style="color: #5d7355;">@c.ThanhTien.ToString("N0") đ</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="border-top bg-light p-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tổng số sản phẩm:</span>
+                                    <span class="fw-medium">@Model.HoaDonChiTiets.Count() món</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Tổng số lượng:</span>
+                                    <span class="fw-medium">@Model.HoaDonChiTiets.Sum(x => x.SoLuong) cái</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <div class="p-3 rounded" style="background: white; border: 2px solid #99b18f;">
+                                    <div class="fw-bold text-uppercase text-muted mb-1">Tổng thanh toán</div>
+                                    <div class="fw-bold fs-3" style="color: #5d7355;">
+                                        @Model.TongTien.ToString("N0") đ
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Timeline -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="fas fa-history me-2" style="color: #99b18f;"></i>
+                        Lịch sử đơn hàng
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @{ 
+                        var logs = (Model.LichSuTrangThaiHoaDons ?? new List<PhuLieuToc.Models.LichSuTrangThaiHoaDon>())
+                                   .OrderBy(l => l.ThoiGianThayDoi)
+                                   .ToList();
+                        // lấy bản ghi mới nhất theo mỗi trạng thái
+                        var latestByStatus = logs
+                            .GroupBy(l => l.TrangThaiMoi)
+                            .ToDictionary(g => g.Key, g => g.Max(x => x.ThoiGianThayDoi));
+                        bool isCancelled = latestByStatus.ContainsKey(4);
+                    }
+                    <div class="timeline">
+                        <div class="timeline-item completed">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1">Đơn hàng được tạo</h6>
+                                <small class="text-muted">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</small>
+                            </div>
+                        </div>
+
+                        @if (!isCancelled)
+                        {
+                            if (latestByStatus.ContainsKey(1))
+                            {
+                                <div class="timeline-item completed">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Admin xác nhận</h6>
+                                        <small class="text-muted">@latestByStatus[1].ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                </div>
+                            }
+                            if (latestByStatus.ContainsKey(2))
+                            {
+                                <div class="timeline-item completed">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Bắt đầu giao hàng</h6>
+                                        <small class="text-muted">@latestByStatus[2].ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                </div>
+                            }
+                            if (latestByStatus.ContainsKey(3))
+                            {
+                                <div class="timeline-item completed">
+                                    <div class="timeline-marker"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Giao hàng thành công</h6>
+                                        <small class="text-muted">@latestByStatus[3].ToString("dd/MM/yyyy HH:mm")</small>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="timeline-item cancelled">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <h6 class="mb-1 text-danger">Đơn hàng bị hủy</h6>
+                                    <small class="text-muted">@latestByStatus[4].ToString("dd/MM/yyyy HH:mm")</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-semibold">
+                        <i class="fas fa-bolt me-2" style="color: #99b18f;"></i>
+                        Thao tác nhanh
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="sendSMS('@Model.SoDienThoai')">
+                            <i class="fas fa-sms me-2"></i>Gửi SMS thông báo
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" onclick="window.open('tel:@Model.SoDienThoai')">
+                            <i class="fas fa-phone me-2"></i>Gọi điện khách hàng
+                        </button>
+                        <button class="btn btn-outline-info btn-sm" onclick="copyOrderInfo()">
+                            <i class="fas fa-copy me-2"></i>Copy thông tin đơn hàng
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Stats -->
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #99b18f, #7a9470); color: white;">
+                <div class="card-body text-center p-4">
+                    <i class="fas fa-chart-pie fs-2 mb-3 opacity-75"></i>
+                    <h6 class="fw-bold mb-3">Thống kê đơn hàng</h6>
+                    <div class="row text-center">
+                        <div class="col-6 mb-2">
+                            <div class="fw-bold fs-4">@Model.HoaDonChiTiets.Count()</div>
+                            <small class="opacity-75">Sản phẩm</small>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="fw-bold fs-4">@Model.HoaDonChiTiets.Sum(x => x.SoLuong)</div>
+                            <small class="opacity-75">Tổng SL</small>
+                        </div>
+                    </div>
+                    <hr class="my-3 opacity-25">
+                    <div class="fw-bold fs-5">@Model.TongTien.ToString("N0") đ</div>
+                    <small class="opacity-75">Tổng giá trị đơn hàng</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e9ecef;
+        }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -2rem;
+        top: 0.25rem;
+        width: 12px;
+        height: 12px;
+        background: #e9ecef;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 2px #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-item.completed .timeline-marker {
+        background: #99b18f;
+        box-shadow: 0 0 0 2px #99b18f;
+    }
+
+    .timeline-item.cancelled .timeline-marker {
+        background: #dc3545;
+        box-shadow: 0 0 0 2px #dc3545;
+    }
+
+    .timeline-content h6 {
+        color: #495057;
+        font-size: 0.9rem;
+    }
+
+    .timeline-item.completed .timeline-content h6 {
+        color: #99b18f;
+    }
+
+    .timeline-item.cancelled .timeline-content h6 {
+        color: #dc3545;
+    }
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+        }
+    </style>
+
+    <script>
+        function openGoogleMaps(address){
+            if(!address){ if(window.showToast) showToast('Không có địa chỉ','secondary'); return; }
+            const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
+            window.open(url, '_blank');
+        }
+
+        function sendSMS(phone){
+            if(!phone){ if(window.showToast) showToast('Không có số điện thoại','secondary'); return; }
+            const smsUrl = 'sms:' + phone + '?body=' + encodeURIComponent('Xin chào, đơn hàng của bạn đang được xử lý.');
+            try { window.location.href = smsUrl; } catch(e){ navigator.clipboard.writeText(phone); }
+            if(window.showToast) showToast('Đã mở SMS / copy số: ' + phone,'success');
+        }
+
+        function copyOrderInfo(){
+            try{
+                const text = `Đơn hàng #${'@Model.HoaDonId'.substring(0,8)}\nKhách hàng: ${'@Model.TenKhachHang'}\nSĐT: ${'@Model.SoDienThoai'}\nĐịa chỉ: ${'@Model.DiaChiGiaoHang'}\nTổng tiền: ${'@Model.TongTien.ToString("N0")'} đ`;
+                navigator.clipboard.writeText(text);
+                if(window.showToast) showToast('Đã copy thông tin đơn hàng','success');
+            }catch(e){ alert('Không thể copy'); }
+        }
+    </script>

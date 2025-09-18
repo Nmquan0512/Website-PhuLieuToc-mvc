@@ -57,6 +57,16 @@
                             </div>
                         </div>
 
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <div class="mb-3">
+                                <label asp-for="EmailKhachHang" class="form-label">Email nhận thông báo (bắt buộc, không trùng tài khoản)</label>
+                                <input asp-for="EmailKhachHang" type="email" class="form-control" placeholder="email@domain.com" required>
+                                <small class="text-muted">Dùng để nhận thông báo đơn hàng.</small>
+                                <span asp-validation-for="EmailKhachHang" class="text-danger"></span>
+                            </div>
+                        }
+
                         <div class="mb-3">
                             <label asp-for="DiaChiGiaoHang" class="form-label">Địa chỉ giao hàng *</label>
                             <textarea asp-for="DiaChiGiaoHang" class="form-control" rows="3" required placeholder="Nhập địa chỉ chi tiết..."></textarea>
@@ -151,8 +161,9 @@
                     </div>
                     
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-check me-2"></i>Đặt hàng
+                        <button type="submit" class="btn btn-primary btn-lg" id="btnPlaceOrder">
+                            <span class="btn-text"><i class="fas fa-check me-2"></i>Đặt hàng</span>
+                            <span class="btn-loading d-none"><span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang xử lý...</span>
                         </button>
                     </div>
                     
@@ -165,6 +176,13 @@
             </div>
         </div>
     </form>
+    <!-- Loading overlay -->
+    <div id="checkoutLoading" class="position-fixed top-0 start-0 w-100 h-100 d-none" style="background: rgba(0,0,0,0.35); z-index: 1080;">
+        <div class="d-flex flex-column align-items-center justify-content-center h-100 text-white">
+            <div class="spinner-border text-light mb-3" role="status" aria-hidden="true"></div>
+            <div>Đang tạo đơn hàng, vui lòng chờ...</div>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -288,7 +306,18 @@
 
 @section Scripts {
     <script>
-        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        let isSubmitting = false;
+        const form = document.getElementById('checkoutForm');
+        const btn = document.getElementById('btnPlaceOrder');
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoading = btn.querySelector('.btn-loading');
+        const overlay = document.getElementById('checkoutLoading');
+
+        form.addEventListener('submit', function(e) {
+            if (isSubmitting) {
+                e.preventDefault();
+                return false;
+            }
             const tenKhachHang = document.querySelector('input[name="TenKhachHang"]').value;
             const soDienThoai = document.querySelector('input[name="SoDienThoai"]').value;
             const diaChiGiaoHang = document.querySelector('textarea[name="DiaChiGiaoHang"]').value;
@@ -304,6 +333,12 @@
                 alert('Số điện thoại không hợp lệ');
                 return false;
             }
+            // lock UI
+            isSubmitting = true;
+            btn.disabled = true;
+            btnText.classList.add('d-none');
+            btnLoading.classList.remove('d-none');
+            overlay.classList.remove('d-none');
         });
 
         // Payment method selection

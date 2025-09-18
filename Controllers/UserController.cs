@@ -18,6 +18,23 @@ namespace PhuLieuToc.Controllers
             _context = context;
         }
 
+        private async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false)
+        {
+            try
+            {
+                var config = HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
+                var host = config?["EmailSettings:SmtpServer"];
+                var port = int.TryParse(config?["EmailSettings:SmtpPort"], out var p) ? p : 587;
+                var user = config?["EmailSettings:SenderEmail"];
+                var pass = config?["EmailSettings:SenderPassword"];
+                var display = config?["EmailSettings:SenderName"] ?? "Phụ Liệu Tóc";
+                using var client = new System.Net.Mail.SmtpClient(host, port) { EnableSsl = true, Credentials = new System.Net.NetworkCredential(user, pass) };
+                var mail = new System.Net.Mail.MailMessage(new System.Net.Mail.MailAddress(user!, display), new System.Net.Mail.MailAddress(toEmail)) { Subject = subject, Body = body, IsBodyHtml = isHtml };
+                await client.SendMailAsync(mail);
+            }
+            catch { }
+        }
+
         public async Task<IActionResult> Profile()
         {
             var userId = GetCurrentUserId();
@@ -154,6 +171,7 @@ namespace PhuLieuToc.Controllers
 
             var orders = await _context.HoaDons
                 .Include(h => h.HoaDonChiTiets)
+                .Include(h => h.TaiKhoan)
                 .Where(h => h.TaiKhoanId == userId)
                 .OrderByDescending(h => h.NgayTao)
                 .ToListAsync();
@@ -195,12 +213,27 @@ namespace PhuLieuToc.Controllers
                 TenKhachHang = order.TenKhachHang,
                 SoDienThoai = order.SoDienThoai,
                 DiaChiGiaoHang = order.DiaChiGiaoHang,
+                Email = order.TaiKhoanId != null ? (await _context.TaiKhoans.Where(t=>t.TaiKhoanId==order.TaiKhoanId).Select(t=>t.Email).FirstOrDefaultAsync()) : order.EmailKhachHang,
                 TongTien = order.TongTien,
                 TrangThai = order.TrangThai,
                 PhuongThucThanhToan = order.PhuongThucThanhToan,
                 NgayTao = order.NgayTao,
                 ChiTietHoaDon = order.HoaDonChiTiets.ToList()
             };
+
+            // Build history dictionary for client timeline (same as admin)
+            try
+            {
+                var histories = await _context.LichSuTrangThaiHoaDons
+                    .Where(l => l.HoaDonId == order.HoaDonId)
+                    .OrderBy(l => l.ThoiGianThayDoi)
+                    .ToListAsync();
+                var dict = histories
+                    .GroupBy(x => x.TrangThaiMoi)
+                    .ToDictionary(g => g.Key, g => g.Max(x => x.ThoiGianThayDoi));
+                ViewBag.LichSu = dict;
+            }
+            catch { ViewBag.LichSu = new Dictionary<int, DateTime>(); }
 
             return View(orderViewModel);
         }
@@ -263,6 +296,27 @@ namespace PhuLieuToc.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+
+                // Email admin notification
+                try
+                {
+                    var cfg = HttpContext.RequestServices.GetService(typeof(IConfiguration)) as IConfiguration;
+                    var adminEmail = cfg?["EmailSettings:AdminEmail"] ?? cfg?["EmailSettings:SenderEmail"];
+                    string customerEmail = (await _context.TaiKhoans.Where(t=>t.TaiKhoanId==userId).Select(t=>t.Email).FirstOrDefaultAsync()) ?? string.Empty;
+                    if (!string.IsNullOrWhiteSpace(adminEmail))
+                    {
+                        var html = $@"<div style='font-family:Segoe UI,Arial,sans-serif'>
+                            <div style='background:#7a9470;color:#fff;padding:12px;border-radius:8px 8px 0 0'>Thông báo hủy đơn</div>
+                            <div style='border:1px solid #e6efe6;border-top:none;padding:16px;border-radius:0 0 8px 8px'>
+                                <p>Khách hàng <strong>{order.TenKhachHang}</strong> đã hủy đơn <strong>#{order.HoaDonId}</strong>.</p>
+                                <p>Email: {(string.IsNullOrWhiteSpace(customerEmail) ? order.EmailKhachHang : customerEmail)}</p>
+                                <p>Tổng tiền: <strong>{order.TongTien:n0} đ</strong></p>
+                            </div></div>";
+                        await SendEmailAsync(adminEmail, $"[PhuLieuToc] Huỷ đơn #{order.HoaDonId}", html, true);
+                    }
+                }
+                catch { }
+
                 return Json(new { success = true, message = "Hủy đơn hàng thành công" });
             }
             catch (Exception ex)

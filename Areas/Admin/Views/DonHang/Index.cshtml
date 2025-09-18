@@ -1,0 +1,465 @@
+@model IEnumerable<PhuLieuToc.Models.HoaDon>
+
+<div class="container-fluid px-4">
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #99b18f 0%, #7a9470 100%);">
+        <div class="card-body p-4">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <h4 class="text-white mb-1 fw-bold">
+                <i class="fas fa-file-invoice-dollar me-2"></i>Quản lý Đơn hàng
+              </h4>
+              <p class="text-white-50 mb-0">Theo dõi và quản lý tất cả đơn hàng</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+              <div class="d-flex flex-wrap justify-content-md-end gap-2">
+                <button class="btn btn-light btn-sm" id="refreshBtn">
+                  <i class="fas fa-sync-alt me-1"></i>Làm mới
+                </button>
+                <div class="dropdown">
+                  <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-filter me-1"></i>Lọc trạng thái
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" data-filter="all">Tất cả</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="0">Chờ duyệt</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="1">Đã duyệt</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="2">Đang giao</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="3">Đã giao</a></li>
+                    <li><a class="dropdown-item" href="#" data-filter="4">Đã hủy</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4" id="statsCards">
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+               style="width: 50px; height: 50px; background: rgba(108, 117, 125, 0.1);">
+            <i class="fas fa-clock text-secondary fs-5"></i>
+          </div>
+          <h6 class="card-title mb-1">Chờ duyệt</h6>
+          <h4 class="text-secondary mb-0 fw-bold" id="stat-pending">0</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+               style="width: 50px; height: 50px; background: rgba(13, 110, 253, 0.1);">
+            <i class="fas fa-check text-primary fs-5"></i>
+          </div>
+          <h6 class="card-title mb-1">Đã duyệt</h6>
+          <h4 class="text-primary mb-0 fw-bold" id="stat-approved">0</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+               style="width: 50px; height: 50px; background: rgba(255, 193, 7, 0.1);">
+            <i class="fas fa-truck text-warning fs-5"></i>
+          </div>
+          <h6 class="card-title mb-1">Đang giao</h6>
+          <h4 class="text-warning mb-0 fw-bold" id="stat-shipping">0</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body text-center">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" 
+               style="width: 50px; height: 50px; background: rgba(25, 135, 84, 0.1);">
+            <i class="fas fa-check-double text-success fs-5"></i>
+          </div>
+          <h6 class="card-title mb-1">Đã giao</h6>
+          <h4 class="text-success mb-0 fw-bold" id="stat-completed">0</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Table -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h6 class="mb-0 fw-semibold">Danh sách đơn hàng</h6>
+        </div>
+        <div class="col-md-6">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light border-end-0">
+              <i class="fas fa-search text-muted"></i>
+            </span>
+            <input type="text" class="form-control border-start-0" id="searchInput" 
+                   placeholder="Tìm kiếm theo mã hoặc tên khách hàng...">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table id="ordersTable" class="table table-hover align-middle mb-0">
+          <thead style="background: #f8f9fa;">
+            <tr>
+              <th class="px-4 py-3 fw-semibold">Mã đơn hàng</th>
+              <th class="px-4 py-3 fw-semibold">Khách hàng</th>
+              <th class="px-4 py-3 fw-semibold text-center">Trạng thái</th>
+              <th class="px-4 py-3 fw-semibold">Ngày tạo</th>
+              <th class="px-4 py-3 fw-semibold text-center">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+          @foreach (var h in Model)
+          {
+            <tr data-status="@h.TrangThai" class="border-bottom">
+              <td class="px-4 py-3">
+                <div class="d-flex align-items-center">
+                  <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                       style="width: 35px; height: 35px; background: linear-gradient(135deg, #99b18f, #7a9470); color: white; font-size: 12px; font-weight: bold;">
+                    #
+                  </div>
+                  <div>
+                    <div class="fw-semibold text-primary">@h.HoaDonId.ToString().Substring(0,8).ToUpper()</div>
+                    <small class="text-muted">ID: @h.HoaDonId</small>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="d-flex align-items-center">
+                  <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                       style="width: 35px; height: 35px; background: #e9ecef;">
+                    <i class="fas fa-user text-muted"></i>
+                  </div>
+                  <div>
+                    <div class="fw-medium">@h.TenKhachHang</div>
+                    <small class="text-muted">Khách hàng</small>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                @switch(h.TrangThai){
+                  case 0:
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(108, 117, 125, 0.1); color: #6c757d; font-weight: 500;">
+                      <i class="fas fa-clock me-1"></i>Chờ duyệt
+                    </span>
+                    break;
+                  case 1:
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(13, 110, 253, 0.1); color: #0d6efd; font-weight: 500;">
+                      <i class="fas fa-check me-1"></i>Đã duyệt
+                    </span>
+                    break;
+                  case 2:
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(255, 193, 7, 0.1); color: #ffc107; font-weight: 500;">
+                      <i class="fas fa-truck me-1"></i>Đang giao
+                    </span>
+                    break;
+                  case 3:
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(25, 135, 84, 0.1); color: #198754; font-weight: 500;">
+                      <i class="fas fa-check-double me-1"></i>Đã giao
+                    </span>
+                    break;
+                  case 4:
+                    <span class="badge rounded-pill px-3 py-2" style="background: rgba(220, 53, 69, 0.1); color: #dc3545; font-weight: 500;">
+                      <i class="fas fa-times me-1"></i>Đã hủy
+                    </span>
+                    break;
+                }
+              </td>
+              <td class="px-4 py-3">
+                <div>
+                  <div class="fw-medium">@h.NgayTao.ToString("dd/MM/yyyy")</div>
+                  <small class="text-muted">@h.NgayTao.ToString("HH:mm")</small>
+                </div>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <div class="d-flex justify-content-center gap-1">
+                  <a asp-action="Details" asp-route-id="@h.HoaDonId" 
+                     class="btn btn-sm btn-outline-primary rounded-pill px-3" 
+                     data-bs-toggle="tooltip" title="Xem chi tiết">
+                    <i class="fas fa-eye me-1"></i>Xem
+                  </a>
+                  
+                  @if (h.TrangThai == 0 || h.TrangThai == 1){
+                    <form method="post" asp-action="Cancel" asp-route-id="@h.HoaDonId" class="d-inline">
+                      <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 cancel-btn" 
+                              data-bs-toggle="tooltip" title="Hủy đơn hàng">
+                        <i class="fas fa-times me-1"></i>Hủy
+                      </button>
+                    </form>
+                  }
+                  
+                  @if (h.TrangThai == 0 || h.TrangThai == 1 || h.TrangThai == 2){
+                    <form method="post" asp-action="NextStatus" asp-route-id="@h.HoaDonId" class="d-inline">
+                      <button type="submit" class="btn btn-sm rounded-pill px-3 next-status-btn"
+                              style="background: linear-gradient(135deg, #99b18f, #7a9470); color: white; border: none;"
+                              data-bs-toggle="tooltip" title="Chuyển trạng thái tiếp theo">
+                        <i class="fas fa-arrow-right me-1"></i>
+                        @(h.TrangThai == 0 ? "Duyệt" : (h.TrangThai == 1 ? "Giao hàng" : "Hoàn thành"))
+                      </button>
+                    </form>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Empty State -->
+      <div id="emptyState" class="text-center py-5 d-none">
+        <div class="mb-3">
+          <i class="fas fa-inbox text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+        </div>
+        <h5 class="text-muted">Không tìm thấy đơn hàng</h5>
+        <p class="text-muted mb-0">Thử thay đổi bộ lọc hoặc tìm kiếm với từ khóa khác</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="d-none position-fixed top-0 start-0 w-100 h-100" 
+     style="background: rgba(255,255,255,0.8); z-index: 9999;">
+  <div class="d-flex align-items-center justify-content-center h-100">
+    <div class="text-center">
+      <div class="spinner-border" style="color: #99b18f;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <div class="mt-2 text-muted">Đang xử lý...</div>
+    </div>
+  </div>
+</div>
+
+@section Scripts{
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Initialize DataTable
+    let table = new DataTable('#ordersTable', { 
+        order: [[3, 'desc']],
+        pageLength: 10,
+        language: {
+            search: "",
+            lengthMenu: "Hiển thị _MENU_ đơn hàng",
+            info: "Hiển thị _START_ đến _END_ của _TOTAL_ đơn hàng",
+            infoEmpty: "Không có đơn hàng",
+            infoFiltered: "(lọc từ _MAX_ đơn hàng)",
+            paginate: {
+                first: "Đầu",
+                last: "Cuối", 
+                next: "Sau",
+                previous: "Trước"
+            }
+        },
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+        drawCallback: function() {
+            updateStats();
+            checkEmptyState();
+        }
+    });
+
+    // Custom search
+    $('#searchInput').on('keyup', function() {
+        table.search(this.value).draw();
+    });
+
+    // Status filter
+    $('[data-filter]').on('click', function(e) {
+        e.preventDefault();
+        let filter = $(this).data('filter');
+        
+        if (filter === 'all') {
+            table.columns(2).search('').draw();
+        } else {
+            table.columns(2).search(filter).draw();
+        }
+        
+        // Update dropdown text
+        $('.dropdown-toggle').html('<i class="fas fa-filter me-1"></i>' + $(this).text());
+    });
+
+    // Refresh button
+    $('#refreshBtn').on('click', function() {
+        showLoading();
+        setTimeout(() => {
+            location.reload();
+        }, 500);
+    });
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Add confirmation for actions (use SweetAlert if available)
+    $('.cancel-btn').on('click', function(e) {
+        const form = this.closest('form');
+        if (window.Swal){
+            e.preventDefault();
+            Swal.fire({
+              icon:'warning', title:'Hủy đơn hàng?',
+              showCancelButton:true, confirmButtonText:'Hủy đơn', cancelButtonText:'Không',
+            }).then(res=>{ if(res.isConfirmed){ showLoading(); form.submit(); } });
+        } else {
+            if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) { e.preventDefault(); } else { showLoading(); }
+        }
+    });
+
+    $('.next-status-btn').on('click', function(e) {
+        const form = this.closest('form');
+        let action = $(this).text().trim();
+        if (window.Swal){
+            e.preventDefault();
+            Swal.fire({
+              icon:'question', title:`${action}?`,
+              showCancelButton:true, confirmButtonText:'Xác nhận', cancelButtonText:'Không',
+            }).then(res=>{ if(res.isConfirmed){ showLoading(); form.submit(); } });
+        } else {
+            if (!confirm(`Bạn có chắc chắn muốn ${action.toLowerCase()} đơn hàng này?`)) { e.preventDefault(); } else { showLoading(); }
+        }
+    });
+
+    // Realtime tooltip with timestamp
+    document.querySelectorAll('form[asp-action="NextStatus"] button, form[asp-action="Cancel"] button').forEach(btn => {
+        btn.addEventListener('mouseover', () => { 
+            btn.setAttribute('data-bs-original-title', btn.getAttribute('data-bs-original-title') + ' - ' + new Date().toLocaleString());
+        });
+    });
+
+    // Initial stats update
+    updateStats();
+    // Hide overlay when page ready
+    $('#loadingOverlay').addClass('d-none');
+});
+
+function updateStats() {
+    let pending = $('tr[data-status="0"]:visible').length;
+    let approved = $('tr[data-status="1"]:visible').length;
+    let shipping = $('tr[data-status="2"]:visible').length;
+    let completed = $('tr[data-status="3"]:visible').length;
+
+    $('#stat-pending').text(pending);
+    $('#stat-approved').text(approved);
+    $('#stat-shipping').text(shipping);
+    $('#stat-completed').text(completed);
+
+    // Add animation
+    $('.fw-bold').addClass('animate__animated animate__pulse');
+    setTimeout(() => $('.fw-bold').removeClass('animate__animated animate__pulse'), 1000);
+}
+
+function checkEmptyState() {
+    let visibleRows = $('#ordersTable tbody tr:visible').length;
+    if (visibleRows === 0) {
+        $('#emptyState').removeClass('d-none');
+    } else {
+        $('#emptyState').addClass('d-none');
+    }
+}
+
+function showLoading() {
+    $('#loadingOverlay').removeClass('d-none');
+}
+
+// Auto refresh every 30 seconds (optional)
+// setInterval(() => {
+//     $('#refreshBtn').click();
+// }, 30000);
+</script>
+
+<style>
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(153, 177, 143, 0.05) !important;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.badge {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.table th {
+    border: none;
+    font-weight: 600;
+    color: #495057;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.table td {
+    border: none;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+.input-group-text {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.form-control:focus {
+    border-color: #99b18f;
+    box-shadow: 0 0 0 0.2rem rgba(153, 177, 143, 0.25);
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.dropdown-item:hover {
+    background-color: rgba(153, 177, 143, 0.1);
+    color: #495057;
+}
+
+@@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.table tbody tr {
+    animation: fadeIn 0.3s ease;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+</style>
+}

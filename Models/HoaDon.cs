@@ -43,6 +43,11 @@ namespace PhuLieuToc.Models
         public int? TaiKhoanId { get; set; }
         public TaiKhoan? TaiKhoan { get; set; }
 
+        // Email của khách (nếu mua không đăng nhập)
+        [EmailAddress]
+        [StringLength(100)]
+        public string? EmailKhachHang { get; set; }
+
         public ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; } = new List<HoaDonChiTiet>();
 
         public ICollection<LichSuTrangThaiHoaDon> LichSuTrangThaiHoaDons { get; set; } = new List<LichSuTrangThaiHoaDon>();

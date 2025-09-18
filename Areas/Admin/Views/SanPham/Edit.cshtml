@@ -1,82 +1,161 @@
 @model PhuLieuToc.Models.ViewModels.ProductCreateEditViewModel
 
-<div class="container-fluid">
-    <h4 class="mb-3">Sửa sản phẩm</h4>
-
-    <form asp-area="Admin" asp-controller="SanPham" asp-action="Edit" asp-route-id="@Model.SanPhamId" method="post" enctype="multipart/form-data">
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label class="form-label">Tên sản phẩm</label>
-                <input asp-for="TenSanPham" class="form-control" />
-                <span asp-validation-for="TenSanPham" class="text-danger"></span>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Slug</label>
-                <input asp-for="Slug" class="form-control" />
-                <span asp-validation-for="Slug" class="text-danger"></span>
-            </div>
-            <div class="col-12">
-                <label class="form-label">Mô tả</label>
-                <textarea asp-for="MoTa" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Danh mục</label>
-                <select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(Model.Categories, nameof(CategoryModel.Id), nameof(CategoryModel.TenDanhMuc), Model.CategoryId))">
-                    <option value="">-- Chọn danh mục --</option>
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Thương hiệu</label>
-                <select asp-for="BrandId" class="form-select" asp-items="@(new SelectList(Model.Brands, nameof(BrandModel.Id), nameof(BrandModel.TenThuongHieu), Model.BrandId))">
-                    <option value="">-- Chọn thương hiệu --</option>
-                </select>
-                <span asp-validation-for="BrandId" class="text-danger"></span>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Trạng thái</label>
-                <div class="form-check form-switch mt-2">
-                    <input type="hidden" asp-for="TrangThai" />
-                    <input class="form-check-input" type="checkbox" role="switch" id="TrangThaiToggleEdit" @(Model.TrangThai == 1 ? "checked" : "")>
-                    <label class="form-check-label" for="TrangThaiToggleEdit">Hiển thị</label>
+<div class="container-fluid px-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #99b18f 0%, #7a9470 100%);">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h4 class="text-white mb-1 fw-bold">
+                                <i class="fas fa-edit me-2"></i>Chỉnh sửa sản phẩm
+                            </h4>
+                            <p class="text-white-50 mb-0">Cập nhật thông tin sản phẩm</p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <a asp-area="Admin" asp-controller="SanPham" asp-action="Index" class="btn btn-light btn-sm">
+                                <i class="fas fa-arrow-left me-1"></i>Quay lại danh sách
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <hr class="my-4" />
+    <!-- Form Section -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <form asp-area="Admin" asp-controller="SanPham" asp-action="Edit" asp-route-id="@Model.SanPhamId" method="post" enctype="multipart/form-data">
+                <!-- Basic Information -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                             style="width: 35px; height: 35px; background: linear-gradient(135deg, #99b18f, #7a9470); color: white;">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <h5 class="mb-0 fw-semibold text-primary">Thông tin cơ bản</h5>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Tên sản phẩm</label>
+                            <input asp-for="TenSanPham" class="form-control" placeholder="Nhập tên sản phẩm..." />
+                            <span asp-validation-for="TenSanPham" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Slug</label>
+                            <input asp-for="Slug" id="slugInput" class="form-control" placeholder="URL thân thiện..." />
+                            <span asp-validation-for="Slug" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium">Mô tả</label>
+                            <textarea asp-for="MoTa" class="form-control" rows="4" placeholder="Mô tả chi tiết về sản phẩm..."></textarea>
+                        </div>
+                    </div>
+                </div>
 
-        <div id="variants-section" class="mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="mb-0">Biến thể</h5>
-                <button type="button" class="btn btn-sm btn-outline-secondary" id="btnAddVariant">+ Thêm dòng</button>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-bordered align-middle" id="variants-table">
-                    <thead>
-                        <tr>
-                            <th>Thuộc tính</th>
-                            <th style="width:140px">Giá</th>
-                            <th style="width:140px">Số lượng</th>
-                            <th style="width:220px">Ảnh (URL)</th>
-                            <th style="width:120px">Trạng thái</th>
-                            <th style="width:60px"></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+                <!-- Category & Brand -->
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                             style="width: 35px; height: 35px; background: linear-gradient(135deg, #99b18f, #7a9470); color: white;">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <h5 class="mb-0 fw-semibold text-primary">Phân loại sản phẩm</h5>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Danh mục</label>
+                            <select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(Model.Categories, nameof(CategoryModel.Id), nameof(CategoryModel.TenDanhMuc), Model.CategoryId))">
+                                <option value="">-- Chọn danh mục --</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Thương hiệu</label>
+                            <select asp-for="BrandId" class="form-select" asp-items="@(new SelectList(Model.Brands, nameof(BrandModel.Id), nameof(BrandModel.TenThuongHieu), Model.BrandId))">
+                                <option value="">-- Chọn thương hiệu --</option>
+                            </select>
+                            <span asp-validation-for="BrandId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Trạng thái</label>
+                            <div class="form-check form-switch mt-2 p-3 rounded" style="background: #f8f9fa;">
+                                <input type="hidden" asp-for="TrangThai" />
+                                <input class="form-check-input" type="checkbox" role="switch" id="TrangThaiToggleEdit" @(Model.TrangThai == 1 ? "checked" : "")>
+                                <label class="form-check-label fw-medium" for="TrangThaiToggleEdit">
+                                    <i class="fas fa-eye me-1"></i>Hiển thị sản phẩm
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4 border-2" style="border-color: #e9ecef;">
+
+                <!-- Variants Section -->
+                <div id="variants-section" class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                 style="width: 35px; height: 35px; background: linear-gradient(135deg, #99b18f, #7a9470); color: white;">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <h5 class="mb-0 fw-semibold text-primary">Biến thể sản phẩm</h5>
+                        </div>
+                        <button type="button" class="btn btn-sm rounded-pill px-3" id="btnAddVariant"
+                                style="background: linear-gradient(135deg, #99b18f, #7a9470); color: white; border: none;">
+                            <i class="fas fa-plus me-1"></i>Thêm sản phẩm
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle" id="variants-table" style="border-radius: 8px; overflow: hidden;">
+                            <thead style="background: #f8f9fa;">
+                                <tr>
+                                    <th class="fw-semibold">Thuộc tính</th>
+                                    <th style="width:140px" class="fw-semibold">Giá</th>
+                                    <th style="width:140px" class="fw-semibold">Số lượng</th>
+                                    <th style="width:220px" class="fw-semibold">Ảnh (URL)</th>
+                                    <th style="width:120px" class="fw-semibold text-center">Trạng thái</th>
+                                    <th style="width:60px" class="fw-semibold text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-2 pt-3 border-top">
+                    <button type="submit" class="btn btn-success rounded-pill px-4">
+                        <i class="fas fa-save me-1"></i>Cập nhật sản phẩm
+                    </button>
+                    <a asp-area="Admin" asp-controller="SanPham" asp-action="Index" class="btn btn-secondary rounded-pill px-4">
+                        <i class="fas fa-times me-1"></i>Hủy bỏ
+                    </a>
+                </div>
+
+                <div id="variants-hidden-inputs"></div>
+            </form>
         </div>
-
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-success">Lưu</button>
-            <a asp-area="Admin" asp-controller="SanPham" asp-action="Index" class="btn btn-secondary">Hủy</a>
-        </div>
-
-        <div id="variants-hidden-inputs"></div>
-    </form>
+    </div>
 </div>
 
-@section Scripts{
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="d-none position-fixed top-0 start-0 w-100 h-100"
+     style="background: rgba(255,255,255,0.8); z-index: 9999;">
+    <div class="d-flex align-items-center justify-content-center h-100">
+        <div class="text-center">
+            <div class="spinner-border" style="color: #99b18f;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="mt-2 text-muted">Đang cập nhật sản phẩm...</div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
     <partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" />
     <script>
         const api = {
@@ -94,13 +173,13 @@
             allThuocTinhs = await res.json();
         }
 
-        function createAttrItem(selectedTypeId, selectedValueId) {
+        function createAttrItem(selectedTypeId, selectedValueId, singleMode = false) {
             const div = document.createElement('div');
             div.className = 'd-flex gap-2 align-items-center mb-2 attr-item';
             div.innerHTML = `
-                <select class="form-select form-select-sm attr-type" style="max-width:220px"><option value="">-- Thuộc tính --</option></select>
-                <select class="form-select form-select-sm attr-value" style="max-width:220px"><option value="">-- Giá trị --</option></select>
-                <button type="button" class="btn btn-sm btn-outline-danger attr-remove">X</button>`;
+                        <select class="form-select form-select-sm attr-type" style="max-width:220px"><option value="">-- Thuộc tính --</option></select>
+                        <select class="form-select form-select-sm attr-value" style="max-width:220px"><option value="">-- Giá trị --</option></select>
+                        <button type="button" class="btn btn-sm btn-outline-danger attr-remove" ${singleMode ? 'style="display:none"' : ''}>X</button>`;
 
             const typeSel = div.querySelector('.attr-type');
             const valueSel = div.querySelector('.attr-value');
@@ -124,43 +203,41 @@
         function addVariantRow(preset, valueToTypeMap) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>
-                    <div class="attr-list"></div>
-                    <button type="button" class="btn btn-sm btn-outline-secondary attr-add">+ Thêm thuộc tính</button>
-                </td>
-                <td><input type="number" min="0" step="0.01" class="form-control v-gia" value="${preset?.gia ?? preset?.Gia ?? 0}" /></td>
-                <td><input type="number" min="0" step="1" class="form-control v-qty" value="${preset?.soLuongTon ?? preset?.SoLuongTon ?? 0}" /></td>
-                <td>
-                    <input type="file" class="form-control v-anh-file" accept="image/*" />
-                    ${preset?.Anh ? `<div class="small text-muted mt-1">Ảnh hiện tại:</div><img src="${preset.Anh}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-top:4px;">` : ''}
-                    <input type="hidden" class="v-anh-old" value="${preset?.Anh ?? ''}" />
-                </td>
-                <td>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input v-status" type="checkbox" role="switch" ${(preset?.trangThai ?? preset?.TrangThai ?? 1) == 1 ? 'checked' : ''}>
-                    </div>
-                </td>
-                <td><button type="button" class="btn btn-sm btn-outline-danger v-remove">X</button></td>`;
+                        <td>
+                            <div class="attr-list"></div>
+                        </td>
+                        <td><input type="number" min="0" step="0.01" class="form-control v-gia" value="${preset?.gia ?? preset?.Gia ?? 0}" /></td>
+                        <td><input type="number" min="0" step="1" class="form-control v-qty" value="${preset?.soLuongTon ?? preset?.SoLuongTon ?? 0}" /></td>
+                        <td>
+                            <input type="file" class="form-control v-anh-file" accept="image/*" />
+                            ${preset?.Anh ? `<div class="small text-muted mt-1">Ảnh hiện tại:</div><img src="${preset.Anh}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin-top:4px;">` : ''}
+                            <input type="hidden" class="v-anh-old" value="${preset?.Anh ?? ''}" />
+                        </td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input v-status" type="checkbox" role="switch" ${(preset?.trangThai ?? preset?.TrangThai ?? 1) == 1 ? 'checked' : ''}>
+                            </div>
+                        </td>
+                        <td><button type="button" class="btn btn-sm btn-outline-danger v-remove">X</button></td>`;
 
             variantsTableBody.appendChild(tr);
 
             const list = tr.querySelector('.attr-list');
-            const addBtn = tr.querySelector('.attr-add');
-            addBtn.addEventListener('click', () => list.appendChild(createAttrItem()));
             tr.querySelector('.v-remove').addEventListener('click', () => tr.remove());
 
             if (preset && (preset.giaTriThuocTinhIds || preset.GiaTriThuocTinhIds)) {
                 const ids = (preset.giaTriThuocTinhIds || preset.GiaTriThuocTinhIds).map(Number);
-                ids.forEach(id => {
-                    const typeId = valueToTypeMap ? valueToTypeMap[id] : undefined;
-                    list.appendChild(createAttrItem(typeId, id));
-                });
+                const firstId = ids[0];
+                const typeId = valueToTypeMap ? valueToTypeMap[firstId] : undefined;
+                list.appendChild(createAttrItem(typeId, firstId, true));
+            } else {
+                list.appendChild(createAttrItem(undefined, undefined, true));
             }
         }
 
         btnAddVariant.addEventListener('click', () => addVariantRow());
 
-        (async function init(){
+        (async function init() {
             await loadThuocTinhs();
             const variants = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Variants));
             if (variants && variants.length) {

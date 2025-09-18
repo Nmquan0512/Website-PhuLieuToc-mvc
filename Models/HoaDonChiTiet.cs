@@ -41,10 +41,9 @@ namespace PhuLieuToc.Models
         public Guid HoaDonId { get; set; }
         public HoaDon HoaDon { get; set; }
 
-        [Required]
         [ForeignKey("SanPhamChiTiet")]
-        public int SanPhamChiTietId { get; set; }
-        public SanPhamChiTiet SanPhamChiTiet { get; set; }
+        public int? SanPhamChiTietId { get; set; }
+        public SanPhamChiTiet? SanPhamChiTiet { get; set; }
 
 
     }

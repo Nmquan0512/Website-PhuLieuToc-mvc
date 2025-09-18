@@ -61,7 +61,7 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="sidebar-brand">
+                <a href="@Url.Action("Index", "Home", new { area = "Admin" })" class="sidebar-brand">
                     <div class="">
                         <img src="/images/home/logo.jpg" alt="Logo" style="height: 40px;" />
                     </div>
@@ -77,7 +77,7 @@
                         <h3 class="nav-section-title">Dashboard</h3>
                         <ul class="nav-item">
                             <li>
-                                <a href="@Url.Action("Index", "Dashboard", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                            <a href="@Url.Action("Index", "Home", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <span>Tổng quan</span>
                                 </a>
@@ -183,6 +183,34 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        // Toast helper for Admin (avoid depending on public layout)
+        (function ensureToast(){
+            if (window.showToast) return;
+            const id = 'toastContainer';
+            let c = document.getElementById(id);
+            if (!c){ c = document.createElement('div'); c.id=id; c.className='position-fixed top-0 end-0 p-3'; c.style.zIndex='2000'; c.style.pointerEvents='none'; document.body.appendChild(c); }
+            window.showToast = function(message, type){
+                const container = document.getElementById(id);
+                const el = document.createElement('div');
+                const theme = (type==='success') ? 'success' : (type==='danger'||type==='error'?'danger':'secondary');
+                el.className = 'toast align-items-center text-bg-' + theme + ' border-0 show';
+                el.style.pointerEvents='auto';
+                el.innerHTML = '<div class="d-flex"><div class="toast-body">'+ message +'</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>';
+                container.appendChild(el);
+                setTimeout(function(){ if(el && el.parentNode){ el.parentNode.removeChild(el);} }, 2500);
+            }
+        })();
+        // Redirect all alert() in admin to toast for consistency
+        (function overrideAlert(){
+            const native = window.alert;
+            window.alert = function(msg){
+                try { if (window.showToast) { showToast(String(msg||''),'secondary'); return; } } catch(e){}
+                native(msg);
+            }
+        })();
+    </script>
+
+    <script>
         // Sidebar toggle for mobile
         function toggleSidebarAndOverlay() {
             const sidebar = document.getElementById('sidebar');
@@ -232,30 +260,24 @@
             // Initialize notifications
             initializeNotifications();
 
-            // Hiển thị thông báo thành công/thất bại chung
+            // Hiển thị thông báo thành công/thất bại dạng Toast
         @if (TempData["Success"] != null)
         {
             <text>
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Thành công!',
-                        text: '@Html.Raw(TempData["Success"])',
-                        timer: 3000,
-                        showConfirmButton: false
-                    });
+                document.addEventListener('DOMContentLoaded', function(){
+                    if (window.showToast) { showToast('@Html.Raw(TempData["Success"])','success'); }
+                    else if (window.Swal) { Swal.fire({ icon:'success', title:'Thành công', text:'@Html.Raw(TempData["Success"])', timer:1800, showConfirmButton:false }); }
+                });
             </text>
         }
 
         @if (TempData["Error"] != null)
         {
             <text>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Lỗi!',
-                        text: '@Html.Raw(TempData["Error"])',
-                        timer: 5000,
-                        showConfirmButton: true
-                    });
+                document.addEventListener('DOMContentLoaded', function(){
+                    if (window.showToast) { showToast('@Html.Raw(TempData["Error"])','secondary'); }
+                    else if (window.Swal) { Swal.fire({ icon:'error', title:'Thông báo', text:'@Html.Raw(TempData["Error"])', timer:2200, showConfirmButton:false }); }
+                });
             </text>
         }
                 });
