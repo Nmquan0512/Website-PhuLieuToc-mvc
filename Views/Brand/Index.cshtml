@@ -17,12 +17,18 @@
 				<div class="col-12 col-sm-6 col-md-4 d-flex">
 					<div class="product-image-wrapper w-100">
 						<div class="single-products">
-							<div class="productinfo text-center">
-								<img src="@Url.Content(!string.IsNullOrEmpty(item.FirstVariant?.Anh) ? item.FirstVariant.Anh : "/images/home/logo.jpg")" style="width:260px;height:260px;object-fit:cover;" />
-								<h2 class="price-text" data-product-id="@item.SanPham.SanPhamId">@(item.FirstVariant?.Gia.ToString("N0") ?? "0")</h2>
-								<p style="font-size: 15px; font-weight: bold;">@item.SanPham.TenSanPham</p>
-								<button class="btn btn-default add-to-cart" onclick="openVariantOrAdd(@item.SanPham.SanPhamId, @(item.FirstVariant?.SanPhamChiTietId ?? 0))"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</button>
-							</div>
+                            <div class="productinfo text-center">
+                                <a href="@Url.Action("DetailsBySlug","Product", new { slug = item.SanPham.Slug, variantId = item.FirstVariant?.SanPhamChiTietId ?? 0 })">
+                                    <img src="@Url.Content(!string.IsNullOrEmpty(item.FirstVariant?.Anh) ? item.FirstVariant.Anh : "/images/home/logo.jpg")" style="width:260px;height:260px;object-fit:cover;" />
+                                </a>
+                                <h2 class="price-text" data-product-id="@item.SanPham.SanPhamId">@(item.FirstVariant?.Gia.ToString("N0") ?? "0") VNĐ</h2>
+                                <p style="font-size: 15px; font-weight: bold;">
+                                    <a href="@Url.Action("DetailsBySlug","Product", new { slug = item.SanPham.Slug, variantId = item.FirstVariant?.SanPhamChiTietId ?? 0 })" style="color:inherit;text-decoration:none;">
+                                        @item.SanPham.TenSanPham
+                                    </a>
+                                </p>
+                                <button class="btn btn-default add-to-cart" onclick="openVariantOrAdd(@item.SanPham.SanPhamId, @(item.FirstVariant?.SanPhamChiTietId ?? 0))"><i class="fa fa-shopping-cart"></i>Thêm vào giỏ</button>
+                            </div>
 						</div>
 					</div>
 				</div>

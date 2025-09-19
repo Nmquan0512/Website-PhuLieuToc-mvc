@@ -79,7 +79,9 @@
                             @{ var firstVariant = product.SanPhamChiTiets?.Where(v => v.TrangThai == 1).OrderBy(v => v.SanPhamChiTietId).FirstOrDefault(); }
                             @if (!string.IsNullOrEmpty(firstVariant?.Anh))
                             {
-                                <img src="@Url.Content(firstVariant.Anh)" alt="@product.TenSanPham" class="card-img-top product-image" style="width:100%;height:200px;object-fit:cover;">
+                                <a href="@Url.Action("DetailsBySlug", new { slug = product.Slug, variantId = firstVariant.SanPhamChiTietId })">
+                                    <img src="@Url.Content(firstVariant.Anh)" alt="@product.TenSanPham" class="card-img-top product-image" style="width:100%;height:200px;object-fit:cover;">
+                                </a>
                             }
                             else
                             {
@@ -89,14 +91,20 @@
                             }
                             <div class="product-overlay">
                                 @if (firstVariant != null) {
-                                <a href="@Url.Action("Details", new { id = firstVariant.SanPhamChiTietId })" class="btn btn-primary btn-sm">
+                                <a href="@Url.Action("DetailsBySlug", new { slug = product.Slug, variantId = firstVariant.SanPhamChiTietId })" class="btn btn-primary btn-sm">
                                     <i class="fas fa-eye me-1"></i>Xem chi tiết
                                 </a>
                                 }
                             </div>
                         </div>
                         <div class="card-body d-flex flex-column">
-                            <h6 class="card-title">@product.TenSanPham</h6>
+                            <h6 class="card-title">
+                                @if (firstVariant != null) {
+                                    <a href="@Url.Action("DetailsBySlug", new { slug = product.Slug, variantId = firstVariant.SanPhamChiTietId })" style="text-decoration:none;color:inherit;">@product.TenSanPham</a>
+                                } else {
+                                    @product.TenSanPham
+                                }
+                            </h6>
                             
                             @if (firstVariant?.SanPhamChiTietThuocTinhs != null && firstVariant.SanPhamChiTietThuocTinhs.Any())
                             {

@@ -89,6 +89,22 @@ app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
+// Friendly SEO routes
+app.MapControllerRoute(
+    name: "product-details-slug",
+    pattern: "san-pham/{slug}",
+    defaults: new { controller = "Product", action = "DetailsBySlug" });
+
+app.MapControllerRoute(
+    name: "product-list-category",
+    pattern: "san-pham/danh-muc/{categorySlug}",
+    defaults: new { controller = "Product", action = "Index" });
+
+app.MapControllerRoute(
+    name: "product-list-brand",
+    pattern: "san-pham/thuong-hieu/{brandSlug}",
+    defaults: new { controller = "Product", action = "Index" });
+
 // Định tuyến mặc định
 app.MapControllerRoute(
     name: "default",

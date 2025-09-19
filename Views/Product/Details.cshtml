@@ -5,12 +5,28 @@
 }
 
 <div class="container my-5">
+    <style>
+        :root { --primary-green:#2e7d32; --primary-green-600:#1b5e20; --mint-50:#f3fbf5; --mint-100:#e6f6ea; }
+        .badge-attr { background:#e8f5e9; color:#1b5e20; border:1px solid #cde8d2; padding:6px 10px; border-radius:999px; display:inline-block; margin:2px 6px 2px 0; font-size:13px; }
+        .price-accent { color:var(--primary-green); }
+        .btn-primary { background:var(--primary-green); border-color:var(--primary-green); }
+        .btn-primary:hover { background:var(--primary-green-600); border-color:var(--primary-green-600); }
+        .thumbs .thumb { width:78px; height:78px; object-fit:cover; border-radius:10px; border:2px solid transparent; cursor:pointer; transition:all .15s ease; }
+        .thumbs .thumb.active, .thumbs .thumb:hover { border-color:var(--primary-green); transform:translateY(-1px); }
+        .variant-chip { border:1px solid #dbe7d9; background:#f7fbf8; border-radius:10px; padding:8px 12px; cursor:pointer; display:inline-flex; gap:8px; align-items:center; margin:4px 6px 0 0; font-size:13px; }
+        .variant-chip.active { border-color:var(--primary-green); background:#e9f5ec; box-shadow:0 0 0 3px rgba(46,125,50,.08); }
+        .section-title { border-left:4px solid var(--primary-green); padding-left:10px; font-weight:700; }
+        .related-card .card { border:1px solid #e6efe6; transition:transform .15s ease, box-shadow .15s ease; }
+        .related-card .card:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,.06); }
+        .related-actions { display:flex; gap:8px; }
+        .related-actions .btn { flex:1 1 0; }
+    </style>
     <div class="row">
         <div class="col-lg-6">
             <div class="product-image">
                 @if (!string.IsNullOrEmpty(Model.Anh))
                 {
-                    <img src="@Model.Anh" alt="@Model.SanPham.TenSanPham" class="img-fluid rounded shadow">
+                    <img id="mainImage" src="@Model.Anh" alt="@Model.SanPham.TenSanPham" class="img-fluid rounded shadow w-100" style="max-height:480px;object-fit:contain;background:#fff" />
                 }
                 else
                 {
@@ -19,6 +35,20 @@
                     </div>
                 }
             </div>
+
+            @{
+                var allVariantThumbs = ViewBag.RelatedVariants as List<PhuLieuToc.Models.SanPhamChiTiet>;
+            }
+            @if (allVariantThumbs != null && allVariantThumbs.Any(v => !string.IsNullOrEmpty(v.Anh)))
+            {
+            <div class="thumbs mt-3 d-flex flex-wrap gap-2">
+                @foreach (var v in allVariantThumbs.Where(x => !string.IsNullOrEmpty(x.Anh)))
+                {
+                    var isActive = v.SanPhamChiTietId == Model.SanPhamChiTietId;
+                    <img src="@v.Anh" class="thumb @(isActive ? "active" : "")" alt="thumb" onclick="onThumbClick('@Url.Action("DetailsBySlug", new { slug = v.SanPham.Slug, variantId = v.SanPhamChiTietId })', '@v.Anh')" />
+                }
+            </div>
+            }
         </div>
         
         <div class="col-lg-6">
@@ -27,7 +57,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
                         <li class="breadcrumb-item"><a href="@Url.Action("Index", "Product")">Sản phẩm</a></li>
-                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Product", new { categoryId = Model.SanPham.CategoryId })">@Model.SanPham.Category?.TenDanhMuc</a></li>
+                        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Product", new { categorySlug = Model.SanPham.Category?.Slug })">@Model.SanPham.Category?.TenDanhMuc</a></li>
                         <li class="breadcrumb-item active">@Model.SanPham.TenSanPham</li>
                     </ol>
                 </nav>
@@ -43,23 +73,20 @@
                 }
 
                 <div class="price-section mb-4">
-                    <h3 class="text-primary mb-0">@Model.Gia.ToString("N0") ₫</h3>
+                    <h3 class="price-accent mb-0">@Model.Gia.ToString("N0") ₫</h3>
                     <small class="text-muted">Giá đã bao gồm VAT</small>
                 </div>
 
                 @if (Model.SanPhamChiTietThuocTinhs.Any())
                 {
-                    <div class="attributes mb-4">
-                        <h6>Thông số kỹ thuật:</h6>
-                        <ul class="list-unstyled">
+                    <div class="attributes mb-3">
+                        <h6 class="section-title">Thuộc tính biến thể</h6>
+                        <div>
                             @foreach (var attr in Model.SanPhamChiTietThuocTinhs)
                             {
-                                <li class="mb-1">
-                                    <strong>@attr.GiaTriThuocTinh.ThuocTinh.TenThuocTinh:</strong>
-                                    <span>@attr.GiaTriThuocTinh.TenGiaTri</span>
-                                </li>
+                                <span class="badge-attr">@attr.GiaTriThuocTinh.ThuocTinh.TenThuocTinh: <strong>@attr.GiaTriThuocTinh.TenGiaTri</strong></span>
                             }
-                        </ul>
+                        </div>
                     </div>
                 }
 
@@ -97,7 +124,7 @@
                         </div>
                         
                         <div class="d-grid gap-2">
-                            <button class="btn btn-primary btn-lg" onclick="addToCart(@Model.SanPhamChiTietId)">
+                            <button class="btn btn-primary btn-lg" onclick="openVariantOrAdd(@Model.SanPhamId, @Model.SanPhamChiTietId)">
                                 <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ hàng
                             </button>
                             <a href="@Url.Action("Index", "Cart")" class="btn btn-outline-primary">
@@ -110,8 +137,8 @@
                 @if (!string.IsNullOrEmpty(Model.SanPham.MoTa))
                 {
                     <div class="product-description mt-5">
-                        <h5>Mô tả sản phẩm</h5>
-                        <div class="border rounded p-3">
+                        <h5 class="section-title">Mô tả sản phẩm</h5>
+                        <div class="border rounded p-3" style="background:#ffffff">
                             @Html.Raw(Model.SanPham.MoTa.Replace("\n", "<br>"))
                         </div>
                     </div>
@@ -124,7 +151,7 @@
     {
         <div class="row mt-5">
             <div class="col-12">
-                <h4>Biến thể khác</h4>
+                <h4 class="section-title">Biến thể khác</h4>
                 <div class="row">
                     @foreach (var variant in (List<SanPhamChiTiet>)ViewBag.RelatedVariants)
                     {
@@ -140,8 +167,8 @@
                                                 @string.Join(", ", variant.SanPhamChiTietThuocTinhs.Select(t => t.GiaTriThuocTinh.TenGiaTri))
                                             </p>
                                         }
-                                        <p class="text-primary fw-bold">@variant.Gia.ToString("N0") ₫</p>
-                                        <a href="@Url.Action("Details", new { id = variant.SanPhamChiTietId })" class="btn btn-outline-primary btn-sm">
+                                        <p class="price-accent fw-bold">@variant.Gia.ToString("N0") ₫</p>
+                                        <a href="@Url.Action("DetailsBySlug", new { slug = variant.SanPham.Slug, variantId = variant.SanPhamChiTietId })" class="btn btn-outline-primary btn-sm">
                                             Xem chi tiết
                                         </a>
                                     </div>
@@ -153,10 +180,44 @@
             </div>
         </div>
     }
+
+    @if (ViewBag.RelatedProducts != null)
+    {
+        var prods = ViewBag.RelatedProducts as List<PhuLieuToc.Models.SanPham>;
+        if (prods != null && prods.Any())
+        {
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h4 class="section-title">Sản phẩm liên quan</h4>
+                </div>
+                @foreach (var p in prods)
+                {
+                    var first = p.SanPhamChiTiets?.FirstOrDefault();
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 related-card">
+                        <div class="card h-100">
+                            <a href="@Url.Action("DetailsBySlug", new { slug = p.Slug, variantId = first?.SanPhamChiTietId ?? 0 })" class="text-decoration-none text-dark">
+                                <img src="@Url.Content(!string.IsNullOrEmpty(first?.Anh) ? first.Anh : "/images/home/logo.jpg")" class="card-img-top" style="height:200px;object-fit:cover" />
+                            </a>
+                            <div class="card-body d-flex flex-column">
+                            <h6 class="card-title" style="min-height:40px">@p.TenSanPham</h6>
+                            <a href="@Url.Action("DetailsBySlug", new { slug = p.Slug, variantId = first?.SanPhamChiTietId ?? 0 })" class="btn btn-outline-primary btn-sm mt-auto w-100">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
 </div>
 
 @section Scripts {
     <script>
+        function onThumbClick(detailUrl, imgUrl) {
+            const main = document.getElementById('mainImage');
+            if (main && imgUrl) main.src = imgUrl;
+            window.location.href = detailUrl;
+        }
+
         function increaseQuantity() {
             const quantityInput = document.getElementById('quantity');
             const maxQuantity = parseInt(quantityInput.getAttribute('max'));
@@ -176,20 +237,17 @@
             }
         }
 
-        function addToCart(sanPhamChiTietId) {
-            const quantity = document.getElementById('quantity').value;
-            
+        function addToCart(sanPhamChiTietId, selectedThuocTinhText = '', soLuong = 1) {
             fetch('@Url.Action("AddToCart", "Cart")', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `sanPhamChiTietId=${sanPhamChiTietId}&soLuong=${quantity}`
+                body: `sanPhamChiTietId=${sanPhamChiTietId}&soLuong=${encodeURIComponent(soLuong)}&selectedThuocTinh=${encodeURIComponent(selectedThuocTinhText)}`
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Hiển thị thông báo thành công
                     const alertDiv = document.createElement('div');
                     alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
                     alertDiv.style.top = '20px';
@@ -200,13 +258,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     `;
                     document.body.appendChild(alertDiv);
-                    
-                    // Tự động ẩn sau 3 giây
-                    setTimeout(() => {
-                        if (alertDiv.parentNode) {
-                            alertDiv.parentNode.removeChild(alertDiv);
-                        }
-                    }, 3000);
+                    setTimeout(() => { if (alertDiv.parentNode) alertDiv.parentNode.removeChild(alertDiv); }, 2500);
+                    if (window.updateCartCount) window.updateCartCount();
                 } else {
                     alert(data.message || 'Có lỗi xảy ra');
                 }
@@ -215,6 +268,113 @@
                 console.error('Error:', error);
                 alert('Có lỗi xảy ra khi thêm vào giỏ hàng');
             });
+        }
+
+        async function openVariantOrAdd(productId, defaultVariantId) {
+            try {
+                const res = await fetch('@Url.Action("GetVariants","Product")' + `?productId=${productId}`);
+                const data = await res.json();
+                if (!data.success) return addToCart(defaultVariantId, '', parseInt(document.getElementById('quantity')?.value||'1',10));
+                if (!data.variants || data.variants.length === 0) return addToCart(defaultVariantId, '', parseInt(document.getElementById('quantity')?.value||'1',10));
+                if (data.variants.length === 1) {
+                    const onlyId = data.variants[0]?.id || defaultVariantId;
+                    return addToCart(onlyId, '', parseInt(document.getElementById('quantity')?.value||'1',10));
+                }
+
+                const variants = data.variants;
+                const options = variants.map(v => {
+                    const firstAttr = (v.thuocTinh && v.thuocTinh[0]) || { loai: 'Biến thể', giaTri: v.ten || v.id };
+                    return { id: v.id, gia: v.gia, soLuong: v.soLuongTon ?? 0, anh: v.anh || '', label: `${firstAttr.loai}: ${firstAttr.giaTri}` };
+                });
+
+                const html = `
+<div class="modal fade variant-modal" id="variantModal" tabindex="-1" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+   <div class="modal-header">
+     <h5 class="modal-title">Chọn biến thể</h5>
+     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+   </div>
+   <div class="modal-body">
+     <div class="variant-options" data-type="single">
+       ${options.map(o => `
+         <div class='variant-chip' data-id='${o.id}' data-label='${o.label}' data-gia='${o.gia}' data-stock='${o.soLuong}' data-img='${o.anh}'>
+           <div style='font-size:14px;font-weight:600'>${o.label}</div>
+         </div>
+       `).join('')}
+     </div>
+     <div class="d-flex align-items-center gap-3 mt-3">
+        <img id="variantImgPreview" src="" alt="variant" style="width:64px;height:64px;object-fit:cover;border-radius:8px;display:none;"/>
+        <div id="variantStock" class="text-muted small"></div>
+     </div>
+     <div class="mt-3 d-flex align-items-center justify-content-between">
+        <div class="qty-control">
+          <button type="button" id="qtyMinus">-</button>
+          <input type="number" id="qtyInput" value="1" min="1" />
+          <button type="button" id="qtyPlus">+</button>
+        </div>
+        <div id="pricePreview" style="font-weight:700;color:var(--primary-green)"></div>
+     </div>
+   </div>
+   <div class="modal-footer d-flex justify-content-between align-items-center">
+     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+     <button type="button" class="btn btn-primary" id="variantAddBtn">Thêm vào giỏ</button>
+   </div>
+  </div>
+ </div>
+</div>`;
+                const container = document.createElement('div');
+                container.style.position = 'relative';
+                container.style.zIndex = '1056';
+                container.innerHTML = html;
+                document.body.appendChild(container);
+                const modalEl = container.querySelector('#variantModal');
+                const modal = new bootstrap.Modal(modalEl, {backdrop:true,focus:true});
+                let selectedId = null;
+                const pricePreview = container.querySelector('#pricePreview');
+                const imgPreview = container.querySelector('#variantImgPreview');
+                const stockText = container.querySelector('#variantStock');
+                const qtyInput = container.querySelector('#qtyInput');
+
+                const firstChip = container.querySelector('.variant-options .variant-chip');
+                if (firstChip) firstChip.classList.add('active');
+
+                function refreshSelection(){
+                    const act = container.querySelector('.variant-options .variant-chip.active');
+                    selectedId = act ? Number(act.getAttribute('data-id')) : null;
+                    const gia = act ? Number(act.getAttribute('data-gia')) : null;
+                    pricePreview.textContent = gia != null ? (Number(gia).toLocaleString() + ' đ') : '';
+                    const img = act ? act.getAttribute('data-img') : '';
+                    const stock = act ? Number(act.getAttribute('data-stock')) : null;
+                    if (img) { imgPreview.src = img; imgPreview.style.display = 'block'; } else { imgPreview.style.display = 'none'; }
+                    stockText.textContent = stock != null ? `Còn: ${stock}` : '';
+                }
+                container.querySelectorAll('.variant-options .variant-chip').forEach(c => {
+                    c.addEventListener('click', () => {
+                        const parent = c.closest('.variant-options');
+                        parent.querySelectorAll('.variant-chip').forEach(x=>x.classList.remove('active'));
+                        c.classList.add('active');
+                        refreshSelection();
+                    });
+                });
+                refreshSelection();
+                container.querySelector('#qtyMinus').addEventListener('click', ()=>{ const v = Math.max(1, (parseInt(qtyInput.value||'1',10)-1)); qtyInput.value = v; });
+                container.querySelector('#qtyPlus').addEventListener('click', ()=>{ const v = Math.max(1, (parseInt(qtyInput.value||'1',10)+1)); qtyInput.value = v; });
+                container.querySelector('#variantAddBtn').addEventListener('click', () => {
+                    refreshSelection();
+                    if (!selectedId) return;
+                    const amount = Math.max(1, parseInt(qtyInput.value||'1', 10));
+                    const act = container.querySelector('.variant-options .variant-chip.active');
+                    const label = act ? act.getAttribute('data-label') : '';
+                    addToCart(selectedId, label, amount);
+                    modal.hide();
+                    container.remove();
+                });
+                modalEl.addEventListener('hidden.bs.modal', () => container.remove());
+                modal.show();
+            } catch (e) {
+                addToCart(defaultVariantId, '', parseInt(document.getElementById('quantity')?.value||'1',10));
+            }
         }
     </script>
 }

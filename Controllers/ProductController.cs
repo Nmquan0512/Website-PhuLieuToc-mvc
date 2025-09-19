@@ -14,8 +14,20 @@ namespace PhuLieuToc.Controllers
 			_context = context;
 		}
 
-		public async Task<IActionResult> Index(int? categoryId, int? brandId, string? search)
+		public async Task<IActionResult> Index(int? categoryId, int? brandId, string? search, string? categorySlug = null, string? brandSlug = null)
 		{
+			// Resolve slugs to IDs if provided
+			if (!string.IsNullOrWhiteSpace(categorySlug))
+			{
+				var cat = await _context.Categorys.FirstOrDefaultAsync(c => c.Slug == categorySlug && c.TrangThai == 1);
+				if (cat != null) categoryId = cat.Id;
+			}
+			if (!string.IsNullOrWhiteSpace(brandSlug))
+			{
+				var br = await _context.Brands.FirstOrDefaultAsync(b => b.Slug == brandSlug && b.TrangThai == 1);
+				if (br != null) brandId = br.Id;
+			}
+
 			var query = _context.SanPhams
 				.Include(p => p.Category)
 				.Include(p => p.Brand)
@@ -82,8 +94,103 @@ namespace PhuLieuToc.Controllers
 
 			ViewBag.RelatedVariants = relatedVariants;
 
+			// Sản phẩm liên quan (ưu tiên cùng danh mục; nếu không có thì cùng thương hiệu)
+			var relatedProducts = await _context.SanPhams
+				.Include(p => p.SanPhamChiTiets)
+				.Where(p => p.CategoryId == product.SanPham.CategoryId
+					&& p.SanPhamId != product.SanPhamId
+					&& p.TrangThai == 1
+					&& p.SanPhamChiTiets.Any(v => v.TrangThai == 1))
+				.OrderByDescending(p => p.SanPhamId)
+				.Take(8)
+				.ToListAsync();
+
+			if (relatedProducts.Count == 0)
+			{
+				relatedProducts = await _context.SanPhams
+					.Include(p => p.SanPhamChiTiets)
+					.Where(p => p.BrandId == product.SanPham.BrandId
+						&& p.SanPhamId != product.SanPhamId
+						&& p.TrangThai == 1
+						&& p.SanPhamChiTiets.Any(v => v.TrangThai == 1))
+					.OrderByDescending(p => p.SanPhamId)
+					.Take(8)
+					.ToListAsync();
+			}
+			ViewBag.RelatedProducts = relatedProducts;
+
             return View(product);
         }
+
+		[HttpGet]
+		public async Task<IActionResult> DetailsBySlug(string slug, int? variantId)
+		{
+			if (string.IsNullOrWhiteSpace(slug)) return NotFound();
+			var prod = await _context.SanPhams
+				.Include(p => p.Category)
+				.Include(p => p.Brand)
+				.FirstOrDefaultAsync(p => p.Slug == slug && p.TrangThai == 1);
+			if (prod == null) return NotFound();
+
+			SanPhamChiTiet? variant = null;
+			if (variantId.HasValue)
+			{
+				variant = await _context.SanPhamChiTiets
+					.Include(s => s.SanPham)
+						.ThenInclude(p => p.Category)
+					.Include(s => s.SanPham)
+						.ThenInclude(p => p.Brand)
+					.Include(s => s.SanPhamChiTietThuocTinhs)
+						.ThenInclude(t => t.GiaTriThuocTinh)
+							.ThenInclude(g => g.ThuocTinh)
+					.FirstOrDefaultAsync(s => s.SanPhamId == prod.SanPhamId && s.SanPhamChiTietId == variantId.Value && s.TrangThai == 1);
+			}
+
+			if (variant == null)
+			{
+				variant = await _context.SanPhamChiTiets
+					.Include(s => s.SanPham)
+						.ThenInclude(p => p.Category)
+					.Include(s => s.SanPham)
+						.ThenInclude(p => p.Brand)
+					.Include(s => s.SanPhamChiTietThuocTinhs)
+						.ThenInclude(t => t.GiaTriThuocTinh)
+							.ThenInclude(g => g.ThuocTinh)
+					.Where(s => s.SanPhamId == prod.SanPhamId && s.TrangThai == 1)
+					.OrderBy(s => s.SanPhamChiTietId)
+					.FirstOrDefaultAsync();
+			}
+
+			if (variant == null) return NotFound();
+
+			var relatedVariants = await _context.SanPhamChiTiets
+				.Include(s => s.SanPhamChiTietThuocTinhs)
+					.ThenInclude(t => t.GiaTriThuocTinh)
+						.ThenInclude(g => g.ThuocTinh)
+				.Where(s => s.SanPhamId == prod.SanPhamId && s.TrangThai == 1)
+				.ToListAsync();
+			ViewBag.RelatedVariants = relatedVariants;
+
+			var relatedProducts = await _context.SanPhams
+				.Include(p => p.SanPhamChiTiets)
+				.Where(p => p.CategoryId == prod.CategoryId && p.SanPhamId != prod.SanPhamId && p.TrangThai == 1 && p.SanPhamChiTiets.Any(v => v.TrangThai == 1))
+				.OrderByDescending(p => p.SanPhamId)
+				.Take(8)
+				.ToListAsync();
+
+			if (relatedProducts.Count == 0)
+			{
+				relatedProducts = await _context.SanPhams
+					.Include(p => p.SanPhamChiTiets)
+					.Where(p => p.BrandId == prod.BrandId && p.SanPhamId != prod.SanPhamId && p.TrangThai == 1 && p.SanPhamChiTiets.Any(v => v.TrangThai == 1))
+					.OrderByDescending(p => p.SanPhamId)
+					.Take(8)
+					.ToListAsync();
+			}
+			ViewBag.RelatedProducts = relatedProducts;
+
+			return View("Details", variant);
+		}
 
         [HttpGet]
         public async Task<IActionResult> GetVariants(int productId)
