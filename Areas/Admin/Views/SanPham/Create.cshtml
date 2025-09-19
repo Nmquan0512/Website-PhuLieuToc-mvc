@@ -273,13 +273,16 @@
             });
         });
 
-        // auto slug from name
-        document.querySelector('[name="TenSanPham"]').addEventListener('input', function(){
-            const v = this.value.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-                .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+        // auto slug from name (sync unless user edits slug manually)
+        (function enableAutoSlug(){
+            const nameEl = document.querySelector('[name="TenSanPham"]');
             const slugEl = document.getElementById('slugInput');
-            if (slugEl && !slugEl.value) slugEl.value = v; else if (slugEl && slugEl.value.startsWith(v.slice(0,5))) slugEl.value = v;
-        });
+            if (!nameEl || !slugEl) return;
+            const toSlug = (t)=> t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+            let userTouchedSlug = false;
+            slugEl.addEventListener('input', ()=>{ userTouchedSlug = true; });
+            nameEl.addEventListener('input', ()=>{ if (!userTouchedSlug) slugEl.value = toSlug(nameEl.value); });
+        })();
 
         (async function init(){ 
             await loadThuocTinhs(); 

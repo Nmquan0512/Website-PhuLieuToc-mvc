@@ -53,7 +53,10 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                 return View(model);
             }
 
-            if (await _context.SanPhams.AnyAsync(p => p.Slug == model.Slug))
+            // Auto-generate slug when missing
+            var slugToUse = string.IsNullOrWhiteSpace(model.Slug) ? CreateSlug(model.TenSanPham) : model.Slug;
+
+            if (await _context.SanPhams.AnyAsync(p => p.Slug == slugToUse))
             {
                 ModelState.AddModelError("Slug", "Slug đã tồn tại");
                 model.Categories = await _context.Categorys.ToListAsync();
@@ -64,7 +67,7 @@ namespace PhuLieuToc.Areas.Admin.Controllers
             var product = new SanPham
             {
                 TenSanPham = model.TenSanPham,
-                Slug = model.Slug,
+                Slug = slugToUse,
                 MoTa = model.MoTa,
                 TrangThai = model.TrangThai,
                 CategoryId = model.CategoryId,
@@ -172,7 +175,14 @@ namespace PhuLieuToc.Areas.Admin.Controllers
                 return View(model);
             }
 
-            if (await _context.SanPhams.AnyAsync(p => p.Slug == model.Slug && p.SanPhamId != id))
+            // Determine intended slug: if user didn't change slug or left blank, auto-regenerate from name
+            var intendedSlug = string.IsNullOrWhiteSpace(model.Slug)
+                ? CreateSlug(model.TenSanPham)
+                : (string.Equals(model.Slug, product.Slug, System.StringComparison.OrdinalIgnoreCase)
+                    ? CreateSlug(model.TenSanPham) // keep auto sync when user hasn't edited slug manually
+                    : model.Slug);
+
+            if (await _context.SanPhams.AnyAsync(p => p.Slug == intendedSlug && p.SanPhamId != id))
             {
                 ModelState.AddModelError("Slug", "Slug đã tồn tại");
                 model.Categories = await _context.Categorys.ToListAsync();
@@ -181,7 +191,7 @@ namespace PhuLieuToc.Areas.Admin.Controllers
             }
 
             product.TenSanPham = model.TenSanPham;
-            product.Slug = model.Slug;
+            product.Slug = intendedSlug;
             product.MoTa = model.MoTa;
             product.TrangThai = model.TrangThai;
             product.CategoryId = model.CategoryId;
@@ -254,6 +264,43 @@ namespace PhuLieuToc.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        private string CreateSlug(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return "";
+            return text.ToLower()
+                .Replace("đ", "d")
+                .Replace("Đ", "d")
+                .Replace(" ", "-")
+                .Replace(".", "")
+                .Replace(",", "")
+                .Replace(";", "")
+                .Replace(":", "")
+                .Replace("!", "")
+                .Replace("?", "")
+                .Replace("(", "")
+                .Replace(")", "")
+                .Replace("[", "")
+                .Replace("]", "")
+                .Replace("{", "")
+                .Replace("}", "")
+                .Replace("'", "")
+                .Replace("\"", "")
+                .Replace("\\", "")
+                .Replace("/", "")
+                .Replace("|", "")
+                .Replace("`", "")
+                .Replace("~", "")
+                .Replace("@", "")
+                .Replace("#", "")
+                .Replace("$", "")
+                .Replace("%", "")
+                .Replace("^", "")
+                .Replace("&", "")
+                .Replace("*", "")
+                .Replace("+", "")
+                .Replace("=", "")
+                .Replace("_", "-");
+        }
         // JSON endpoints to power dynamic UI
         [HttpGet]
         public async Task<IActionResult> GetThuocTinhs()

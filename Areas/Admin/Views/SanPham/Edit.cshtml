@@ -255,6 +255,21 @@
             }
         })();
 
+        // auto slug from name (sync when user hasn't typed a custom slug)
+        (function enableAutoSlug(){
+            const nameEl = document.querySelector('[name="TenSanPham"]');
+            const slugEl = document.getElementById('slugInput');
+            if (!nameEl || !slugEl) return;
+            const toSlug = (t)=> t.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+            const original = slugEl.value || '';
+            let userTouchedSlug = false;
+            slugEl.addEventListener('input', ()=>{ userTouchedSlug = true; });
+            nameEl.addEventListener('input', ()=>{
+                if (userTouchedSlug && slugEl.value && slugEl.value !== original) return;
+                slugEl.value = toSlug(nameEl.value);
+            });
+        })();
+
         document.querySelector('form').addEventListener('submit', (e) => {
             // sync product status from toggle to hidden input
             const toggleEdit = document.getElementById('TrangThaiToggleEdit');
