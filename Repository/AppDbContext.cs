@@ -12,10 +12,7 @@ namespace PhuLieuToc.Repository
 		{
 		}
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		{
-			optionsBuilder.UseSqlServer("Data Source=WINDOWS-PC\\SQLEXPRESS05;Initial Catalog=PhuLieuToc;Trusted_Connection=True;TrustServerCertificate=True");
-		}
+	
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
